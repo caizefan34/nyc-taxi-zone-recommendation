@@ -10,6 +10,7 @@ scientifically bounded evaluation.
 
    problem_statement
    methodology
+   forecasting
    ablation_study
 
 .. toctree::
