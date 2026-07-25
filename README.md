@@ -124,6 +124,16 @@ DQN and Double DQN train for 300 episodes on Jan 18--24 only, then run in the sa
 
 DQN minus Single-Step is +$53.74 per driver, 95% paired bootstrap CI [$46.21, $61.57]. Double DQN minus Single-Step is -$25.27, CI [-$32.77, -$17.97]. These intervals cover evaluation-market seeds for one trained network per algorithm, not training uncertainty or real deployment effects. The default recommender remains unchanged. See [`outputs/rl_benchmark.md`](outputs/rl_benchmark.md).
 
+### Combined research benchmark
+
+The endpoint-aware final report evaluates the original Single-Step heuristic, forecasting-enhanced heuristic, DQN, Double DQN, and GraphSAGE-enhanced forecast without combining incompatible metrics into one leaderboard. Its central findings are:
+
+- forecasting improves demand MAE by 0.2406, CI [0.1960, 0.2820], but reduces legacy simulator fare by $17.88/day, CI [-$38.15, $3.03];
+- DQN improves finite-demand multi-agent revenue by $53.74/driver, CI [$46.21, $61.57], while Double DQN is $25.27 below Single-Step;
+- GraphSAGE reduces demand MAE by 0.0077, but CI [-0.0042, 0.0200] crosses zero and OD messages alone perform better.
+
+See [`outputs/benchmark_report.md`](outputs/benchmark_report.md) for matched baselines, effect sizes, ablations, and statistical boundaries.
+
 ## Method
 
 For candidate zone `z` at arrival state `s`, the two-step score uses
@@ -238,6 +248,7 @@ python -m pip install -e ".[dev,forecasting,graph]"
 python -m scripts.train_forecaster
 python -m scripts.run_forecasting_benchmark --runs 100
 python -m scripts.run_graph_benchmark
+python -m scripts.generate_combined_benchmark
 ```
 
 Generated model and row-level prediction artifacts remain under `data/processed/` and are ignored by Git. Reproducible aggregate results are checked in as [`outputs/forecast_evaluation.md`](outputs/forecast_evaluation.md), [`outputs/forecast_evaluation.json`](outputs/forecast_evaluation.json), and [`outputs/forecasting_benchmark.md`](outputs/forecasting_benchmark.md). See [`docs/forecasting.md`](docs/forecasting.md) for feature semantics and limitations.

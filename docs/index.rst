@@ -14,6 +14,7 @@ scientifically bounded evaluation.
    rl_baselines
    forecasting
    graph_learning
+   combined_benchmark
    ablation_study
 
 .. toctree::

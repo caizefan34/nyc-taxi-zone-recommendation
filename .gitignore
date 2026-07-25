@@ -23,6 +23,7 @@ outputs/tmp/
 !outputs/forecast_evaluation.json
 !outputs/forecasting_benchmark.json
 !outputs/graph_benchmark.json
+!outputs/benchmark_report.json
 
 # Temp files
 tmp/
