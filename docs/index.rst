@@ -14,6 +14,7 @@ scientifically bounded evaluation.
    graph_learning
    multi_agent_simulator
    rl_baselines
+   combined_benchmark
    ablation_study
 
 .. toctree::

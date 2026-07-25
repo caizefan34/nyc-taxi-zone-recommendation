@@ -23,6 +23,7 @@ outputs/tmp/
 !outputs/graph_benchmark.json
 !outputs/multi_agent_benchmark.json
 !outputs/rl_benchmark.json
+!outputs/benchmark_report.json
 
 # Temp files
 tmp/

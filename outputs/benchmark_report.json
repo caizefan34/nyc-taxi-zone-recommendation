@@ -1,0 +1,351 @@
+{
+  "sources": [
+    "outputs/forecast_evaluation.json",
+    "outputs/forecasting_benchmark.json",
+    "outputs/multi_agent_benchmark.json",
+    "outputs/rl_benchmark.json",
+    "outputs/graph_benchmark.json"
+  ],
+  "evaluation_boundaries": {
+    "forecast_validation": {
+      "train_start": "2023-01-08T00:00:00",
+      "train_end": "2023-01-20T23:30:00",
+      "validation_start": "2023-01-21T00:00:00",
+      "validation_end": "2023-01-24T23:30:00",
+      "train_rows": 164112,
+      "validation_rows": 50496
+    },
+    "forecast_policy": {
+      "runs": 100,
+      "simulator": "legacy single-driver historical-market simulator"
+    },
+    "multi_agent_policy": {
+      "runs": 20,
+      "drivers": 50,
+      "training_window": {
+        "start": "2023-01-18T00:00:00",
+        "end_exclusive": "2023-01-25T00:00:00"
+      },
+      "evaluation_window": {
+        "start": "2023-01-25T00:00:00",
+        "end_exclusive": "2023-02-01T00:00:00"
+      }
+    },
+    "graph_validation": {
+      "training_end_exclusive": "2023-01-21T00:00:00",
+      "validation_start": "2023-01-21T00:00:00",
+      "validation_end": "2023-01-24T23:30:00"
+    }
+  },
+  "methods": {
+    "original_single_step": {
+      "legacy_daily_fare": 548.7740715429028,
+      "multi_agent_revenue_per_driver": 1768.036170468129
+    },
+    "forecasting_enhanced": {
+      "demand_mae": 1.4867501549557998,
+      "historical_demand_mae": 1.727305133079848,
+      "mae_improvement": {
+        "mean_mae_improvement": 0.24055497812404789,
+        "ci95_low": 0.19599895721053412,
+        "ci95_high": 0.28204201013090147,
+        "cohen_dz": 0.8008347147953432,
+        "timestamp_blocks": 192
+      },
+      "legacy_daily_fare": 530.8898430643762,
+      "fare_difference_vs_original": {
+        "mean_a": 530.8898430643764,
+        "mean_b": 548.7740715429028,
+        "mean_difference": -17.88422847852644,
+        "std_difference": 103.30850647935321,
+        "ci95_low": -38.15198303116805,
+        "ci95_high": 3.0318333066868033,
+        "paired_t_statistic": -1.7311477135816207,
+        "paired_t_pvalue": 0.08654075725490559,
+        "wilcoxon_statistic": 1589.0,
+        "wilcoxon_pvalue": 0.0012896543207021507,
+        "cohen_dz": -0.17311477135816208
+      }
+    },
+    "dqn": {
+      "revenue_per_driver": 1821.7711810665319,
+      "difference_vs_original": {
+        "mean_a": 1821.7711810665319,
+        "mean_b": 1768.0361704681295,
+        "mean_difference": 53.73501059840245,
+        "std_difference": 17.941741784608748,
+        "ci95_low": 46.211038469278925,
+        "ci95_high": 61.5668703040805,
+        "paired_t_statistic": 13.393921048710457,
+        "paired_t_pvalue": 3.963862808523594e-11,
+        "wilcoxon_statistic": 0.0,
+        "wilcoxon_pvalue": 1.9073486328125e-06,
+        "cohen_dz": 2.9949717950181856
+      }
+    },
+    "double_dqn": {
+      "revenue_per_driver": 1742.7655708685386,
+      "difference_vs_original": {
+        "mean_a": 1742.7655708685386,
+        "mean_b": 1768.0361704681295,
+        "mean_difference": -25.270599599590525,
+        "std_difference": 17.466190219606926,
+        "ci95_low": -32.7749851491237,
+        "ci95_high": -17.96521880404897,
+        "paired_t_statistic": -6.470418314055789,
+        "paired_t_pvalue": 3.355199624121422e-06,
+        "wilcoxon_statistic": 2.0,
+        "wilcoxon_pvalue": 5.7220458984375e-06,
+        "cohen_dz": -1.4468295193088327
+      }
+    },
+    "graphsage_enhanced": {
+      "demand_mae": 1.5037357329121144,
+      "non_graph_mae": 1.5114059352241813,
+      "mae_reduction": {
+        "mean_a": 1.5114059352241815,
+        "mean_b": 1.5037357329121146,
+        "mean_difference": 0.00767020231206714,
+        "std_difference": 0.08605323171128906,
+        "ci95_low": -0.0042087809942788,
+        "ci95_high": 0.01996022346224643,
+        "paired_t_statistic": 1.2350662346678343,
+        "paired_t_pvalue": 0.21832297551145965,
+        "wilcoxon_statistic": 8937.0,
+        "wilcoxon_pvalue": 0.6714747485873112,
+        "cohen_dz": 0.08913322788156147
+      }
+    }
+  },
+  "ablations": {
+    "forecast_features": {
+      "full": {
+        "features": [
+          "zone_id",
+          "weekday",
+          "hour",
+          "half_hour_bucket",
+          "time_slot",
+          "lag_demand_1",
+          "lag_demand_2",
+          "lag_demand_48",
+          "lag_demand_336",
+          "rolling_demand_mean_3",
+          "rolling_demand_mean_48",
+          "rolling_demand_mean_336",
+          "neighbor_lag_demand_mean",
+          "neighbor_lag_demand_std",
+          "neighbor_lag_demand_max",
+          "neighbor_mean_travel_minutes"
+        ],
+        "mae": 1.5114059352241813,
+        "rmse": 5.070736961604602
+      },
+      "without_lags": {
+        "features": [
+          "zone_id",
+          "weekday",
+          "hour",
+          "half_hour_bucket",
+          "time_slot",
+          "rolling_demand_mean_3",
+          "rolling_demand_mean_48",
+          "rolling_demand_mean_336",
+          "neighbor_lag_demand_mean",
+          "neighbor_lag_demand_std",
+          "neighbor_lag_demand_max",
+          "neighbor_mean_travel_minutes"
+        ],
+        "mae": 1.5343707542855334,
+        "rmse": 5.184730885011641
+      },
+      "without_rolling": {
+        "features": [
+          "zone_id",
+          "weekday",
+          "hour",
+          "half_hour_bucket",
+          "time_slot",
+          "lag_demand_1",
+          "lag_demand_2",
+          "lag_demand_48",
+          "lag_demand_336",
+          "neighbor_lag_demand_mean",
+          "neighbor_lag_demand_std",
+          "neighbor_lag_demand_max",
+          "neighbor_mean_travel_minutes"
+        ],
+        "mae": 1.5631569283861495,
+        "rmse": 5.242354884855908
+      },
+      "without_neighborhood": {
+        "features": [
+          "zone_id",
+          "weekday",
+          "hour",
+          "half_hour_bucket",
+          "time_slot",
+          "lag_demand_1",
+          "lag_demand_2",
+          "lag_demand_48",
+          "lag_demand_336",
+          "rolling_demand_mean_3",
+          "rolling_demand_mean_48",
+          "rolling_demand_mean_336"
+        ],
+        "mae": 1.536602640308462,
+        "rmse": 5.213998064028179
+      }
+    },
+    "multi_agent_demand_supply": {
+      "0.50": {
+        "runs": 10,
+        "average_driver_revenue": 1007.48484023384,
+        "average_driver_revenue_std": 14.729775028900342,
+        "fulfilled_trips": 1882.4,
+        "fulfilled_trips_std": 30.10057216141322,
+        "average_idle_minutes": 9432.6,
+        "average_idle_minutes_std": 13.365627557282718,
+        "driver_utilization": 0.06422619047619048,
+        "driver_utilization_std": 0.0013259551148098112,
+        "demand_fulfillment_rate": 0.22409523809523807,
+        "demand_fulfillment_rate_std": 0.0035834014477872838,
+        "zone_saturation_rate": 0.9529655494382242,
+        "zone_saturation_rate_std": 0.0022060102484301077,
+        "peak_zone_supply": 33.2,
+        "peak_zone_supply_std": 2.3944379994757297,
+        "first_run": {
+          "driver_count": 50,
+          "configured_demand_supply_ratio": 0.5,
+          "realized_demand_supply_ratio": 0.5,
+          "initial_trip_inventory": 8400,
+          "remaining_trip_inventory": 6544,
+          "fulfilled_trips": 1856,
+          "demand_fulfillment_rate": 0.22095238095238096,
+          "total_revenue": 49271.49997925758,
+          "average_driver_revenue": 985.4299995851517,
+          "average_idle_minutes": 9432.6,
+          "driver_utilization": 0.06422619047619048,
+          "pickup_attempts": 11249,
+          "failed_pickup_attempts": 9393,
+          "competing_pickup_attempts": 10394,
+          "saturated_pickup_attempts": 10746,
+          "saturated_zone_slots": 1684,
+          "zone_saturation_rate": 0.9552849142145968,
+          "peak_zone_supply": 30,
+          "relocation_count": 6126,
+          "average_relocation_minutes": 2587.1937625199985
+        }
+      },
+      "1.00": {
+        "runs": 10,
+        "average_driver_revenue": 1775.676460488815,
+        "average_driver_revenue_std": 13.313861580642596,
+        "fulfilled_trips": 3144.6,
+        "fulfilled_trips_std": 29.556725123057866,
+        "average_idle_minutes": 8953.560000000001,
+        "average_idle_minutes_std": 7.579973614729801,
+        "driver_utilization": 0.11174999999999999,
+        "driver_utilization_std": 0.0007519815093977987,
+        "demand_fulfillment_rate": 0.18717857142857144,
+        "demand_fulfillment_rate_std": 0.0017593288763724938,
+        "zone_saturation_rate": 0.8828834313611994,
+        "zone_saturation_rate_std": 0.005516120377307123,
+        "peak_zone_supply": 31.1,
+        "peak_zone_supply_std": 1.7919573407620817,
+        "first_run": {
+          "driver_count": 50,
+          "configured_demand_supply_ratio": 1.0,
+          "realized_demand_supply_ratio": 1.0,
+          "initial_trip_inventory": 16800,
+          "remaining_trip_inventory": 13604,
+          "fulfilled_trips": 3196,
+          "demand_fulfillment_rate": 0.19023809523809523,
+          "total_revenue": 89401.0099501703,
+          "average_driver_revenue": 1788.0201990034059,
+          "average_idle_minutes": 8945.4,
+          "driver_utilization": 0.1125595238095238,
+          "pickup_attempts": 10445,
+          "failed_pickup_attempts": 7249,
+          "competing_pickup_attempts": 9962,
+          "saturated_pickup_attempts": 9261,
+          "saturated_zone_slots": 1017,
+          "zone_saturation_rate": 0.886644327429392,
+          "peak_zone_supply": 29,
+          "relocation_count": 6446,
+          "average_relocation_minutes": 2654.8915301599986
+        }
+      },
+      "2.00": {
+        "runs": 10,
+        "average_driver_revenue": 2977.496400338724,
+        "average_driver_revenue_std": 21.423302632916087,
+        "fulfilled_trips": 4762.0,
+        "fulfilled_trips_std": 35.364765892999586,
+        "average_idle_minutes": 8211.9,
+        "average_idle_minutes_std": 16.57045563646362,
+        "driver_utilization": 0.18532738095238094,
+        "driver_utilization_std": 0.0016438944083793008,
+        "demand_fulfillment_rate": 0.14172619047619048,
+        "demand_fulfillment_rate_std": 0.0010525227944345131,
+        "zone_saturation_rate": 0.7305922732717351,
+        "zone_saturation_rate_std": 0.005430032077303017,
+        "peak_zone_supply": 31.0,
+        "peak_zone_supply_std": 2.1081851067789197,
+        "first_run": {
+          "driver_count": 50,
+          "configured_demand_supply_ratio": 2.0,
+          "realized_demand_supply_ratio": 2.0,
+          "initial_trip_inventory": 33600,
+          "remaining_trip_inventory": 28849,
+          "fulfilled_trips": 4751,
+          "demand_fulfillment_rate": 0.1413988095238095,
+          "total_revenue": 148905.60003900528,
+          "average_driver_revenue": 2978.1120007801055,
+          "average_idle_minutes": 8206.8,
+          "driver_utilization": 0.18583333333333332,
+          "pickup_attempts": 9272,
+          "failed_pickup_attempts": 4521,
+          "competing_pickup_attempts": 8743,
+          "saturated_pickup_attempts": 6790,
+          "saturated_zone_slots": 689,
+          "zone_saturation_rate": 0.7323123382226057,
+          "peak_zone_supply": 33,
+          "relocation_count": 6560,
+          "average_relocation_minutes": 2690.1876191799993
+        }
+      }
+    },
+    "graph_features": {
+      "non_graph_lightgbm": {
+        "mae": 1.5114059352241813,
+        "rmse": 5.070736961604602
+      },
+      "od_messages": {
+        "mae": 1.5023594085132514,
+        "rmse": 5.074537483106027
+      },
+      "graphsage": {
+        "mae": 1.5037357329121144,
+        "rmse": 5.071598416052141
+      },
+      "gat": {
+        "mae": 1.5057963898247595,
+        "rmse": 5.073356926016035
+      }
+    },
+    "dqn_vs_double_dqn": {
+      "mean_a": 1742.7655708685386,
+      "mean_b": 1821.7711810665319,
+      "mean_difference": -79.00561019799298,
+      "std_difference": 21.80441782935211,
+      "ci95_low": -88.70667575424756,
+      "ci95_high": -70.26580501418064,
+      "paired_t_statistic": -16.204231306625275,
+      "paired_t_pvalue": 1.4044977489050813e-12,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_pvalue": 1.9073486328125e-06,
+      "cohen_dz": -3.623376272474436
+    }
+  }
+}
