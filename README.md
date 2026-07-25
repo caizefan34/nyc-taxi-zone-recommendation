@@ -22,7 +22,7 @@ We address the **spatial-temporal recommendation problem** of guiding taxi drive
 1. **Immediate reward**: Pickup probability × expected fare at candidate zones
 2. **Future transfer value**: Expected value after _both_ successful pickups (weighted by empirical OD transition distribution) _and_ failed attempts (stay in zone)
 
-The framework operates on a **263-zone × 336-time-slot** state space with a **~0.24 ms** query latency, achieving **NDCG@3 = 0.9978**, **Hit@3 = 0.9988**, and **$569.80 average daily fare** — a **+32.1% improvement** over the Hot Zone baseline and **+3.8% over Single-Step Utility**.
+The framework operates on a **263-zone × 336-time-slot** state space with a **~0.24 ms** query latency, achieving **NDCG@3 = 0.9978**, **Hit@3 = 0.9988**, and **$569.80 average daily fare**  --  a **+32.1% improvement** over the Hot Zone baseline and **+3.8% over Single-Step Utility**.
 
 We provide comprehensive baselines (Hot Zone, Single-Step Utility, Q-Learning, MDP Value Iteration), a **5-experiment ablation study**, Docker reproducibility, and a full LaTeX report.
 
@@ -45,7 +45,7 @@ We provide comprehensive baselines (Hot Zone, Single-Step Utility, Q-Learning, M
 
 </div>
 
-> ¹ Fewer pickups but _higher fare per trip_ — the two-step planner strategically targets premium long-fare zones rather than high-volume short-trip zones.
+> ¹ Fewer pickups but _higher fare per trip_  --  the two-step planner strategically targets premium long-fare zones rather than high-volume short-trip zones.
 
 ---
 
@@ -53,17 +53,19 @@ We provide comprehensive baselines (Hot Zone, Single-Step Utility, Q-Learning, M
 
 ### Problem Formulation
 
-Given a taxi driver's state $(z_t, t)$ — current zone $z_t$ and time $t$ — recommend top-3 zones maximizing expected cumulative revenue:
+Given a taxi driver's state $(z_t, t)$  --  current zone $z_t$ and time $t$  --  recommend top-3 zones maximizing expected cumulative revenue:
 
 $$\pi^*(z_t, t) = \arg\max_{z \in \mathcal{Z}^3} \mathbb{E}\left[ \sum_{k=0}^{K} \gamma^k \cdot R(s_k, a_k) \right]$$
 
-where $|\mathcal{S}| = 263 \times 336 = 88{,}368$ states.
+where $|\mathcal{S}| = 263 \times 336 = 88,368$ states.
 
 ### Two-Step Value Function
 
 Our core contribution extends single-step utility by modeling the **expected future value** after both outcomes at the target zone:
 
 $$U(z) = p_s \cdot \bigl(f + \gamma \cdot V_{\text{success}}\bigr) + (1 - p_s) \cdot \gamma \cdot V_{\text{failure}}$$
+
+> **Plain text**: Zone value $U(z)$ = pickup probability $p_s$ times (fare $f$ + discounted future $V_{success}$), plus failure probability $(1-p_s)$ times discounted future $V_{failure}$.
 
 #### Components
 
@@ -253,7 +255,7 @@ nyc-taxi-zone-recommendation/
 | Metric | Baseline 1 | Baseline 2 | Two-Step |
 |:-------|:---------:|:---------:|:--------:|
 | Avg Daily Fare | $431.4 | $549.0 | **$569.8** |
-| Relative Gain | — | +27.3% | **+32.1%** |
+| Relative Gain |  --  | +27.3% | **+32.1%** |
 | Regret (vs optimal) | $138.4/day | $20.8/day | **$0.0/day** |
 
 ### 3. Ablation Experiments
@@ -274,10 +276,10 @@ Full report: [`outputs/evaluation_report.md`](outputs/evaluation_report.md) · [
 
 Contributions are welcome! Please see:
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) — Guidelines
-- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — Community standards
-- [SECURITY.md](SECURITY.md) — Security policy
-- [CHANGELOG.md](CHANGELOG.md) — Version history
+- [CONTRIBUTING.md](CONTRIBUTING.md)  --  Guidelines
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)  --  Community standards
+- [SECURITY.md](SECURITY.md)  --  Security policy
+- [CHANGELOG.md](CHANGELOG.md)  --  Version history
 
 **Development quick start:**
 
@@ -309,7 +311,7 @@ If you use this code or methodology in your research, please cite:
 
 ## 📄 License
 
-This project is **MIT Licensed** — see [LICENSE](LICENSE).
+This project is **MIT Licensed**  --  see [LICENSE](LICENSE).
 
 ---
 

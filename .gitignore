@@ -12,8 +12,10 @@ data/
 *.parquet
 *.parquet.zstd
 
-# Output artifacts
-outputs/
+# Generated output artifacts (track .md reports)
+outputs/*.json
+outputs/*.csv
+outputs/tmp/
 
 # Temp files
 tmp/
