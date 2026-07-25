@@ -1,0 +1,209 @@
+% 使用 XeLaTeX 编译：xelatex report.tex
+\documentclass[11pt,a4paper]{ctexart}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,longtable,array,graphicx,float,hyperref}
+\usepackage{xcolor}
+\usepackage{xurl}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.25em}
+\linespread{1.18}
+\title{\textbf{New York Taxi Zone Recommendation}\\[0.4em]\large 编程综合实践课程项目报告}
+\author{蔡泽凡（caizefan@sjtu.edu.cn）}
+\date{2026 年 7 月}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本项目基于纽约出租车 2023 年 1 月订单，完成数据清洗、区域时段统计、有向 OD 图和全源 Dijkstra 最短移动时间矩阵，并实现热门区域、单步图效用和两步有限时域规划三种策略。Task C 在实际到达状态估计接单概率与车费，同时分别建模接单成功和失败后的下一状态。公开静态验证得到 NDCG@3=0.9978、Hit@3=0.9988；100 次七日 rollout 的平均日基础车费为 569.8，高于 Baseline 1 的 431.4 和 Baseline 2 的 549.0。报告同时给出交互式推荐和 Q-learning 两项独立拓展。文中“车费”均指 \texttt{fare\_amount} 基础车费代理，并非司机净收入。
+
+\noindent\textbf{关键词：} 出租车区域推荐；Dijkstra；有限时域规划；状态转移；rollout
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{问题定义与数据边界}
+
+一次决策状态为 $(t,i)$，其中 $t$ 是当前时间，$i\in\{1,\ldots,263\}$ 是当前区域。策略接口 \url{recommend(current\_datetime, current\_location\_id)} 返回 3 个互不重复且有序的合法区域编号。一天划分为 48 个半小时时段。
+
+训练段为 $[\text{2023-01-01},\text{2023-01-25})$，验证段为 $[\text{2023-01-25},\text{2023-02-01})$。训练统计、OD 图和转移分布只使用训练段。公开验证查询、答案和市场仅用于有限参数选择与实验，不进入训练产物，也不在策略运行时读取。最终 submission 不包含原始订单、公开答案或课程评测器。
+
+移动和载客时长统一离散为
+\[
+S(m)=\left\lfloor\frac{m}{30}+0.5\right\rfloor,
+\]
+结果允许为 0；每次接单判定另消耗 1 个 slot。选择当前区域是停留动作，空驶时间为 0，而时间矩阵对角线仍保存训练集中同区载客行程的平均时长。
+
+\section{数据清洗、统计与图}
+
+\subsection{清洗规则与审计}
+
+清洗规则按表 \ref{tab:cleaning} 顺序执行，每一步只统计该步新增删除量。时间规则先删除缺失、相等或倒置的上下车时刻，再按完整订单边界过滤。训练订单要求上车和下车均位于训练段；验证订单要求均位于验证段。
+
+\begin{longtable}{p{7.0cm}rr}
+\caption{清洗规则及逐步删除量}\label{tab:cleaning}\\
+\toprule
+规则 & 训练集 & 验证集 \\
+\midrule
+\endfirsthead
+\toprule
+规则 & 训练集 & 验证集 \\
+\midrule
+\endhead
+缺失必要字段 & 0 & 0 \\
+缺失、相等或倒置时间 & 862 & 259 \\
+日期边界过滤 & 13 & 543 \\
+上车或下车区域不在 1--263 & 43,762 & 13,402 \\
+\texttt{fare\_amount} 不在 $[0,200]$ & 18,710 & 5,509 \\
+行程时长不在 $[1,240]$ 分钟 & 21,412 & 6,069 \\
+距离不在 $[0.1,100]$ 英里 & 17,794 & 5,523 \\
+平均速度超过 80 mph & 111 & 23 \\
+完全重复订单 & 63 & 15 \\
+\midrule
+清洗后行数 & \textbf{2,243,804} & \textbf{688,250} \\
+\bottomrule
+\end{longtable}
+
+阈值用于排除明显测量或录入异常：1 分钟下限去除近零时长，240 分钟保留正常长途同时限制异常长订单；0--200 美元、0.1--100 英里和 80 mph 上限覆盖常见市内与机场行程。所有阈值写入 \texttt{configs/parameters.json}，逐步审计写入 \texttt{outputs/cleaning\_audit.csv}。
+
+\subsection{训练统计和有向图}
+
+仅由清洗训练集按 $(pickup\ zone, weekday, slot)$ 聚合 \texttt{pickup\_count} 和 \texttt{mean\_fare\_amount}。缺失组合在推荐时按 0 处理。
+
+有向 OD 图以 263 个区域为节点，以训练订单对应 OD 的平均 \texttt{trip\_duration} 为边权。使用 \texttt{scipy.sparse.csgraph.dijkstra} 计算全源最短路。之后将对角线恢复为同区历史订单平均时长；无同区样本时填 10 分钟。不可达跨区候选为 $\infty$ 并在策略中排除。基础检查确认矩阵为 $263\times263$ 且对角线与训练订单一致。
+
+\section{推荐算法}
+
+\subsection{Baseline 1：下一时段热门区域}
+
+对任意当前时刻，先取“严格下一个半小时边界”。例如 08:00 和 08:29 都查询 08:30 对应的星期与时段；23:45 会跨到次日 00:00。随后按训练 \texttt{pickup\_count} 降序返回 Top-3，同分时区域编号小者优先。
+
+\subsection{Baseline 2：单步图效用}
+
+设当前区域为 $i$，严格下一时段为 $s$，训练需求和平均车费分别为 $n_{s,j}$、$f_{s,j}$，Dijkstra 移动分钟为 $T(i,j)$。对所有可达区域计算
+\[
+U(i,j,s)=\frac{n_{s,j}f_{s,j}}{T(i,j)+\lambda},\qquad \lambda=1.
+\]
+该平滑项避免分母过小，并在需求收益相同时偏向移动时间较短的区域。Baseline 2 与课程参考实现逐状态一致。
+
+\subsection{Task C：两步有限时域规划}
+
+Task C 不使用候选池近似，而是扫描全部 263 个区域。令 $r(i,j)$ 为按课程规则离散的空驶 slot；当 $i=j$ 时 $r(i,i)=0$。到达状态为
+\[
+s'=s+r(i,j),\qquad p_{s',j}=\frac{n_{s',j}}{n_{s',j}+240}.
+\]
+一阶价值为
+\[
+Q_1(i,s,j)=\frac{p_{s',j}f_{s',j}}{r(i,j)+\lambda},\qquad
+V_1(i,s)=\max_j Q_1(i,s,j),
+\]
+其中 $\lambda=1$。公式使用每个候选自己的实际到达时段，而不是当前时段或统一下一时段。
+
+接单失败时，司机留在 $j$，判定消耗 1 个 slot，下一价值为 $V_1(j,s'+1)$。接单成功时，从训练联合分布
+\[
+P(k,h\mid j,s')
+\]
+估计下车区域 $k$ 与载客 slot 数 $h$；成功后的下一状态为 $(k,s'+1+h)$。因此
+\[
+Q_2(i,s,j)=Q_1(i,s,j)+\gamma\left[(1-p_{s',j})V_1(j,s'+1)
++p_{s',j}\mathbb{E}_{k,h}\left[V_1(k,s'+1+h)\right]\right],
+\]
+其中 $\gamma=0.5$。精确 $(j,s')$ 转移为空时，依次回退到“同 pickup 区域全训练期”和“全局全训练期”。最终按 $Q_2$ 降序返回 Top-3。
+
+训练加载阶段完成统计聚合、$V_1$ 和成功未来价值预计算，约为 $O(WN^2+|D|)$；其中 $W=336$ 个周时段、$N=263$、$|D|$ 为训练订单数。单次推荐只扫描候选，时间为 $O(N)$；主要空间为 $O(WN+N^2)$ 加稀疏转移聚合。
+
+\subsection{公式回归测试}
+
+\texttt{tests/test\_improved\_strategy.py} 覆盖四项关键性质：停留动作空驶 slot 为 0、$Q_1$ 使用实际到达时段、$Q_2$ 成功与失败分支符合公式、推荐结果始终是合法 Top-3。四项测试全部通过。
+
+\section{参数选择与验证实验}
+
+\subsection{参数选择}
+
+只在公开一月验证查询上比较预先限定的小网格：$\lambda\in\{0.5,1,2\}$，$\gamma\in\{0.25,0.5,0.75\}$。选择顺序为 NDCG@3、Hit@3、推荐耗时。公开验证只决定固定配置，不加入训练统计。
+
+\begin{table}[H]
+\centering
+\caption{Task C 参数选择结果}
+\begin{tabular}{ccrr}
+\toprule
+$\lambda$ & $\gamma$ & NDCG@3 & Hit@3 \\
+\midrule
+0.5 & 0.25 & 0.9790 & 0.9857 \\
+0.5 & 0.50 & 0.9836 & 0.9851 \\
+0.5 & 0.75 & 0.9567 & 0.9268 \\
+1.0 & 0.25 & 0.9843 & 0.9955 \\
+\textbf{1.0} & \textbf{0.50} & \textbf{0.9978} & \textbf{0.9988} \\
+1.0 & 0.75 & 0.9867 & 0.9929 \\
+2.0 & 0.25 & 0.9750 & 0.9940 \\
+2.0 & 0.50 & 0.9849 & 0.9881 \\
+2.0 & 0.75 & 0.9875 & 0.9720 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+因此最终固定 $\lambda=1.0,\gamma=0.5$。完整机器可读结果保存在 \url{outputs/task\_c\_parameter\_selection.json}。
+
+\subsection{静态验证与 rollout}
+
+基础检查全部通过：产物 schema、时间矩阵、三个策略接口以及两个 Baseline 参考结果均为 PASS。Task C 在 3,360 个静态查询上得到 NDCG@3=0.9978、Hit@3=0.9988、Top-1 参考两步效用 27.7508、平均推荐耗时约 2 ms、峰值追踪内存约 0.49 MiB。这些静态指标仅针对 Task C，未错误套用到 Baseline；耗时会随机器负载轻微波动。
+
+rollout 使用相同验证市场、100 次独立模拟、每次 7 天、初始区域 132、基础随机种子 20230722 和 Top-3 权重 0.6/0.3/0.1。
+
+\begin{table}[H]
+\centering
+\caption{Validation rollout 结果}
+\begin{tabular}{lrrrr}
+\toprule
+策略 & 日均车费 & 标准差 & 日均接单 & 日均空驶 \\
+\midrule
+Baseline 1 & 431.4 & 37.9 & 133.9 & 164.0 \\
+Baseline 2 & 549.0 & 72.6 & 107.0 & 130.7 \\
+Task C & \textbf{569.8} & 56.8 & 81.2 & 133.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Task C 相对 Baseline 2 的平均日车费提升约 3.8\%，但接单数更少，说明策略倾向于较高单次价值机会；该结果是课程模型下的基础车费代理，不表示真实司机净收益。
+
+\subsection{轨迹案例与局限}
+
+成功案例来自 \texttt{validation\_trace\_improved.csv} 的第 1 次模拟第 46 次决策：2023-01-26 23:00 从区域 239 出发，Top-1 为区域 132；移动 22.65 分钟后在 23:30 尝试接单，市场需求 121、成功概率 0.7516，抽到 92.60 美元订单并到达区域 200。该行完整体现“移动、到达时需求、成功转移和载客时长”。
+
+失败案例为同次模拟第 74 次决策：2023-01-28 02:30 从区域 148 选择区域 79，移动时间 6.15 分钟被离散为 0 slot；当时需求 222、成功概率 0.8473，但随机判定仍失败，03:00 留在区域 79。该案例说明高概率不等于必然成功，也验证失败分支必须保留当前位置并消耗 1 个 slot。
+
+主要局限包括：没有真实空驶轨迹或车辆竞争；平均 OD 时间不能反映实时拥堵；$n/(n+240)$ 是经验饱和模型；两步规划忽略更长时域；公开验证结果不能保证未见月份保持同幅度提升。
+
+\section{开放拓展}
+
+\subsection{方向 2：数据分析与交互式推荐}
+
+程序生成需求时段、星期、Top-15 区域和平均车费分布 4 张图，并提供输入时间与区域的 CLI。示例输入 \texttt{2023-01-30 08:15, zone=132} 中，区域 132 正确显示为 JFK Airport；Baseline 2 返回 $[132,138,236]$，Task C 返回 $[132,138,130]$，后者把第三名改为 Jamaica。交互程序直接动态加载正式策略文件，避免复制简化公式；区域名称和 Borough 来自提交内的元数据文件。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.47\textwidth]{outputs/extension_2_charts/chart_demand_by_time.png}
+\hfill
+\includegraphics[width=0.47\textwidth]{outputs/extension_2_charts/chart_top_zones.png}
+\caption{交互拓展使用的训练需求图表}
+\end{figure}
+
+\subsection{方向 5：Q-learning}
+
+状态为 $(zone,weekday,slot)$，动作是 Top-50 单步候选，成功奖励为 \texttt{fare\_amount}。超参数为 $\alpha=0.1$、$\gamma=0.9$、初始 $\epsilon=0.3$、衰减 0.995、5,000 回合、每回合最多 50 步。训练、Q-learning 评估和 Baseline 评估分别固定随机种子 20230722，连续运行输出哈希一致。
+
+200 回合评估中，Q-learning 平均奖励 190.9（标准差 81.4），Q 表 22,278 条；相同环境下 Baseline 2 平均奖励 1184.2（标准差 375.5）。训练奖励均值 188.0，最后 500 回合均值 189.4。Q-learning 未胜过贪心对照，主要原因是约 $263\times7\times48\approx88,000$ 个状态、稀疏奖励和表格模型缺乏状态间泛化。该负结果仍可复现，并明确了增加训练量、改进探索或使用 DQN 的后续方向。
+
+\section{分工与外部工具声明}
+
+本项目为个人独立完成。AI 工具、第三方库、课程评测器和数据来源的用途已在 \url{contribution.md} 中列明。核心公式、参数选择依据、实验结果和局限均与提交代码及机器可读输出保持一致。
+
+\begin{thebibliography}{9}
+\bibitem{project} 课程项目说明书与评分细则；问题建模与评测规则。
+\bibitem{dijkstra} E. W. Dijkstra. A note on two problems in connexion with graphs. \textit{Numerische Mathematik}, 1:269--271, 1959.
+\bibitem{nyc} NYC Taxi \& Limousine Commission. TLC Trip Record Data.
+\end{thebibliography}
+
+\end{document}
