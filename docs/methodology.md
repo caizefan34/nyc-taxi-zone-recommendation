@@ -35,7 +35,7 @@ The cleaning command can now split the official monthly parquet into chronologic
 For the strictly next half-hour boundary:
 
 $$
-U_{B1}(z,t)=D(z,\operatorname{next}(t)).
+U_{B1}(z,t)=D(z,\mathrm{next}(t)).
 $$
 
 The three largest training pickup counts are returned.

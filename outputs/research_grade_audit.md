@@ -59,7 +59,7 @@ flowchart TD
 For query time `t`, let `next(t)` be the strictly next half-hour slot. The strategy returns
 
 $$
-\operatorname{TopK}_z D(z,\operatorname{next}(t)),
+\mathrm{TopK}_z D(z,\mathrm{next}(t)),
 $$
 
 where `D` is the training pickup count. It ignores origin, travel time, fare, supply, and uncertainty.
@@ -119,7 +119,7 @@ to transitions sampled from its learned simulator. It is online learning in a mo
 The intended objective is Bellman optimality:
 
 $$
-V^*(s)=\max_a\left[R(s,a)+\gamma\mathbb E[V^*(s')\mid s,a]\right].
+V^{*}(s)=\max_a\left[R(s,a)+\gamma\mathbb E[V^{*}(s')\mid s,a]\right].
 $$
 
 The implementation does not realize this taxi MDP correctly; details appear in the high-severity findings.
