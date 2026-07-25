@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Extension 5: Q-learning for Taxi Zone Recommendation.
+"""Extension 5: simulator-trained Q-learning for taxi zone recommendation.
 
 Direction 5: Reinforcement Learning Strategy.
-Trains a Q-learning agent on historical taxi trip data to recommend zones.
+Builds a simulator from historical aggregates and trains an online Q-learning
+agent inside that model. This is not batch/offline RL over logged actions.
 """
 from __future__ import annotations
 
@@ -31,6 +32,7 @@ EPSILON_MIN = 0.01
 NUM_EPISODES = 5000
 MAX_STEPS = 50     # max steps per episode
 CANDIDATE_K = 50   # top K candidate actions
+SEED = 20230722
 
 
 def load_statistics():
@@ -79,13 +81,13 @@ def load_mean_trip_duration():
 
 
 class QLearningAgent:
-    def __init__(self, demand, mf, tt, trans, mean_dur):
+    def __init__(self, demand, mf, tt, trans, mean_dur, seed=SEED):
         self.demand = demand; self.mf = mf; self.tt = tt; self.trans = trans; self.mean_dur = mean_dur
         self.n_states = WEEK_SLOT_COUNT * ZONE_COUNT
         self.n_actions = CANDIDATE_K + 1
         self.q_table = {}  # sparse dict: state -> list of action values
         self.action_cache = {}  # state -> list of (action_zone, action_idx)
-        pass  # candidates computed on demand
+        self.rng = random.Random(seed)
 
     def _state_id(self, zone, weekday, slot):
         return (weekday * SLOT_COUNT + slot) * ZONE_COUNT + zone
@@ -123,8 +125,9 @@ class QLearningAgent:
         expected_fare = self.mf[wd][slot][zone]
         return p * expected_fare
 
-    def _next_state(self, zone, action_zone, wd, slot, state):
+    def _next_state(self, zone, action_zone, wd, slot, state, rng=None):
         """Simulate one step and return next state and reward."""
+        rng = self.rng if rng is None else rng
         origin = zone
         target = action_zone
         move_minutes = 0.0 if origin == target else self.tt[origin][target]
@@ -135,7 +138,7 @@ class QLearningAgent:
         arr_wd = arrival // SLOT_COUNT; arr_slot = arrival % SLOT_COUNT
         d = self.demand[arr_wd][arr_slot][target]
         p = d / (d + 240.0) if d > 0 else 0.0
-        if random.random() < p:  # success
+        if rng.random() < p:  # success
             fare = self.mf[arr_wd][arr_slot][target]
             dur = self.mean_dur[target]
             dur_slots = int(np.floor(dur / 30.0 + 0.5))
@@ -143,7 +146,7 @@ class QLearningAgent:
             # Sample dropoff zone from transition probs
             dropoff = target
             if sum(self.trans[target]) > 0:
-                r = random.random(); cum = 0.0
+                r = rng.random(); cum = 0.0
                 for do in range(ZONE_COUNT):
                     cum += self.trans[target][do]
                     if r <= cum: dropoff = do; break
@@ -153,12 +156,13 @@ class QLearningAgent:
             next_state = (arrival + 1) % WEEK_SLOT_COUNT * ZONE_COUNT + target
             return next_state, 0.0, False
 
-    def choose_action(self, state, epsilon):
+    def choose_action(self, state, epsilon, rng=None):
+        rng = self.rng if rng is None else rng
         candidates = self._get_candidates(state)
         if state not in self.q_table:
             self.q_table[state] = [0.0] * len(candidates)
-        if random.random() < epsilon:
-            return random.choice(candidates)
+        if epsilon > 0.0 and rng.random() < epsilon:
+            return rng.choice(candidates)
         q_values = self.q_table[state]
         best_idx = max(range(len(q_values)), key=lambda i: (q_values[i], -candidates[i][0]))
         return candidates[best_idx]
@@ -194,9 +198,9 @@ def train_agent(agent, episodes=5000):
     epsilon = EPSILON
     total_rewards = []
     for ep in range(episodes):
-        zone = random.randint(0, ZONE_COUNT - 1)
-        wd = random.randint(0, 6)
-        slot = random.randint(0, SLOT_COUNT - 1)
+        zone = agent.rng.randint(0, ZONE_COUNT - 1)
+        wd = agent.rng.randint(0, 6)
+        slot = agent.rng.randint(0, SLOT_COUNT - 1)
         state = agent._state_id(zone, wd, slot)
         ep_reward = 0.0
         for step in range(MAX_STEPS):
@@ -220,16 +224,19 @@ def train_agent(agent, episodes=5000):
 
 def evaluate_agent(agent, n_episodes=100):
     print(f"\nEvaluating agent over {n_episodes} episodes...")
+    rng = random.Random(SEED + 1)
     total_rewards = []
     for ep in range(n_episodes):
-        zone = random.randint(0, ZONE_COUNT - 1)
-        wd = random.randint(0, 6)
-        slot = random.randint(0, SLOT_COUNT - 1)
+        zone = rng.randint(0, ZONE_COUNT - 1)
+        wd = rng.randint(0, 6)
+        slot = rng.randint(0, SLOT_COUNT - 1)
         state = agent._state_id(zone, wd, slot)
         ep_reward = 0.0
         for step in range(MAX_STEPS):
-            action_zone, _ = agent.choose_action(state, 0.0)  # greedy
-            next_state, reward, done = agent._next_state(zone, action_zone, wd, slot, state // ZONE_COUNT)
+            action_zone, _ = agent.choose_action(state, 0.0, rng=rng)  # greedy
+            next_state, reward, done = agent._next_state(
+                zone, action_zone, wd, slot, state // ZONE_COUNT, rng=rng
+            )
             state = next_state
             zone = state % ZONE_COUNT
             w_slot = state // ZONE_COUNT
@@ -245,53 +252,13 @@ def evaluate_agent(agent, n_episodes=100):
     }
 
 
-# OLD evaluate_baseline removed
-    """Evaluate Baseline 2 (greedy single-step) as comparison."""
-    total_rewards = []
-    for ep in range(n_episodes):
-        zone = random.randint(0, ZONE_COUNT - 1)
-        wd = random.randint(0, 6)
-        slot = random.randint(0, SLOT_COUNT - 1)
-        state = wd * SLOT_COUNT + slot
-        ep_reward = 0.0
-        for step in range(MAX_STEPS):
-            scores = [
-            demand[wd][slot][z] * mf[wd][slot][z]
-            / (tt[zone][z] + 1.0)
-            if np.isfinite(tt[zone][z]) else 0.0
-            for z in range(ZONE_COUNT)
-        ]
-            best_zone = max(range(ZONE_COUNT), key=lambda z: (scores[z], -z))
-            move_min = 0.0 if zone == best_zone else tt[zone][best_zone]
-            if not np.isfinite(move_min) or move_min < 0: break
-            move_slots = int(np.floor(move_min / 30.0 + 0.5))
-            arrival = (state + move_slots) % WEEK_SLOT_COUNT
-            arr_wd = arrival // SLOT_COUNT; arr_slot = arrival % SLOT_COUNT
-            d = demand[arr_wd][arr_slot][best_zone]
-            if random.random() < d / (d + 240.0) if d > 0 else 0.0:
-                ep_reward += mf[arr_wd][arr_slot][best_zone]
-                dur = 10.0
-                dur_slots = int(np.floor(dur / 30.0 + 0.5))
-                state = (arrival + 1 + dur_slots) % WEEK_SLOT_COUNT
-                zone = best_zone
-            else:
-                state = (arrival + 1) % WEEK_SLOT_COUNT
-                zone = best_zone
-            wd = state // SLOT_COUNT; slot = state % SLOT_COUNT
-        total_rewards.append(ep_reward)
-    return {
-        "avg_reward": float(np.mean(total_rewards)),
-        "std_reward": float(np.std(total_rewards)),
-        "episodes": n_episodes,
-    }
-
-
 def _evaluate_baseline(agent, n_episodes=100):
+    rng = random.Random(SEED + 1)
     total_rewards = []
     for ep in range(n_episodes):
-        zone = random.randint(0, ZONE_COUNT - 1)
-        wd = random.randint(0, 6)
-        slot = random.randint(0, SLOT_COUNT - 1)
+        zone = rng.randint(0, ZONE_COUNT - 1)
+        wd = rng.randint(0, 6)
+        slot = rng.randint(0, SLOT_COUNT - 1)
         state = wd * SLOT_COUNT + slot
         ep_reward = 0.0
         for step in range(MAX_STEPS):
@@ -310,13 +277,13 @@ def _evaluate_baseline(agent, n_episodes=100):
             arr_wd = arrival // SLOT_COUNT; arr_slot = arrival % SLOT_COUNT
             d = agent.demand[arr_wd][arr_slot][best_zone]
             p = d / (d + 240.0) if d > 0 else 0.0
-            if random.random() < p:
+            if rng.random() < p:
                 fare = agent.mf[arr_wd][arr_slot][best_zone]
                 dur = agent.mean_dur[best_zone]
                 dur_slots = int(np.floor(dur / 30.0 + 0.5))
                 state = (arrival + 1 + dur_slots) % WEEK_SLOT_COUNT
                 if sum(agent.trans[best_zone]) > 0:
-                    r = random.random(); cum = 0.0
+                    r = rng.random(); cum = 0.0
                     for do in range(ZONE_COUNT):
                         cum += agent.trans[best_zone][do]
                         if r <= cum: zone = do; break
@@ -362,11 +329,13 @@ def main():
 
     # Save results
     result = {
-        "algorithm": "Q-learning",
+        "algorithm": "Simulator-trained tabular Q-learning",
+        "offline_rl": False,
         "hyperparameters": {
             "gamma": GAMMA, "alpha": ALPHA, "epsilon_start": EPSILON,
             "epsilon_decay": EPSILON_DECAY, "epsilon_min": EPSILON_MIN,
             "episodes": NUM_EPISODES, "max_steps": MAX_STEPS, "candidate_k": CANDIDATE_K,
+            "seed": SEED,
         },
         "q_learning_evaluation": rl_result,
         "baseline_2_comparison": bl_result,

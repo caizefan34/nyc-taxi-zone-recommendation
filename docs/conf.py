@@ -2,7 +2,6 @@
 
 import os
 import sys
-from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -17,13 +16,13 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.mathjax",
     "sphinx_rtd_theme",
+    "myst_parser",
 ]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "sphinx_rtd_theme"
-html_static_path = ["_static"]
 html_title = f"{project} v{release}"
 html_favicon = "../assets/favicon.ico" if os.path.exists("../assets/favicon.ico") else None
 
@@ -39,3 +38,5 @@ mathjax3_config = {
         "displayMath": [["$$", "$$"], ["\\[", "\\]"]],
     }
 }
+
+myst_enable_extensions = ["dollarmath", "amsmath"]

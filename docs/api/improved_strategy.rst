@@ -1,17 +1,13 @@
-﻿Improved Strategy
-=================
+Finite-Horizon Strategy
+=======================
 
-.. automodule:: src.two_step_strategy
-   :members:
-   :undoc-members:
-   :show-inheritance:
+The production strategy is a lightweight wrapper around the vectorized
+finite-horizon planner.
 
-.. automodule:: src.hot_zone_baseline
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. literalinclude:: ../../src/2_recommendation_algorithm/improved_strategy.py
+   :language: python
+   :caption: Production horizon-two interface
 
-.. automodule:: src.single_step_utility
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. literalinclude:: ../../src/2_recommendation_algorithm/finite_horizon.py
+   :language: python
+   :caption: Generalized finite-horizon planner

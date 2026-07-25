@@ -16,6 +16,8 @@ data/
 outputs/*.json
 outputs/*.csv
 outputs/tmp/
+!outputs/reference_metrics.json
+!outputs/parameter_selection.json
 
 # Temp files
 tmp/

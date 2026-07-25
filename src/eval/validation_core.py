@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pyarrow.parquet as pq
 
-from eval.offline_core import ZONE_COUNT
+from src.eval.offline_core import ZONE_COUNT
 
 
 def read_validation_answers(path: Path) -> dict[int, np.ndarray]:

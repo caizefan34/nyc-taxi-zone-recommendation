@@ -1,0 +1,164 @@
+[
+  {
+    "pickup_half_saturation": 240.0,
+    "gamma": 0.25,
+    "candidate_pool_size": 50,
+    "ndcg_at_3": 0.9577136878189483,
+    "hit_at_3": 0.9761904761904762,
+    "reference_utility_at_1": 27.58818545948921,
+    "average_recommend_time_ms": 0.029754494047619047
+  },
+  {
+    "pickup_half_saturation": 240.0,
+    "gamma": 0.25,
+    "candidate_pool_size": 100,
+    "ndcg_at_3": 0.9577136878189483,
+    "hit_at_3": 0.9761904761904762,
+    "reference_utility_at_1": 27.58818545948921,
+    "average_recommend_time_ms": 0.0305025
+  },
+  {
+    "pickup_half_saturation": 360.0,
+    "gamma": 0.25,
+    "candidate_pool_size": 50,
+    "ndcg_at_3": 0.95681012487289,
+    "hit_at_3": 0.9738095238095238,
+    "reference_utility_at_1": 27.56902328981491,
+    "average_recommend_time_ms": 0.03172264880952381
+  },
+  {
+    "pickup_half_saturation": 360.0,
+    "gamma": 0.25,
+    "candidate_pool_size": 100,
+    "ndcg_at_3": 0.95681012487289,
+    "hit_at_3": 0.9738095238095238,
+    "reference_utility_at_1": 27.56902328981491,
+    "average_recommend_time_ms": 0.032858035714285715
+  },
+  {
+    "pickup_half_saturation": 240.0,
+    "gamma": 0.5,
+    "candidate_pool_size": 50,
+    "ndcg_at_3": 0.9565240925177884,
+    "hit_at_3": 0.9714285714285714,
+    "reference_utility_at_1": 27.585462887713895,
+    "average_recommend_time_ms": 0.029350089285714285
+  },
+  {
+    "pickup_half_saturation": 240.0,
+    "gamma": 0.5,
+    "candidate_pool_size": 100,
+    "ndcg_at_3": 0.9565240925177884,
+    "hit_at_3": 0.9714285714285714,
+    "reference_utility_at_1": 27.585462887713895,
+    "average_recommend_time_ms": 0.03408470238095238
+  },
+  {
+    "pickup_half_saturation": 360.0,
+    "gamma": 0.5,
+    "candidate_pool_size": 50,
+    "ndcg_at_3": 0.9562162677932441,
+    "hit_at_3": 0.9720238095238095,
+    "reference_utility_at_1": 27.5638891211545,
+    "average_recommend_time_ms": 0.02836029761904762
+  },
+  {
+    "pickup_half_saturation": 360.0,
+    "gamma": 0.5,
+    "candidate_pool_size": 100,
+    "ndcg_at_3": 0.9562162677932441,
+    "hit_at_3": 0.9720238095238095,
+    "reference_utility_at_1": 27.5638891211545,
+    "average_recommend_time_ms": 0.029274375
+  },
+  {
+    "pickup_half_saturation": 120.0,
+    "gamma": 0.25,
+    "candidate_pool_size": 50,
+    "ndcg_at_3": 0.9559654069666391,
+    "hit_at_3": 0.9747023809523809,
+    "reference_utility_at_1": 27.60820138290433,
+    "average_recommend_time_ms": 0.02886291666666667
+  },
+  {
+    "pickup_half_saturation": 120.0,
+    "gamma": 0.25,
+    "candidate_pool_size": 100,
+    "ndcg_at_3": 0.9559620691038374,
+    "hit_at_3": 0.9747023809523809,
+    "reference_utility_at_1": 27.60820138290433,
+    "average_recommend_time_ms": 0.03099485119047619
+  },
+  {
+    "pickup_half_saturation": 240.0,
+    "gamma": 0.75,
+    "candidate_pool_size": 50,
+    "ndcg_at_3": 0.9557211317454587,
+    "hit_at_3": 0.9732142857142857,
+    "reference_utility_at_1": 27.59413264981346,
+    "average_recommend_time_ms": 0.03836389880952381
+  },
+  {
+    "pickup_half_saturation": 240.0,
+    "gamma": 0.75,
+    "candidate_pool_size": 100,
+    "ndcg_at_3": 0.9557177938826569,
+    "hit_at_3": 0.9732142857142857,
+    "reference_utility_at_1": 27.59413264981346,
+    "average_recommend_time_ms": 0.03413035714285714
+  },
+  {
+    "pickup_half_saturation": 360.0,
+    "gamma": 0.75,
+    "candidate_pool_size": 50,
+    "ndcg_at_3": 0.9550014066520786,
+    "hit_at_3": 0.9735119047619047,
+    "reference_utility_at_1": 27.542646256590736,
+    "average_recommend_time_ms": 0.029068244047619048
+  },
+  {
+    "pickup_half_saturation": 360.0,
+    "gamma": 0.75,
+    "candidate_pool_size": 100,
+    "ndcg_at_3": 0.9549980687892767,
+    "hit_at_3": 0.9735119047619047,
+    "reference_utility_at_1": 27.542646256590736,
+    "average_recommend_time_ms": 0.03005
+  },
+  {
+    "pickup_half_saturation": 120.0,
+    "gamma": 0.5,
+    "candidate_pool_size": 50,
+    "ndcg_at_3": 0.9548897127917206,
+    "hit_at_3": 0.9758928571428571,
+    "reference_utility_at_1": 27.60863025579243,
+    "average_recommend_time_ms": 0.02840422619047619
+  },
+  {
+    "pickup_half_saturation": 120.0,
+    "gamma": 0.5,
+    "candidate_pool_size": 100,
+    "ndcg_at_3": 0.9548863749289188,
+    "hit_at_3": 0.9758928571428571,
+    "reference_utility_at_1": 27.60863025579243,
+    "average_recommend_time_ms": 0.029331369047619047
+  },
+  {
+    "pickup_half_saturation": 120.0,
+    "gamma": 0.75,
+    "candidate_pool_size": 50,
+    "ndcg_at_3": 0.9515097549989421,
+    "hit_at_3": 0.9744047619047619,
+    "reference_utility_at_1": 27.599290894599616,
+    "average_recommend_time_ms": 0.02845160714285714
+  },
+  {
+    "pickup_half_saturation": 120.0,
+    "gamma": 0.75,
+    "candidate_pool_size": 100,
+    "ndcg_at_3": 0.9515046281623554,
+    "hit_at_3": 0.9744047619047619,
+    "reference_utility_at_1": 27.599290894599616,
+    "average_recommend_time_ms": 0.031788869047619045
+  }
+]

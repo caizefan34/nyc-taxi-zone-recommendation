@@ -15,7 +15,7 @@ from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 import pyarrow.parquet as pq
 
-from eval.offline_core import validate_top3
+from src.eval.offline_core import validate_top3
 
 ZONE_COUNT = 263
 SLOT_MINUTES = 30

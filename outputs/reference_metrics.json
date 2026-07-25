@@ -1,0 +1,536 @@
+{
+  "generated_at": "2026-07-25T13:42:26.041351+00:00",
+  "static": {
+    "baseline_1": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.7846075610629685,
+      "hit_at_3": 0.5842261904761905,
+      "reference_two_step_utility_at_1": 19.429872723695173,
+      "average_recommend_time_ms": 0.10784380952380952,
+      "peak_tracemalloc_bytes": 511052
+    },
+    "baseline_2": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.9024297721851223,
+      "hit_at_3": 0.8803571428571428,
+      "reference_two_step_utility_at_1": 25.05888674350927,
+      "average_recommend_time_ms": 0.3172975,
+      "peak_tracemalloc_bytes": 520704
+    },
+    "two_step": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.9565240925177884,
+      "hit_at_3": 0.9714285714285714,
+      "reference_two_step_utility_at_1": 27.585462887713895,
+      "average_recommend_time_ms": 0.11331660714285714,
+      "peak_tracemalloc_bytes": 517651
+    }
+  },
+  "rollout": {
+    "runs": 100,
+    "base_seed": 20230722,
+    "mean_daily_fare": {
+      "baseline_1": 431.2079001810721,
+      "baseline_2": 548.7740715429028,
+      "two_step": 570.6107427750447
+    },
+    "comparisons": {
+      "two_step_vs_baseline_1": {
+        "mean_a": 570.6107427750449,
+        "mean_b": 431.2079001810721,
+        "mean_difference": 139.40284259397274,
+        "std_difference": 78.13253191615459,
+        "ci95_low": 123.3062800810515,
+        "ci95_high": 153.9552093751501,
+        "paired_t_statistic": 17.841843746157927,
+        "paired_t_pvalue": 1.0730732568319571e-32,
+        "wilcoxon_statistic": 145.0,
+        "wilcoxon_pvalue": 2.7637372191402876e-16,
+        "cohen_dz": 1.7841843746157926
+      },
+      "two_step_vs_baseline_2": {
+        "mean_a": 570.6107427750449,
+        "mean_b": 548.7740715429028,
+        "mean_difference": 21.83667123214208,
+        "std_difference": 88.32583242615887,
+        "ci95_low": 5.000938931136518,
+        "ci95_high": 39.52659690075672,
+        "paired_t_statistic": 2.472285925003619,
+        "paired_t_pvalue": 0.015130480578532435,
+        "wilcoxon_statistic": 1497.0,
+        "wilcoxon_pvalue": 0.0004083960555564732,
+        "cohen_dz": 0.2472285925003619
+      },
+      "baseline_2_vs_baseline_1": {
+        "mean_a": 548.7740715429028,
+        "mean_b": 431.2079001810721,
+        "mean_difference": 117.56617136183065,
+        "std_difference": 85.43462312886874,
+        "ci95_low": 100.28653098046892,
+        "ci95_high": 133.08233669046305,
+        "paired_t_statistic": 13.76095159739805,
+        "paired_t_pvalue": 1.020948242123193e-24,
+        "wilcoxon_statistic": 226.0,
+        "wilcoxon_pvalue": 2.6856063057638546e-15,
+        "cohen_dz": 1.376095159739805
+      }
+    }
+  },
+  "horizon": {
+    "1": {
+      "static": {
+        "query_count": 3360,
+        "ndcg_at_3": 0.95815833364925,
+        "hit_at_3": 0.9782738095238095,
+        "reference_two_step_utility_at_1": 27.603217482843313,
+        "average_recommend_time_ms": 0.03126273809523809,
+        "peak_tracemalloc_bytes": 0,
+        "coverage": 0.13688212927756654
+      },
+      "rollout": {
+        "metric": "average_daily_fare",
+        "runs": 100,
+        "days_per_run": 7.0,
+        "average_daily_fare": 569.7755998669618,
+        "daily_fare_stddev": 50.212350222217715,
+        "average_served_trips": 91.73,
+        "average_relocations": 123.19,
+        "average_relocation_minutes": 2860.264643759999,
+        "average_recommend_time_ms": 0.03341206376561827,
+        "recommend_calls": 16247,
+        "base_seed": 20230722,
+        "top3_sampling_weights": [
+          0.6,
+          0.3,
+          0.1
+        ],
+        "first_run": {
+          "total_fare": 4020.6999864578247,
+          "average_daily_fare": 574.3857123511178,
+          "served_trips": 95,
+          "relocation_count": 124,
+          "relocation_minutes": 2793.1226999999985,
+          "failed_pickup_attempts": 62,
+          "recommend_calls": 157,
+          "recommend_time_seconds": 0.006013300000000002
+        }
+      }
+    },
+    "2": {
+      "static": {
+        "query_count": 3360,
+        "ndcg_at_3": 0.9565240925177884,
+        "hit_at_3": 0.9714285714285714,
+        "reference_two_step_utility_at_1": 27.585462887713895,
+        "average_recommend_time_ms": 0.03163479166666667,
+        "peak_tracemalloc_bytes": 0,
+        "coverage": 0.14068441064638784
+      },
+      "rollout": {
+        "metric": "average_daily_fare",
+        "runs": 100,
+        "days_per_run": 7.0,
+        "average_daily_fare": 570.6107427750447,
+        "daily_fare_stddev": 65.23032612752525,
+        "average_served_trips": 91.69,
+        "average_relocations": 122.28,
+        "average_relocation_minutes": 2814.54788053,
+        "average_recommend_time_ms": 0.03500788338900699,
+        "recommend_calls": 16465,
+        "base_seed": 20230722,
+        "top3_sampling_weights": [
+          0.6,
+          0.3,
+          0.1
+        ],
+        "first_run": {
+          "total_fare": 4136.27001285553,
+          "average_daily_fare": 590.8957161222186,
+          "served_trips": 89,
+          "relocation_count": 118,
+          "relocation_minutes": 2630.5254489999998,
+          "failed_pickup_attempts": 83,
+          "recommend_calls": 172,
+          "recommend_time_seconds": 0.005771200000000001
+        }
+      }
+    },
+    "3": {
+      "static": {
+        "query_count": 3360,
+        "ndcg_at_3": 0.9549296119678491,
+        "hit_at_3": 0.9758928571428571,
+        "reference_two_step_utility_at_1": 27.599033857690664,
+        "average_recommend_time_ms": 0.030629315476190477,
+        "peak_tracemalloc_bytes": 0,
+        "coverage": 0.1444866920152091
+      },
+      "rollout": {
+        "metric": "average_daily_fare",
+        "runs": 100,
+        "days_per_run": 7.0,
+        "average_daily_fare": 573.4650712639944,
+        "daily_fare_stddev": 43.46066963220983,
+        "average_served_trips": 93.19,
+        "average_relocations": 125.34,
+        "average_relocation_minutes": 2854.66598411,
+        "average_recommend_time_ms": 0.034742877137467286,
+        "recommend_calls": 16433,
+        "base_seed": 20230722,
+        "top3_sampling_weights": [
+          0.6,
+          0.3,
+          0.1
+        ],
+        "first_run": {
+          "total_fare": 4262.870005607605,
+          "average_daily_fare": 608.981429372515,
+          "served_trips": 101,
+          "relocation_count": 123,
+          "relocation_minutes": 2651.2144740000003,
+          "failed_pickup_attempts": 70,
+          "recommend_calls": 172,
+          "recommend_time_seconds": 0.0072147
+        }
+      }
+    },
+    "5": {
+      "static": {
+        "query_count": 3360,
+        "ndcg_at_3": 0.952461981543264,
+        "hit_at_3": 0.9741071428571428,
+        "reference_two_step_utility_at_1": 27.597910037583524,
+        "average_recommend_time_ms": 0.03209985119047619,
+        "peak_tracemalloc_bytes": 0,
+        "coverage": 0.1444866920152091
+      },
+      "rollout": {
+        "metric": "average_daily_fare",
+        "runs": 100,
+        "days_per_run": 7.0,
+        "average_daily_fare": 575.9657857721193,
+        "daily_fare_stddev": 37.73549193844315,
+        "average_served_trips": 94.16,
+        "average_relocations": 126.2,
+        "average_relocation_minutes": 2851.15827689,
+        "average_recommend_time_ms": 0.03459425273390036,
+        "recommend_calls": 16460,
+        "base_seed": 20230722,
+        "top3_sampling_weights": [
+          0.6,
+          0.3,
+          0.1
+        ],
+        "first_run": {
+          "total_fare": 4014.4000029563904,
+          "average_daily_fare": 573.4857147080558,
+          "served_trips": 91,
+          "relocation_count": 125,
+          "relocation_minutes": 2729.388062,
+          "failed_pickup_attempts": 77,
+          "recommend_calls": 168,
+          "recommend_time_seconds": 0.006586899999999996
+        }
+      }
+    },
+    "adaptive": {
+      "static": {
+        "query_count": 3360,
+        "ndcg_at_3": 0.9559194526427593,
+        "hit_at_3": 0.9735119047619047,
+        "reference_two_step_utility_at_1": 27.588277671657384,
+        "average_recommend_time_ms": 0.06824922619047619,
+        "peak_tracemalloc_bytes": 0,
+        "coverage": 0.14068441064638784
+      },
+      "rollout": {
+        "metric": "average_daily_fare",
+        "runs": 100,
+        "days_per_run": 7.0,
+        "average_daily_fare": 573.3079856804573,
+        "daily_fare_stddev": 50.20328362593812,
+        "average_served_trips": 92.42,
+        "average_relocations": 123.06,
+        "average_relocation_minutes": 2829.82562936,
+        "average_recommend_time_ms": 0.07529081850968886,
+        "recommend_calls": 16359,
+        "base_seed": 20230722,
+        "top3_sampling_weights": [
+          0.6,
+          0.3,
+          0.1
+        ],
+        "first_run": {
+          "total_fare": 4272.170013427734,
+          "average_daily_fare": 610.3100019182477,
+          "served_trips": 92,
+          "relocation_count": 121,
+          "relocation_minutes": 2681.6269840000004,
+          "failed_pickup_attempts": 81,
+          "recommend_calls": 173,
+          "recommend_time_seconds": 0.013837599999999992
+        }
+      }
+    }
+  },
+  "fairness": {
+    "baseline_1": {
+      "unique_zones": 21,
+      "coverage": 0.07984790874524715,
+      "gini": 0.9738366829621585,
+      "top_1pct_share": 0.5821428571428583,
+      "top_10pct_share": 1.0,
+      "entropy": 2.2208393388498706,
+      "effective_zone_count": 9.215062180524082,
+      "manhattan_exposure_share": 0.7226190476190523,
+      "airport_exposure_share": 0.27738095238094757,
+      "premium_fare_zone_exposure_share": 0.24940476190475766
+    },
+    "baseline_2": {
+      "unique_zones": 37,
+      "coverage": 0.14068441064638784,
+      "gini": 0.9695487054137244,
+      "top_1pct_share": 0.5705952380952322,
+      "top_10pct_share": 0.9959821428571427,
+      "entropy": 2.2197531205688654,
+      "effective_zone_count": 9.205058045843618,
+      "manhattan_exposure_share": 0.4932738095238167,
+      "airport_exposure_share": 0.506190476190469,
+      "premium_fare_zone_exposure_share": 0.43654761904761025
+    },
+    "two_step": {
+      "unique_zones": 37,
+      "coverage": 0.14068441064638784,
+      "gini": 0.9816960890820203,
+      "top_1pct_share": 0.7672619047619009,
+      "top_10pct_share": 0.996785714285714,
+      "entropy": 1.7063418912330348,
+      "effective_zone_count": 5.508772883719909,
+      "manhattan_exposure_share": 0.2950595238095284,
+      "airport_exposure_share": 0.7033035714285666,
+      "premium_fare_zone_exposure_share": 0.5497321428571278
+    }
+  },
+  "counterfactual_identifiability": {
+    "logged_recommendation_action": false,
+    "logged_behavior_propensity": false,
+    "logged_driver_acceptance": false,
+    "ips_snips_dr_on_tlc_trips": "not identifiable",
+    "reason": "TLC trip records contain realized passenger trips, not recommendation actions sampled by a known logging policy."
+  },
+  "robustness": {
+    "baseline": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.9565240925177884,
+      "hit_at_3": 0.9714285714285714,
+      "reference_two_step_utility_at_1": 27.585462887713895,
+      "average_recommend_time_ms": 0.0,
+      "peak_tracemalloc_bytes": 0,
+      "coverage": 0.14068441064638784
+    },
+    "manhattan_demand_+50%": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.9450970829758111,
+      "hit_at_3": 0.9666666666666667,
+      "reference_two_step_utility_at_1": 27.48868260180734,
+      "average_recommend_time_ms": 0.0,
+      "peak_tracemalloc_bytes": 0,
+      "coverage": 0.1444866920152091,
+      "top3_overlap": 0.8802579365079365
+    },
+    "10%_missing_cells": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.904227585686083,
+      "hit_at_3": 0.7872023809523809,
+      "reference_two_step_utility_at_1": 25.427486332631556,
+      "average_recommend_time_ms": 0.0,
+      "peak_tracemalloc_bytes": 0,
+      "coverage": 0.1482889733840304,
+      "top3_overlap": 0.8134920634920634
+    },
+    "drop_OD_p<0.001": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.9564847667102236,
+      "hit_at_3": 0.9714285714285714,
+      "reference_two_step_utility_at_1": 27.585462887713895,
+      "average_recommend_time_ms": 0.0,
+      "peak_tracemalloc_bytes": 0,
+      "coverage": 0.14068441064638784,
+      "top3_overlap": 0.9984126984126985
+    },
+    "remove_bottom_10%_zones": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.9565240925177884,
+      "hit_at_3": 0.9714285714285714,
+      "reference_two_step_utility_at_1": 27.585462887713895,
+      "average_recommend_time_ms": 0.0,
+      "peak_tracemalloc_bytes": 0,
+      "coverage": 0.14068441064638784,
+      "top3_overlap": 1.0
+    }
+  },
+  "parameter_selection": [
+    {
+      "pickup_half_saturation": 240.0,
+      "gamma": 0.25,
+      "candidate_pool_size": 50,
+      "ndcg_at_3": 0.9577136878189483,
+      "hit_at_3": 0.9761904761904762,
+      "reference_utility_at_1": 27.58818545948921,
+      "average_recommend_time_ms": 0.029754494047619047
+    },
+    {
+      "pickup_half_saturation": 240.0,
+      "gamma": 0.25,
+      "candidate_pool_size": 100,
+      "ndcg_at_3": 0.9577136878189483,
+      "hit_at_3": 0.9761904761904762,
+      "reference_utility_at_1": 27.58818545948921,
+      "average_recommend_time_ms": 0.0305025
+    },
+    {
+      "pickup_half_saturation": 360.0,
+      "gamma": 0.25,
+      "candidate_pool_size": 50,
+      "ndcg_at_3": 0.95681012487289,
+      "hit_at_3": 0.9738095238095238,
+      "reference_utility_at_1": 27.56902328981491,
+      "average_recommend_time_ms": 0.03172264880952381
+    },
+    {
+      "pickup_half_saturation": 360.0,
+      "gamma": 0.25,
+      "candidate_pool_size": 100,
+      "ndcg_at_3": 0.95681012487289,
+      "hit_at_3": 0.9738095238095238,
+      "reference_utility_at_1": 27.56902328981491,
+      "average_recommend_time_ms": 0.032858035714285715
+    },
+    {
+      "pickup_half_saturation": 240.0,
+      "gamma": 0.5,
+      "candidate_pool_size": 50,
+      "ndcg_at_3": 0.9565240925177884,
+      "hit_at_3": 0.9714285714285714,
+      "reference_utility_at_1": 27.585462887713895,
+      "average_recommend_time_ms": 0.029350089285714285
+    },
+    {
+      "pickup_half_saturation": 240.0,
+      "gamma": 0.5,
+      "candidate_pool_size": 100,
+      "ndcg_at_3": 0.9565240925177884,
+      "hit_at_3": 0.9714285714285714,
+      "reference_utility_at_1": 27.585462887713895,
+      "average_recommend_time_ms": 0.03408470238095238
+    },
+    {
+      "pickup_half_saturation": 360.0,
+      "gamma": 0.5,
+      "candidate_pool_size": 50,
+      "ndcg_at_3": 0.9562162677932441,
+      "hit_at_3": 0.9720238095238095,
+      "reference_utility_at_1": 27.5638891211545,
+      "average_recommend_time_ms": 0.02836029761904762
+    },
+    {
+      "pickup_half_saturation": 360.0,
+      "gamma": 0.5,
+      "candidate_pool_size": 100,
+      "ndcg_at_3": 0.9562162677932441,
+      "hit_at_3": 0.9720238095238095,
+      "reference_utility_at_1": 27.5638891211545,
+      "average_recommend_time_ms": 0.029274375
+    },
+    {
+      "pickup_half_saturation": 120.0,
+      "gamma": 0.25,
+      "candidate_pool_size": 50,
+      "ndcg_at_3": 0.9559654069666391,
+      "hit_at_3": 0.9747023809523809,
+      "reference_utility_at_1": 27.60820138290433,
+      "average_recommend_time_ms": 0.02886291666666667
+    },
+    {
+      "pickup_half_saturation": 120.0,
+      "gamma": 0.25,
+      "candidate_pool_size": 100,
+      "ndcg_at_3": 0.9559620691038374,
+      "hit_at_3": 0.9747023809523809,
+      "reference_utility_at_1": 27.60820138290433,
+      "average_recommend_time_ms": 0.03099485119047619
+    },
+    {
+      "pickup_half_saturation": 240.0,
+      "gamma": 0.75,
+      "candidate_pool_size": 50,
+      "ndcg_at_3": 0.9557211317454587,
+      "hit_at_3": 0.9732142857142857,
+      "reference_utility_at_1": 27.59413264981346,
+      "average_recommend_time_ms": 0.03836389880952381
+    },
+    {
+      "pickup_half_saturation": 240.0,
+      "gamma": 0.75,
+      "candidate_pool_size": 100,
+      "ndcg_at_3": 0.9557177938826569,
+      "hit_at_3": 0.9732142857142857,
+      "reference_utility_at_1": 27.59413264981346,
+      "average_recommend_time_ms": 0.03413035714285714
+    },
+    {
+      "pickup_half_saturation": 360.0,
+      "gamma": 0.75,
+      "candidate_pool_size": 50,
+      "ndcg_at_3": 0.9550014066520786,
+      "hit_at_3": 0.9735119047619047,
+      "reference_utility_at_1": 27.542646256590736,
+      "average_recommend_time_ms": 0.029068244047619048
+    },
+    {
+      "pickup_half_saturation": 360.0,
+      "gamma": 0.75,
+      "candidate_pool_size": 100,
+      "ndcg_at_3": 0.9549980687892767,
+      "hit_at_3": 0.9735119047619047,
+      "reference_utility_at_1": 27.542646256590736,
+      "average_recommend_time_ms": 0.03005
+    },
+    {
+      "pickup_half_saturation": 120.0,
+      "gamma": 0.5,
+      "candidate_pool_size": 50,
+      "ndcg_at_3": 0.9548897127917206,
+      "hit_at_3": 0.9758928571428571,
+      "reference_utility_at_1": 27.60863025579243,
+      "average_recommend_time_ms": 0.02840422619047619
+    },
+    {
+      "pickup_half_saturation": 120.0,
+      "gamma": 0.5,
+      "candidate_pool_size": 100,
+      "ndcg_at_3": 0.9548863749289188,
+      "hit_at_3": 0.9758928571428571,
+      "reference_utility_at_1": 27.60863025579243,
+      "average_recommend_time_ms": 0.029331369047619047
+    },
+    {
+      "pickup_half_saturation": 120.0,
+      "gamma": 0.75,
+      "candidate_pool_size": 50,
+      "ndcg_at_3": 0.9515097549989421,
+      "hit_at_3": 0.9744047619047619,
+      "reference_utility_at_1": 27.599290894599616,
+      "average_recommend_time_ms": 0.02845160714285714
+    },
+    {
+      "pickup_half_saturation": 120.0,
+      "gamma": 0.75,
+      "candidate_pool_size": 100,
+      "ndcg_at_3": 0.9515046281623554,
+      "hit_at_3": 0.9744047619047619,
+      "reference_utility_at_1": 27.599290894599616,
+      "average_recommend_time_ms": 0.031788869047619045
+    }
+  ]
+}

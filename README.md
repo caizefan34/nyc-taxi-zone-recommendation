@@ -1,367 +1,235 @@
-﻿<div align="center">
+<div align="center">
   <img src="assets/social-preview.svg" width="100%" alt="NYC Taxi Zone Recommendation">
-  <br><br>
-  <p><strong>Two-Step Finite-Horizon Planning for Taxi Driver Zone Recommendations</strong></p>
+  <p><strong>Finite-Horizon Taxi Zone Recommendation with Reproducible Evaluation</strong></p>
   <p>
-    <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?logo=python&style=for-the-badge" alt="Python 3.10+"></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&style=for-the-badge&logo=github" alt="CI"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/stargazers"><img src="https://img.shields.io/github/stars/caizefan34/nyc-taxi-zone-recommendation?style=for-the-badge&logo=github" alt="Stars"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CHANGELOG.md"><img src="https://img.shields.io/badge/release-v1.0.0--stable-orange?style=for-the-badge" alt="Release"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/tree/master/tests"><img src="https://img.shields.io/badge/tests-41%20tests%20(26%20pass)-brightgreen?style=for-the-badge" alt="Tests"></a>
-    <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000?style=for-the-badge" alt="Code Style: Black"></a>
-    <a href="paper/report.pdf"><img src="https://img.shields.io/badge/PDF-LaTeX%20report-red?style=for-the-badge" alt="LaTeX Report"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/latex.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/latex.yml?branch=master&amp;style=for-the-badge&amp;logo=latex" alt="LaTeX"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/pages.yml?branch=master&amp;style=for-the-badge&amp;logo=github" alt="Docs"></a>
-    <a href="#"><img src="https://img.shields.io/badge/DOI-10.xxxx%2Fxxxxxx-blue?style=for-the-badge" alt="DOI"></a>
-    <a href="#"><img src="https://img.shields.io/badge/arXiv-xxxx.xxxxx-red?style=for-the-badge" alt="arXiv"></a>
+    <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&label=CI" alt="CI"></a>
   </p>
 </div>
 
----
+## Overview
 
-## 📋 Abstract
+This repository studies a taxi-driver repositioning problem: given a driver's current NYC taxi zone and time, return three zones in ranked order.
 
-We address the **spatial-temporal recommendation problem** of guiding taxi drivers to optimal zones for finding their next passenger. Using **2.9M+ Yellow Taxi trips** from NYC TLC (January 2023), we propose a **two-step finite-horizon planning** framework that jointly models:
+The project includes:
 
-1. **Immediate reward**: Pickup probability × expected fare at candidate zones
-2. **Future transfer value**: Expected value after _both_ successful pickups (weighted by empirical OD transition distribution) _and_ failed attempts (stay in zone)
+- chronological cleaning of January 2023 NYC TLC Yellow Taxi trips;
+- weekday/half-hour/zone demand and fare statistics;
+- a directed OD travel-time graph and all-pairs shortest paths;
+- hot-zone, single-step, and finite-horizon planning strategies;
+- static reference-objective diagnostics and a fixed stochastic rollout;
+- paired statistical tests, horizon experiments, robustness checks, and exposure-concentration analysis;
+- a corrected model-based MDP implementation;
+- a reproducible simulator-trained Q-learning extension.
 
-The framework operates on a **263-zone × 336-time-slot** state space with a **~0.24 ms** query latency, achieving **NDCG@3 = 0.9978**, **Hit@3 = 0.9988**, and **$569.80 average daily fare**  --  a **+32.1% improvement** over the Hot Zone baseline and **+3.8% over Single-Step Utility**.
+The repository deliberately distinguishes three different claims:
 
-We provide comprehensive baselines (Hot Zone, Single-Step Utility, Q-Learning, MDP Value Iteration), a **5-experiment ablation study**, Docker reproducibility, and a full LaTeX report.
+1. Static NDCG/Hit measure agreement with a supplied two-step reference objective.
+2. Rollout fare measures performance only inside the supplied single-driver simulator.
+3. Neither metric is a causal estimate of real-world deployment revenue.
 
----
+## Reproduced results
 
-## 🏆 Key Results
+These values come from [`outputs/reference_metrics.json`](outputs/reference_metrics.json) and are rendered into [`outputs/evaluation_report.md`](outputs/evaluation_report.md).
 
-<div align="center">
+### Static diagnostic: 3,360 public validation queries
 
-| Metric | Hot Zone (B1) | Single-Step (B2) | **Two-Step (Ours)** | Δ vs B1 |
-|:-------|:------------:|:----------------:|:-------------------:|:------:|
-| **NDCG@3** | 0.9950 | 0.9972 | **0.9978** | +0.0028 |
-| **Hit@3** | 0.9970 | 0.9984 | **0.9988** | +0.0018 |
-| **Top-1 Utility** | 26.10 | 27.42 | **27.75** | +1.65 |
-| **Avg Daily Fare** | $431.40 | $549.00 | **$569.80** | **+$138.40** |
-| **Avg Daily Pickups** | 133.9 | 107.0 | 81.2 | -52.7¹ |
-| **Recommendation Time** | **0.051 ms** | 0.072 ms | 0.24 ms | +0.19 ms |
-| **Zone Coverage** | 17.1% | 48.7% | **59.3%** | +42.2% |
-| **Geo-Diversity (Top-3)** | 3.2 km | 5.8 km | **6.7 km** | +3.5 km |
+| Strategy | NDCG@3 | Hit@3 | Reference utility@1 |
+|---|---:|---:|---:|
+| Hot Zone | 0.7846 | 0.5842 | 19.4299 |
+| Single-Step | 0.9024 | 0.8804 | 25.0589 |
+| Two-Step | **0.9565** | **0.9714** | **27.5855** |
 
-</div>
+### Paired 100-seed, seven-day rollout
 
-> ¹ Fewer pickups but _higher fare per trip_  --  the two-step planner strategically targets premium long-fare zones rather than high-volume short-trip zones.
+| Strategy | Mean daily `fare_amount` |
+|---|---:|
+| Hot Zone | $431.21 |
+| Single-Step | $548.77 |
+| Two-Step | **$570.61** |
 
----
+Two-Step minus Single-Step is +$21.84/day in this simulator, with paired bootstrap 95% CI [$5.00, $39.53], paired t-test p=0.0151, and Cohen's dz=0.247.
 
-## 🧠 Methodology
+This interval describes Monte Carlo seed variation in one fixed simulator. It does not capture market drift, estimation error, competing drivers, congestion, or deployment interference.
 
-### Problem Formulation
+### Horizon comparison
 
-Given a taxi driver's state $(z_t, t)$  --  current zone $z_t$ and time $t$  --  recommend top-3 zones maximizing expected cumulative revenue:
+| Horizon | NDCG@3 | Mean daily fare |
+|---|---:|---:|
+| 1 | **0.9582** | $569.78 |
+| 2 | 0.9565 | $570.61 |
+| 3 | 0.9549 | $573.47 |
+| 5 | 0.9525 | **$575.97** |
+| Adaptive | 0.9559 | $573.31 |
 
-$$\pi^*(z_t, t) = \arg\max_{z \in \mathcal{Z}^3} \mathbb{E}\left[ \sum_{k=0}^{K} \gamma^k \cdot R(s_k, a_k) \right]$$
+The result is intentionally reported because it shows that higher reference-objective NDCG does not imply higher simulated fare.
 
-where $|\mathcal{S}| = 263 \times 336 = 88,368$ states.
+## Method
 
-### Two-Step Value Function
+For candidate zone `z` at arrival state `s`, the two-step score uses
 
-Our core contribution extends single-step utility by modeling the **expected future value** after both outcomes at the target zone:
+\[
+p(s,z)=\frac{D(s,z)}{D(s,z)+240},
+\]
 
-$$U(z) = p_s \cdot \bigl(f + \gamma \cdot V_{\text{success}}\bigr) + (1 - p_s) \cdot \gamma \cdot V_{\text{failure}}$$
+\[
+V_1(s,z)=p(s,z)\bar f(s,z),
+\]
 
-> **Plain text**: Zone value $U(z)$ = pickup probability $p_s$ times (fare $f$ + discounted future $V_{success}$), plus failure probability $(1-p_s)$ times discounted future $V_{failure}$.
+\[
+Q_2(o,z,s)=\frac{p(s,z)\left[\bar f(s,z)+\gamma\sum_{z'}P(z'\mid z)V_1(s',z')\right]
+ +(1-p(s,z))\gamma V_1(s+1,z)}{m(o,z)+1}.
+\]
 
-#### Components
+`m(o,z)` is rounded relocation time in half-hour slots. The continuation policy waits in the reached zone; therefore this is truncated lookahead with a terminal heuristic, not a full horizon-2 Bellman-optimal policy.
 
-| Symbol | Definition | Source |
-|:-------|:-----------|:-------|
-| $p_s = \frac{D}{D + \lambda}$ | Pickup probability (sigmoid, $\lambda = 240$) | Historical demand |
-| $f$ | Expected fare amount | Historical mean |
-| $V_{\text{success}} = \sum_{z'} P(z' \mid z) \cdot V_{\text{1-step}}(z')$ | Value after successful pickup | OD transition matrix |
-| $V_{\text{failure}}$ | Value after failed pickup (stay + 1 slot) | Same-zone one-step value |
+The generalized implementation in [`finite_horizon.py`](src/2_recommendation_algorithm/finite_horizon.py) supports horizons 1, 2, 3, and 5 plus an adaptive stopping rule.
 
-#### Candidate Pre-Selection
+## Architecture
 
-Full 263-zone two-step computation is expensive ($O(|\mathcal{Z}|^2)$). We use a **two-phase** approach:
-
-1. **Phase 1** (linearithmic): Rank all zones by baseline single-step utility, keep top $K=100$
-2. **Phase 2** (narrow): Compute full two-step value only for candidates + current zone
-
-This achieves **near-optimal quality** with **2.6× speedup** over full computation.
-
-### Ablation Study Summary
-
-| Component | Contribution to NDCG@3 | Contribution to Daily Fare |
-|:----------|:----------------------:|:--------------------------:|
-| Data cleaning | +0.0013 | +$28.60 |
-| Two-step planning ($\gamma > 0$) | +0.0006 | +$20.80 |
-| Transition probabilities | +0.0003 | +$11.60 |
-| Trip duration modeling | +0.0001 | +$4.70 |
-| **Total** | **0.9978** | **$569.80** |
-
-Full ablation in [`docs/ablation_study.md`](docs/ablation_study.md).
-
----
-
-## 🏗️ Architecture
-
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                        RAW NYC TLC DATA                              │
-│                 yellow_tripdata_2023-01.parquet                       │
-│                       2.9M+ trips                                    │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │
-                             ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│                      DATA CLEANING (clean.py)                        │
-│  • Date boundaries     • Invalid zones     • Fare/duration outliers  │
-│  • Distance outliers   • Speed outliers    • Duplicates removal      │
-│  Removes ~4% of records → +5.2% simulation revenue                   │
-└────────────────────────────┬─────────────────────────────────────────┘
-                             │
-              ┌──────────────┼──────────────────┐
-              ▼              ▼                   ▼
-    ┌─────────────────┐ ┌────────────┐ ┌──────────────────────┐
-    │  Zone-Time Stats │ │  OD Matrix │ │  Dijkstra Travel     │
-    │  demand[7][48]   │ │  P(z'"|"z) │ │  Time Matrix         │
-    │  fare[7][48]     │ │  263×263   │ │  travel_time[263]    │
-    └────────┬────────┘ └──────┬─────┘ └──────────┬───────────┘
-             │                 │                   │
-             ▼                 ▼                   ▼
-    ┌──────────────────────────────────────────────────────────────────┐
-    │                    RECOMMENDATION ENGINE                         │
-    │                                                                  │
-    │  ┌──────────────┐  ┌────────────────┐  ┌──────────────────────┐  │
-    │  │  Baseline 1   │  │  Baseline 2     │  │  Two-Step Planning  │  │
-    │  │  Hot Zones    │  │  Single-Step    │  │  (Ours)             │  │
-    │  │  (frequency)  │  │  (utility)      │  │  future + transfer  │  │
-    │  └──────────────┘  └────────────────┘  └──────────────────────┘  │
-    └────────────────────────────┬─────────────────────────────────────┘
-                                 │
-                                 ▼
-    ┌──────────────────────────────────────────────────────────────────┐
-    │                      EVALUATION FRAMEWORK                       │
-    │  ┌─────────────┐  ┌──────────────────┐  ┌──────────────────┐   │
-    │  │  Static      │  │  Simulation      │  │  Analysis        │   │
-    │  │  NDCG@3      │  │  Avg Daily Fare  │  │  Ablation        │   │
-    │  │  Hit@3       │  │  Regret Analysis │  │  Parameter Grid  │   │
-    │  └─────────────┘  └──────────────────┘  └──────────────────┘   │
-    └──────────────────────────────────────────────────────────────────┘
+```text
+official monthly TLC parquet
+        |
+        v
+chronological raw split -> cleaning -> train_cleaned / validation_cleaned
+        |                                |
+        +-> zone-time demand/fare         +-> fixed validation rollout market
+        +-> OD travel graph
+        +-> OD transition/duration model
+                    |
+                    v
+       baseline and finite-horizon strategies
+                    |
+          +---------+----------+
+          v                    v
+ static reference diagnostic  stochastic rollout
+          |                    |
+          +-> statistics, robustness, horizon, and exposure reports
 ```
 
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-- **Python 3.10+**
-- **NYC TLC data**: Download `yellow_tripdata_2023-01.parquet` from [NYC TLC](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) (~1.5 GB)
-- **~8 GB** free disk space for raw + processed data
-
-### Installation
+## Setup
 
 ```bash
 git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
 cd nyc-taxi-zone-recommendation
-pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 ```
 
-### Full Pipeline (with data)
+Download `yellow_tripdata_2023-01.parquet` from the [NYC TLC trip record page](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) and place it at:
+
+```text
+data/raw/yellow_tripdata_2023-01.parquet
+```
+
+## End-to-end data pipeline
 
 ```bash
-# Step 1: Data cleaning
-python src/1_data_clean/clean.py
+python -m scripts.run_data_pipeline --force-split
+python -m scripts.build_travel_time_matrix
+```
 
-# Step 2: Build travel time matrix (Dijkstra)
-python src/2_recommendation_algorithm/baseline_2_1.py
+The cleaning entry point now creates the chronological uncleaned train/validation inputs directly from the official monthly parquet before applying cleaning rules.
 
-# Step 3: Run all tests
-python -m pytest tests/ -v
+The public `validation_input.parquet` and `validation_answers.parquet` are course evaluation artifacts; they are not generated from the TLC raw file by this repository.
 
-# Step 4: Static validation
-PYTHONPATH=. python src/eval/public_validation.py \
+## Validation
+
+```bash
+python -m src.eval.sanity_check \
+  --train-cleaned data/processed/train_cleaned.parquet \
+  --validation-cleaned data/processed/validation_cleaned.parquet \
+  --statistics data/processed/zone_time_statistics.parquet \
+  --travel-times data/processed/travel_time_matrix_dijkstra.csv \
+  --baseline-1 src/2_recommendation_algorithm/baseline_1.py \
+  --baseline-2 src/2_recommendation_algorithm/baseline_2_2.py \
+  --strategy src/2_recommendation_algorithm/improved_strategy.py \
+  --output outputs/sanity_report.json
+
+python -m src.eval.public_validation \
   --strategy src/2_recommendation_algorithm/improved_strategy.py \
   --queries data/processed/validation_input.parquet \
   --answers data/processed/validation_answers.parquet \
   --predictions outputs/validation_predictions.parquet \
   --output outputs/validation_static_metrics.json
 
-# Step 5: Simulation rollout
-PYTHONPATH=. python src/eval/validation_rollout.py \
+python -m src.eval.validation_rollout \
   --strategy src/2_recommendation_algorithm/improved_strategy.py \
-  --output outputs/validation_rollout_improved.json
+  --output outputs/validation_rollout.json
 ```
 
-### Without Data (code tour)
+## Research evaluation
 
 ```bash
-python examples/basic_usage.py
+python -m scripts.run_paired_rollout_audit --runs 100
+python -m scripts.run_horizon_audit --runs 100
+python -m scripts.run_research_audit
+python -m scripts.run_robustness_audit
+python -m scripts.generate_evaluation_report
 ```
 
----
-
-## 📂 Repository Structure
-
-```
-nyc-taxi-zone-recommendation/
-├── src/
-│   ├── 1_data_clean/              # Data cleaning pipeline
-│   ├── 2_recommendation_algorithm/ # All recommendation strategies
-│   │   ├── baseline_1.py              # Hot Zone (Baseline 1)
-│   │   ├── baseline_2_1.py            # Travel time matrix builder
-│   │   ├── baseline_2_2.py            # Single-Step Utility (Baseline 2)
-│   │   ├── improved_strategy.py       # ★ Two-Step Planning (Ours)
-│   │   └── parameter_selection.py     # Grid search over λ/γ
-│   ├── 3_extension_task/          # Extensions (Q-Learning, interactive, temporal)
-│   ├── 4_mdp/                     # MDP Value Iteration solver
-│   ├── common/                    # Shared utilities (config, data loader, logging)
-│   └── eval/                      # Evaluation toolkit
-├── tests/                         # 41 unit tests (26 pass without data)
-├── docs/                          # Full documentation
-│   ├── problem_statement.md           # Formal problem definition
-│   ├── methodology.md                 # Algorithm details, pseudocode, complexity
-│   └── ablation_study.md             # Component-wise analysis
-├── report/                        # LaTeX technical report
-├── configs/                       # YAML configuration system
-├── examples/                      # Runnable demo scripts
-├── assets/                        # Charts and social preview
-├── .github/workflows/             # CI + GitHub Pages
-├── Dockerfile                     # Reproducible build
-├── docker-compose.yml
-└── Makefile
-```
-
----
-
-
----
-
-## 🤖 ML Baseline Benchmark
-
-We compare against **Random Forest** and **Gradient Boosting** regressors trained on synthetic data (8,000 samples) to predict zone utility from temporal/spatial features. See full benchmark at [`benchmark/run_ml_baselines.py`](benchmark/run_ml_baselines.py).
-
-| Model | MSE ↓ | R² ↑ | Train Time |
-|:------|:----:|:---:|:----------:|
-| Random Forest | 0.2032 | 0.9109 | 0.25s |
-| Gradient Boosting | 0.2285 | 0.8998 | 1.32s |
-| XGBoost | — | — | (optional) |
-
-> The two-step planner **remains superior** because ML regressors predict isolated zone utility, while our approach explicitly models OD transitions, temporal dynamics, and the success/failure branching structure.
-
----
-
-## 📓 Interactive Jupyter Notebook
-
-Explore the algorithm with **synthetic NYC taxi data** — no downloads required. Run all cells to see recommendations, simulations, and visualizations.
-
-[`notebooks/demo_synthetic_data.ipynb`](notebooks/demo_synthetic_data.ipynb) — Google Colab compatible.
-
----
-
-## 📊 Performance Plots
-
-<div align="center">
-  <img src="assets/fare_comparison.png" width="45%" alt="Fare Comparison">
-  <img src="assets/pickup_comparison.png" width="45%" alt="Pickup Comparison">
-</div>
-
----
-
-## 🧪 Comprehensive Evaluation
-
-### 1. Static Metrics (3,360 public validation queries)
-
-| Metric | Baseline 1 | Baseline 2 | Two-Step |
-|:-------|:---------:|:---------:|:--------:|
-| NDCG@3 | 0.9950 | 0.9972 | **0.9978** |
-| Hit@3 | 0.9970 | 0.9984 | **0.9988** |
-| Top-1 Ref Utility | 26.10 | 27.42 | **27.75** |
-| Latency (ms) | **0.051** | 0.072 | 0.24 |
-
-### 2. Simulation Rollout (100 runs, 7-day market)
-
-| Metric | Baseline 1 | Baseline 2 | Two-Step |
-|:-------|:---------:|:---------:|:--------:|
-| Avg Daily Fare | $431.4 | $549.0 | **$569.8** |
-| Relative Gain |  --  | +27.3% | **+32.1%** |
-| Regret (vs optimal) | $138.4/day | $20.8/day | **$0.0/day** |
-
-### 3. Ablation Experiments
-
-| Experiment | Finding |
-|:-----------|:--------|
-| Future value ($\gamma$) | $\gamma=0.5$ optimal; $\gamma=0.75$ overvalues future |
-| Transition probs | Empirical OD + duration > empirical only > uniform |
-| Candidate pool ($K$) | $K=100$ = near-optimal; $K=263$ is 2.6× slower with no gain |
-| Sigmoid half-sat ($\lambda$) | $\lambda=1.0$ balanced; $\lambda=0.5$ overconfident |
-| Data cleaning | Removes ~4% records → **+5.2% revenue** |
-
-Full report: [`outputs/evaluation_report.md`](outputs/evaluation_report.md) · [`docs/ablation_study.md`](docs/ablation_study.md)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please see:
-
-- [CONTRIBUTING.md](CONTRIBUTING.md)  --  Guidelines
-- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)  --  Community standards
-- [SECURITY.md](SECURITY.md)  --  Security policy
-- [CHANGELOG.md](CHANGELOG.md)  --  Version history
-
-**Development quick start:**
+Real parameter selection:
 
 ```bash
-pip install -e ".[dev]"
-make test
-make lint
+python -m scripts.run_parameter_selection
 ```
 
----
+The parameter runner evaluates every configured combination. It does not contain pre-filled metric values.
 
-## 📖 Citation
+## Testing
 
-If you use this code or methodology in your research, please cite:
-
-```bibtex
-@software{cai2026nyctaxi,
-  author = {Cai, Zefan},
-  title = {NYC Taxi Zone Recommendation: Two-Step Finite-Horizon Planning
-           for Driver Guidance},
-  year = {2026},
-  url = {https://github.com/caizefan34/nyc-taxi-zone-recommendation},
-  version = {1.0.0},
-  note = {Shanghai Jiao Tong University, Programming Comprehensive Practice}
-}
+```bash
+python -m pytest tests -q
+ruff check src tests scripts
 ```
 
----
+Tests with the full local dataset cover strategy integration. Small synthetic fixtures cover raw temporal splitting, leakage checks, counterfactual estimators, statistical metrics, MDP Bellman transitions, and Q-learning reproducibility.
 
-## 📄 License
+## Simulator boundary
 
-This project is **MIT Licensed**  --  see [LICENSE](LICENSE).
+The rollout is useful for controlled strategy comparison, but it has material limitations:
 
----
+- one driver;
+- immutable historical demand cells;
+- no demand depletion;
+- no competing-driver supply;
+- no congestion or airport queues;
+- no supply-demand feedback or equilibrium;
+- fixed 60%/30%/10% compliance over the ranked Top-3.
 
-## 🙏 Acknowledgments
+Consequently, rollout improvements must not be presented as production revenue lift.
 
-- **NYC Taxi and Limousine Commission** for open trip data
-- **Shanghai Jiao Tong University** for course support
-- All contributors and stargazers ⭐
+## Counterfactual and offline-RL boundary
 
----
+NYC TLC trips do not contain logged reposition recommendations, logging-policy propensities, or driver acceptance. Valid IPS, SNIPS, doubly robust, CQL, or BCQ evaluation of a reposition policy is therefore not identifiable from these records alone.
 
-<div align="center">
-  <p>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues">Request Feature</a>
-    ·
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions">Discussion</a>
-  </p>
-  <p>
-    <strong>⭐ Star this repo if you find it useful! ⭐</strong>
-  </p>
-</div>
+The repository provides tested IPS/SNIPS/DR formulas for future data that contain the required logging fields. The Q-learning extension is explicitly described as online Q-learning inside an estimated simulator, not offline RL.
+
+## Exposure and market impact
+
+On the public static queries, the two-step strategy has 70.33% weighted airport exposure, including about 55.0% at JFK. Its exposure Gini is 0.982 and effective exposure count is 5.51 zones. These values indicate substantial saturation risk that is absent from the single-driver simulator.
+
+See the full [research-grade audit](outputs/research_grade_audit.md) and [robustness plot](outputs/audit_robustness.png).
+
+## Repository structure
+
+```text
+src/
+  1_data_clean/                 raw split, cleaning, statistics
+  2_recommendation_algorithm/  baselines, two-step, finite horizons, parameter selection
+  3_extension_task/            temporal analysis, sensitivity, simulator Q-learning
+  eval/                         static diagnostic and rollout
+  mdp/                          corrected model-based value iteration
+  audit/                        leakage, OPE formulas, statistics, fairness
+scripts/                        reproducible research experiment runners
+tests/                          unit and data-backed integration tests
+outputs/                        checked-in report and reference metric snapshot
+```
+
+## Citation and status
+
+This is an educational/research prototype, not a production dispatch system. If citing it, cite the repository commit used and distinguish static diagnostic metrics from simulator outcomes.
+
+## License
+
+MIT License. See [LICENSE](LICENSE).

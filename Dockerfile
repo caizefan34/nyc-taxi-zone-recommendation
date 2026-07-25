@@ -8,7 +8,6 @@ WORKDIR /app
 
 COPY requirements.txt pyproject.toml ./
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir ".[dev]"
 
 FROM python:3.12-slim
 
@@ -25,5 +24,4 @@ COPY . .
 
 ENV PYTHONPATH=/app
 
-ENTRYPOINT ["make"]
-CMD ["help"]
+CMD ["python", "examples/basic_usage.py"]

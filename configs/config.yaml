@@ -66,8 +66,9 @@ qlearning:
 
 # --- Parameter Selection Grid ---
 parameter_grid:
-  lambda_values: [0.5, 1.0, 2.0]
+  pickup_half_saturation_values: [120.0, 240.0, 360.0]
   gamma_values: [0.25, 0.5, 0.75]
+  candidate_pool_sizes: [50, 100]
 
 # --- Logging ---
 logging:

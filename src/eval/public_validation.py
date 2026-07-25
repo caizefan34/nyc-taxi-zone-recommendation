@@ -17,8 +17,8 @@ import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from eval.offline_core import ZONE_COUNT, Query, validate_top3
-from eval.validation_core import read_validation_answers
+from src.eval.offline_core import ZONE_COUNT, Query, validate_top3
+from src.eval.validation_core import read_validation_answers
 
 PREDICTION_COLUMNS = ("query_id", "rank_1", "rank_2", "rank_3", "latency_ns")
 Strategy = Callable[[datetime, int], Sequence[int]]

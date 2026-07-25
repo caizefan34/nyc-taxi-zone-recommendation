@@ -1,93 +1,58 @@
-﻿# Comprehensive Evaluation Report
+# Reproducible Evaluation Report
 
-> **Generated**: {0}  
-> **Experiment ID**: nyc-taxi-zone-recommendation-v1.0.0
+> Generated from machine-readable artifacts at `2026-07-25T13:42:26.041351+00:00`.
+> Static metrics measure agreement with the public two-step reference objective; they are not counterfactual revenue estimates.
 
----
+## Static diagnostic
 
-## 1. Static Metrics on Public Validation Set (3,360 queries)
+| Strategy | NDCG@3 | Hit@3 | Reference utility@1 | Mean latency (ms) |
+|---|---:|---:|---:|---:|
+| Baseline 1 | 0.7846 | 0.5842 | 19.4299 | 0.108 |
+| Baseline 2 | 0.9024 | 0.8804 | 25.0589 | 0.317 |
+| Two-step | 0.9565 | 0.9714 | 27.5855 | 0.113 |
 
-| Metric | Baseline 1 | Baseline 2 | Two-Step Planning (Ours) |
-|:-------|:---------:|:---------:|:------------------------:|
-| NDCG@3 | 0.9950 | 0.9972 | **0.9978** |
-| Hit@3 | 0.9970 | 0.9984 | **0.9988** |
-| Top-1 Reference Utility | 26.10 | 27.42 | **27.75** |
-| Avg Recommend Time (ms) | **0.051** | 0.072 | 0.24 |
+## Paired 100-seed rollout
 
-## 2. Simulation Rollout Results (100 runs, 7-day market)
+| Strategy | Mean daily fare |
+|---|---:|
+| Baseline 1 | $431.21 |
+| Baseline 2 | $548.77 |
+| Two-step | $570.61 |
 
-| Metric | Baseline 1 | Baseline 2 | Two-Step Planning |
-|:-------|:---------:|:---------:|:----------------:|
-| Avg Daily Fare | $431.4 | $549.0 | **$569.8** |
-| Avg Daily Pickups | 133.9 | 107.0 | 81.2 |
-| Avg Idle Trips | 164.0 | 130.7 | 133.1 |
-| Avg Idle Minutes | 2,911 | 2,578 | 2,814 |
+| Comparison | Mean difference | Bootstrap 95% CI | Paired t p | Cohen dz |
+|---|---:|---:|---:|---:|
+| Two-step - Baseline 1 | $139.40 | [$123.31, $153.96] | 1.07e-32 | 1.784 |
+| Two-step - Baseline 2 | $21.84 | [$5.00, $39.53] | 0.0151 | 0.247 |
+| Baseline 2 - Baseline 1 | $117.57 | [$100.29, $133.08] | 1.02e-24 | 1.376 |
 
-## 3. Relative Gain Analysis
+## Horizon comparison
 
-| Comparison | Relative Fare Gain |
-|:-----------|:-----------------:|
-| Baseline 2 vs Baseline 1 | +27.3% |
-| Two-Step vs Baseline 1 | **+32.1%** |
-| Two-Step vs Baseline 2 | **+3.8%** |
+| Horizon | NDCG@3 | Hit@3 | Coverage | Mean daily fare | Query latency (ms) |
+|---|---:|---:|---:|---:|---:|
+| 1 | 0.9582 | 0.9783 | 13.69% | $569.78 | 0.031 |
+| 2 | 0.9565 | 0.9714 | 14.07% | $570.61 | 0.032 |
+| 3 | 0.9549 | 0.9759 | 14.45% | $573.47 | 0.031 |
+| 5 | 0.9525 | 0.9741 | 14.45% | $575.97 | 0.032 |
+| adaptive | 0.9559 | 0.9735 | 14.07% | $573.31 | 0.068 |
 
-## 4. Regret Analysis (vs Optimal)
+## Static parameter grid
 
-| Strategy | Regret |
-|:---------|:-----:|
-| Baseline 1 | $138.4/day |
-| Baseline 2 | $20.8/day |
-| **Two-Step Planning** | **$0.0/day (reference)** |
+The best public-reference configuration is shown for diagnostics only; the same public labels must not be treated as an untouched test set.
 
-## 5. Recommendation Coverage
+| Half-saturation | Gamma | Candidate pool | NDCG@3 | Hit@3 |
+|---:|---:|---:|---:|---:|
+| 240 | 0.25 | 50 | 0.9577 | 0.9762 |
 
-| Strategy | Unique Zones | Coverage |
-|:---------|:-----------:|:--------:|
-| Baseline 1 | 45 / 263 | 17.1% |
-| Baseline 2 | 128 / 263 | 48.7% |
-| **Two-Step Planning** | **156 / 263** | **59.3%** |
+## Exposure concentration
 
-## 6. Recommendation Diversity
+| Strategy | Coverage | Gini | Effective zones | Airport exposure | Premium-fare exposure |
+|---|---:|---:|---:|---:|---:|
+| Baseline 1 | 7.98% | 0.974 | 9.22 | 27.74% | 24.94% |
+| Baseline 2 | 14.07% | 0.970 | 9.21 | 50.62% | 43.65% |
+| Two-step | 14.07% | 0.982 | 5.51 | 70.33% | 54.97% |
 
-| Strategy | Avg Geo-Distance Between Top-3 |
-|:---------|:-----------------------------:|
-| Baseline 1 | 3.2 km |
-| Baseline 2 | 5.8 km |
-| **Two-Step Planning** | **6.7 km** |
+## Interpretation boundary
 
-## 7. Parameter Sensitivity (Grid Search)
+The rollout is a fixed single-driver historical-market simulator. It does not model competing drivers, demand depletion, congestion, supply-demand feedback, or equilibrium. Its confidence intervals quantify Monte Carlo seed variation only.
 
-| $\lambda$ | $\gamma$ | NDCG@3 | Hit@3 | Latency |
-|:---------:|:--------:|:------:|:-----:|:-------:|
-| 0.5 | 0.25 | 0.9976 | 0.9987 | 0.23 ms |
-| 0.5 | 0.50 | 0.9977 | 0.9988 | 0.24 ms |
-| 1.0 | 0.25 | 0.9977 | 0.9988 | 0.23 ms |
-| **1.0** | **0.50** | **0.9978** | **0.9988** | **0.24 ms** |
-| 2.0 | 0.50 | 0.9976 | 0.9987 | 0.24 ms |
-
-## 8. Data Cleaning Impact
-
-| Cleaning Rule | Train Removed | Validation Removed |
-|:--------------|:------------:|:-----------------:|
-| Date boundaries | 13 | 543 |
-| Invalid zone IDs | 43,762 | 13,402 |
-| Fare outliers ($\pm 3\sigma$, capped \$0–\$200) | 18,710 | 5,509 |
-| Duration outliers ($\pm 3\sigma$, capped 1–240 min) | 21,412 | 6,069 |
-| Distance outliers ($\pm 3\sigma$, capped 0.1–100 mi) | 17,794 | 5,523 |
-| Speed outliers (>80 mph) | 111 | 23 |
-| Duplicate rows | 63 | 15 |
-
-Data cleaning removes **~4% of records** but improves simulation revenue by **5.2%**.
-
-## 9. Extension Results
-
-### Q-Learning
-| Metric | Value |
-|:-------|:-----:|
-| Q-table size | 22,278 / ~88,000 |
-| Evaluation reward (200 eps) | 190.9 |
-| Baseline 2 comparison | 1,184.2 |
-
-### Interactive Analysis
-- Generates 4 analysis charts (demand by time/weekday, fare distribution, top zones)
-- CLI interface for real-time recommendations with human-readable zone names
+IPS, SNIPS, and doubly robust evaluation are not identifiable from the TLC trip table because logged recommendation actions and behavior propensities are absent.

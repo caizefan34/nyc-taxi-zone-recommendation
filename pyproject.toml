@@ -38,6 +38,14 @@ dev = [
     "ruff>=0.4.0",
     "black>=24.0",
 ]
+benchmark = [
+    "scikit-learn>=1.4",
+]
+docs = [
+    "sphinx>=7.0",
+    "sphinx-rtd-theme>=2.0",
+    "myst-parser>=3.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

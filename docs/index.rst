@@ -1,19 +1,16 @@
 ﻿NYC Taxi Zone Recommendation
 =============================
 
-Two-step finite-horizon planning for taxi driver zone recommendations using
-NYC TLC Yellow Taxi trip data.
+Finite-horizon planning for taxi zone recommendations with reproducible,
+scientifically bounded evaluation.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents
 
-   self
-   ../README.md
-   ../docs/problem_statement
-   ../docs/methodology
-   ../docs/ablation_study
-   ../outputs/evaluation_report
+   problem_statement
+   methodology
+   ablation_study
 
 .. toctree::
    :maxdepth: 2

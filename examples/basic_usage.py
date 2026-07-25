@@ -99,26 +99,25 @@ def main() -> None:
     strategies = [
         ("Baseline 1",    "Hot Zone Ranking",            "src/2_recommendation_algorithm/baseline_1.py"),
         ("Baseline 2",    "Single-Step Utility",         "src/2_recommendation_algorithm/baseline_2_2.py"),
-        ("Ours",          "Two-Step Planning",           "src/2_recommendation_algorithm/improved_strategy.py"),
-        ("MDP",           "Value Iteration (offline)",   "src/4_mdp/mdp_solver.py"),
+        ("Two-Step",      "Truncated Lookahead",         "src/2_recommendation_algorithm/improved_strategy.py"),
+        ("MDP",           "Model-Based Value Iteration", "src/mdp/model_based.py"),
     ]
     for name, desc, path in strategies:
         full_path = project_root / path
-        exists = "✓" if full_path.exists() else "✗"
-        print(f"  [{exists}] {name:15s} — {desc:45s}  {path}")
+        exists = "OK" if full_path.exists() else "MISSING"
+        print(f"  [{exists:7s}] {name:15s} - {desc:45s}  {path}")
 
     # ------------------------------------------------------------------ #
     # 5. Performance overview
     # ------------------------------------------------------------------ #
-    print_header("Published Performance")
-    print(f"  {'Metric':<35s} {'Value':<12s} {'Improvement':<12s}")
+    print_header("Reproduced Performance")
+    print(f"  {'Metric':<35s} {'Value':<12s} {'Context':<20s}")
     print(f"  {'-'*35} {'-'*12} {'-'*12}")
-    print(f"  {'NDCG@3 (static)':<35s} {'0.9978':<12s} {'+0.0028 vs B1':<12s}")
-    print(f"  {'Hit@3 (static)':<35s} {'0.9988':<12s} {'+0.0018 vs B1':<12s}")
-    print(f"  {'Avg Daily Fare (rollout)':<35s} {'$569.80':<12s} {'+$138.4 vs B1':<12s}")
-    print(f"  {'Recommendation Latency':<35s} {'0.24 ms':<12s} {'< 1 ms':<12s}")
-    print(f"  {'Zone Coverage':<35s} {'59.3%':<12s} {'+42.2% vs B1':<12s}")
-    print(f"  {'Geo-Diversity (Top-3)':<35s} {'6.7 km':<12s} {'+3.5 km vs B1':<12s}")
+    print(f"  {'NDCG@3 (static)':<35s} {'0.9565':<12s} {'reference objective':<20s}")
+    print(f"  {'Hit@3 (static)':<35s} {'0.9714':<12s} {'reference objective':<20s}")
+    print(f"  {'Avg Daily Fare (rollout)':<35s} {'$570.61':<12s} {'single-driver simulator':<20s}")
+    print(f"  {'Two-Step vs Single-Step':<35s} {'+$21.84':<12s} {'95% CI $5.00-$39.53':<20s}")
+    print(f"  {'Airport Exposure':<35s} {'70.33%':<12s} {'saturation risk':<20s}")
 
     # ------------------------------------------------------------------ #
     # 6. Summary
@@ -128,12 +127,12 @@ def main() -> None:
     print("     https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page")
     print("  2. Place in data/raw/")
     print("  3. Run:")
-    print("     python src/1_data_clean/clean.py")
-    print("     python src/2_recommendation_algorithm/baseline_2_1.py")
+    print("     python -m scripts.run_data_pipeline --force-split")
+    print("     python -m scripts.build_travel_time_matrix")
     print("     python -m pytest tests/ -v")
     print("  4. Evaluate:")
-    print("     python src/eval/public_validation.py ...")
-    print("     python src/eval/validation_rollout.py ...")
+    print("     python -m src.eval.public_validation ...")
+    print("     python -m src.eval.validation_rollout ...")
     print()
     print("  See README.md for detailed instructions.")
     print()

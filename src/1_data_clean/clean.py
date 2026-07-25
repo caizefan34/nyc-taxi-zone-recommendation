@@ -1,6 +1,7 @@
 """Data cleaning pipeline for NYC taxi trip data."""
 from __future__ import annotations
 
+import argparse
 import csv
 from datetime import datetime
 from pathlib import Path
@@ -124,23 +125,53 @@ def build_statistics(train_df, output_path):
     logger.info("Statistics: %d rows written", len(stats))
 
 
-def main():
-    """Run the full data cleaning pipeline."""
-    data_dir = Path(__file__).resolve().parents[2] / "data/processed"
-    outputs_dir = Path(__file__).resolve().parents[2] / "outputs"
+def split_raw_data(raw_path: Path, train_path: Path, validation_path: Path) -> tuple[int, int]:
+    """Create chronological uncleaned inputs from the official monthly parquet."""
+    logger.info("Splitting raw data from %s", raw_path)
+    frame = _load(raw_path)
+    pickup = pd.to_datetime(frame["tpep_pickup_datetime"], errors="coerce")
+    train_mask = (pickup >= TRAIN_BOUNDARY[0]) & (pickup < TRAIN_BOUNDARY[1])
+    validation_mask = (pickup >= VAL_BOUNDARY[0]) & (pickup < VAL_BOUNDARY[1])
+    train = frame.loc[train_mask].copy()
+    validation = frame.loc[validation_mask].copy()
+    _save(train, train_path)
+    _save(validation, validation_path)
+    logger.info("Raw split: train=%d validation=%d", len(train), len(validation))
+    return len(train), len(validation)
+
+
+def run_pipeline(
+    *,
+    raw_path: Path | None = None,
+    processed_dir: Path | None = None,
+    force_split: bool = False,
+) -> None:
+    """Run raw splitting, cleaning, and training-statistic generation."""
+    project_root = Path(__file__).resolve().parents[2]
+    data_dir = processed_dir or project_root / "data/processed"
+    raw_path = raw_path or project_root / get_config(
+        "paths.raw_data",
+        "data/raw/yellow_tripdata_2023-01.parquet",
+    )
+    train_uncleaned = data_dir / "train_uncleaned.parquet"
+    validation_uncleaned = data_dir / "validation_uncleaned.parquet"
+    if force_split or not train_uncleaned.exists() or not validation_uncleaned.exists():
+        split_raw_data(raw_path, train_uncleaned, validation_uncleaned)
+
+    outputs_dir = project_root / "outputs"
     outputs_dir.mkdir(parents=True, exist_ok=True)
     audit = []
 
     logger.info("=== Cleaning training data ===")
     train_df = clean(
-        data_dir / "train_uncleaned.parquet",
+        train_uncleaned,
         data_dir / "train_cleaned.parquet",
         TRAIN_BOUNDARY[0], TRAIN_BOUNDARY[1], audit, "train"
     )
 
     logger.info("=== Cleaning validation data ===")
     val_df = clean(
-        data_dir / "validation_uncleaned.parquet",
+        validation_uncleaned,
         data_dir / "validation_cleaned.parquet",
         VAL_BOUNDARY[0], VAL_BOUNDARY[1], audit, "validation"
     )
@@ -155,6 +186,20 @@ def main():
         writer.writerows(audit)
     logger.info("Train: %d rows after cleaning", len(train_df))
     logger.info("Validation: %d rows after cleaning", len(val_df))
+
+
+def main() -> None:
+    """Run the full data pipeline from an official monthly parquet."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--raw", type=Path)
+    parser.add_argument("--processed-dir", type=Path)
+    parser.add_argument("--force-split", action="store_true")
+    args = parser.parse_args()
+    run_pipeline(
+        raw_path=args.raw,
+        processed_dir=args.processed_dir,
+        force_split=args.force_split,
+    )
 
 
 if __name__ == "__main__":
