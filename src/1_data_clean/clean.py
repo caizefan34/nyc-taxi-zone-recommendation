@@ -4,7 +4,6 @@ from __future__ import annotations
 import csv
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 import pandas as pd
 import pyarrow.parquet as pq
@@ -61,7 +60,12 @@ def clean(input_path, output_path, boundary_start, boundary_end, audit, label):
     audit.append({"rule": f"before_cleaning_{label}", "removed": 0, "remaining": before})
 
     df = _add_features(df)
-    mask = ((df["tpep_pickup_datetime"] >= boundary_start) & (df["tpep_pickup_datetime"] < boundary_end) & (df["tpep_dropoff_datetime"] <= boundary_end) & (df["tpep_pickup_datetime"] < df["tpep_dropoff_datetime"]))
+    mask = (
+        (df["tpep_pickup_datetime"] >= boundary_start)
+        & (df["tpep_pickup_datetime"] < boundary_end)
+        & (df["tpep_dropoff_datetime"] <= boundary_end)
+        & (df["tpep_pickup_datetime"] < df["tpep_dropoff_datetime"])
+    )
     removed = len(df) - mask.sum()
     df = df[mask].copy()
     audit.append({"rule": f"date_boundary_{label}", "removed": int(removed), "remaining": len(df)})
@@ -106,7 +110,13 @@ def clean(input_path, output_path, boundary_start, boundary_end, audit, label):
 
 def build_statistics(train_df, output_path):
     """Build zone-time statistics from cleaned training data."""
-    stats = (train_df.groupby(["PULocationID", "weekday", "time_slot"]).agg(pickup_count=("fare_amount", "count"), mean_fare_amount=("fare_amount", "mean")).reset_index().rename(columns={"PULocationID": "pickup_location_id"}))
+    stats = (
+        train_df.groupby(["PULocationID", "weekday", "time_slot"])
+        .agg(pickup_count=("fare_amount", "count"),
+             mean_fare_amount=("fare_amount", "mean"))
+        .reset_index()
+        .rename(columns={"PULocationID": "pickup_location_id"})
+    )
     stats["pickup_count"] = stats["pickup_count"].astype(int)
     stats["mean_fare_amount"] = stats["mean_fare_amount"].round(6)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -122,10 +132,18 @@ def main():
     audit = []
 
     logger.info("=== Cleaning training data ===")
-    train_df = clean(data_dir / "train_uncleaned.parquet", data_dir / "train_cleaned.parquet", TRAIN_BOUNDARY[0], TRAIN_BOUNDARY[1], audit, "train")
+    train_df = clean(
+        data_dir / "train_uncleaned.parquet",
+        data_dir / "train_cleaned.parquet",
+        TRAIN_BOUNDARY[0], TRAIN_BOUNDARY[1], audit, "train"
+    )
 
     logger.info("=== Cleaning validation data ===")
-    val_df = clean(data_dir / "validation_uncleaned.parquet", data_dir / "validation_cleaned.parquet", VAL_BOUNDARY[0], VAL_BOUNDARY[1], audit, "validation")
+    val_df = clean(
+        data_dir / "validation_uncleaned.parquet",
+        data_dir / "validation_cleaned.parquet",
+        VAL_BOUNDARY[0], VAL_BOUNDARY[1], audit, "validation"
+    )
 
     logger.info("=== Building zone-time statistics ===")
     build_statistics(train_df, data_dir / "zone_time_statistics.parquet")

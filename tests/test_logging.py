@@ -1,8 +1,9 @@
 ﻿"""Tests for the logging utility module."""
 from __future__ import annotations
+
 import io
 import logging
-import pytest
+
 from src.common.logging_utils import get_logger, setup_logging
 
 

@@ -3,15 +3,14 @@
 from __future__ import annotations
 
 import csv
+import random
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-import random
 from typing import Sequence
 
 import numpy as np
 import pyarrow.parquet as pq
-
 
 ZONE_COUNT = 263
 SLOT_COUNT = 48

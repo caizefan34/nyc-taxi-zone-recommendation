@@ -2,21 +2,20 @@
 
 from __future__ import annotations
 
+import csv
+import math
+import random
+import statistics
 from array import array
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
-import csv
-import math
 from pathlib import Path
-import random
-import statistics
 from time import perf_counter_ns
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 import pyarrow.parquet as pq
 
 from eval.offline_core import validate_top3
-
 
 ZONE_COUNT = 263
 SLOT_MINUTES = 30

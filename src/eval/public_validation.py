@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import argparse
-from datetime import datetime
 import importlib.util
 import json
-from pathlib import Path
 import sys
-from time import perf_counter_ns
 import tracemalloc
+from datetime import datetime
+from pathlib import Path
+from time import perf_counter_ns
 from types import ModuleType
 from typing import Callable, Mapping, Sequence
 
@@ -17,9 +17,8 @@ import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from eval.offline_core import Query, ZONE_COUNT, validate_top3
+from eval.offline_core import ZONE_COUNT, Query, validate_top3
 from eval.validation_core import read_validation_answers
-
 
 PREDICTION_COLUMNS = ("query_id", "rank_1", "rank_2", "rank_3", "latency_ns")
 Strategy = Callable[[datetime, int], Sequence[int]]

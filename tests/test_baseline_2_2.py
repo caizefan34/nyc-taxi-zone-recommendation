@@ -1,7 +1,7 @@
 ﻿"""Tests for Baseline 2 strategy."""
 import importlib.util
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 

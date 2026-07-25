@@ -1,6 +1,7 @@
 ﻿"""Tests for evaluation core functions (mock-based)."""
-import pytest
 from datetime import datetime
+
+import pytest
 
 
 def validate_top3(prediction):

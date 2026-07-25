@@ -1,0 +1,12 @@
+{
+  "Random Forest": {
+    "mse": 0.2032,
+    "r2": 0.9109,
+    "train_time_s": 0.25
+  },
+  "Gradient Boosting": {
+    "mse": 0.2285,
+    "r2": 0.8998,
+    "train_time_s": 1.32
+  }
+}

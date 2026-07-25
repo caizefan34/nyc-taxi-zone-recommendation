@@ -1,10 +1,12 @@
 ﻿"""Unified data loading utilities."""
 from __future__ import annotations
+
 import csv
 import math
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
+
 import pyarrow.parquet as pq
 
 from src.common.config import get_config
@@ -20,7 +22,7 @@ class DataLoader:
         zone_count: Number of taxi zones (default 263).
         slot_count: Number of time slots per day (default 48).
     """
-    
+
     def __init__(self, project_root: str | Path | None = None) -> None:
         """Initialize DataLoader.
         
@@ -31,11 +33,11 @@ class DataLoader:
             self.project_root = Path(__file__).resolve().parents[2]
         else:
             self.project_root = Path(project_root)
-        
+
         self.zone_count: int = get_config("data.zone_count", 263)
         self.slot_count: int = get_config("data.slot_count", 48)
         self.week_slot_count: int = 7 * self.slot_count
-    
+
     def load_zone_statistics(
         self,
         statistics_path: str | Path | None = None,
@@ -52,10 +54,10 @@ class DataLoader:
         """
         if statistics_path is None:
             statistics_path = self.project_root / "data/processed/zone_time_statistics.parquet"
-        
+
         demand = [[[0.0] * self.zone_count for _ in range(self.slot_count)] for _ in range(7)]
         mean_fare = [[[0.0] * self.zone_count for _ in range(self.slot_count)] for _ in range(7)]
-        
+
         columns = [
             "pickup_location_id",
             "weekday",
@@ -63,24 +65,24 @@ class DataLoader:
             "pickup_count",
             "mean_fare_amount",
         ]
-        
+
         for row in pq.read_table(statistics_path, columns=columns).to_pylist():
             location_id = int(row["pickup_location_id"])
             weekday = int(row["weekday"])
             time_slot = int(row["time_slot"])
-            
+
             if not 1 <= location_id <= self.zone_count:
                 continue
-            
+
             index = location_id - 1
             demand[weekday][time_slot][index] = float(row["pickup_count"])
-            
+
             raw_fare = row["mean_fare_amount"]
             if raw_fare is not None and math.isfinite(float(raw_fare)):
                 mean_fare[weekday][time_slot][index] = max(0.0, float(raw_fare))
-        
+
         return demand, mean_fare
-    
+
     def load_travel_time_matrix(
         self,
         travel_time_path: str | Path | None = None,
@@ -99,31 +101,31 @@ class DataLoader:
         """
         if travel_time_path is None:
             travel_time_path = self.project_root / "data/processed/travel_time_matrix_dijkstra.csv"
-        
+
         with Path(travel_time_path).open("r", encoding="utf-8-sig", newline="") as handle:
             reader = csv.reader(handle)
             header = next(reader)
-            
+
             if len(header) != self.zone_count + 1:
                 raise ValueError(
                     f"Travel-time matrix must have {self.zone_count} destination columns, "
                     f"got {len(header) - 1}"
                 )
-            
+
             matrix = []
             for expected_origin, row in enumerate(reader, start=1):
                 if int(row[0]) != expected_origin or len(row) != self.zone_count + 1:
                     raise ValueError(f"Invalid travel-time matrix row {expected_origin}")
                 matrix.append([float(value) for value in row[1:]])
-        
+
         if len(matrix) != self.zone_count:
             raise ValueError(
                 f"Travel-time matrix must have {self.zone_count} origin rows, "
                 f"got {len(matrix)}"
             )
-        
+
         return matrix
-    
+
     def load_train_data(
         self,
         train_path: str | Path | None = None,
@@ -141,9 +143,9 @@ class DataLoader:
         """
         if train_path is None:
             train_path = self.project_root / "data/processed/train_cleaned.parquet"
-        
+
         return pq.read_table(train_path, columns=columns).to_pylist()
-    
+
     @staticmethod
     def next_half_hour(value: datetime) -> datetime:
         """Round up to the next half-hour boundary.
@@ -166,7 +168,7 @@ class DataLoader:
             microsecond=0,
         )
         return slot_start + timedelta(minutes=30)
-    
+
     def datetime_to_state(self, dt: datetime) -> int:
         """Convert datetime to state index.
         

@@ -1,5 +1,4 @@
 """Tests for parameter selection module."""
-import pytest
 from src.common.config import load_config
 
 

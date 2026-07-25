@@ -1,5 +1,6 @@
 ﻿"""Logging utilities with standardized formatting."""
 from __future__ import annotations
+
 import logging
 import sys
 from typing import Optional
@@ -26,37 +27,37 @@ def setup_logging(
         2026-07-25 10:00:00 INFO Processing started
     """
     global _LOGGING_INITIALIZED
-    
+
     if _LOGGING_INITIALIZED:
         return
-    
+
     if format_string is None:
         format_string = "%(asctime)s %(levelname)s %(message)s"
-    
+
     date_format = "%Y-%m-%d %H:%M:%S"
-    
+
     handlers: list[logging.Handler] = []
-    
+
     # Console handler
     console_handler = logging.StreamHandler(sys.stderr)
     console_handler.setLevel(level)
     console_handler.setFormatter(logging.Formatter(format_string, date_format))
     handlers.append(console_handler)
-    
+
     # File handler (optional)
     if log_file is not None:
         file_handler = logging.FileHandler(log_file, encoding="utf-8")
         file_handler.setLevel(level)
         file_handler.setFormatter(logging.Formatter(format_string, date_format))
         handlers.append(file_handler)
-    
+
     # Configure root logger
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
-    
+
     for handler in handlers:
         root_logger.addHandler(handler)
-    
+
     _LOGGING_INITIALIZED = True
 
 
@@ -75,5 +76,5 @@ def get_logger(name: str) -> logging.Logger:
     """
     if not _LOGGING_INITIALIZED:
         setup_logging()
-    
+
     return logging.getLogger(name)

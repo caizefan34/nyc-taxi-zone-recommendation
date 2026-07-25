@@ -1,7 +1,9 @@
 ﻿"""Configuration management with YAML support."""
 from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
+
 import yaml
 
 _CONFIG_CACHE: dict[str, Any] | None = None
@@ -22,7 +24,7 @@ def load_config(config_path: str | Path | None = None) -> dict[str, Any]:
         yaml.YAMLError: If config file is invalid YAML.
     """
     global _CONFIG_CACHE, _CONFIG_PATH
-    
+
     if config_path is not None:
         config_path = Path(config_path)
     elif _CONFIG_PATH is not None:
@@ -31,13 +33,13 @@ def load_config(config_path: str | Path | None = None) -> dict[str, Any]:
         # Find config file relative to project root
         project_root = Path(__file__).resolve().parents[2]
         config_path = project_root / "configs" / "config.yaml"
-    
+
     if not config_path.exists():
         raise FileNotFoundError(f"Config file not found: {config_path}")
-    
+
     with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
-    
+
     _CONFIG_CACHE = config
     _CONFIG_PATH = config_path
     return config
@@ -60,19 +62,19 @@ def get_config(key: str, default: Any = None) -> Any:
         263
     """
     global _CONFIG_CACHE
-    
+
     if _CONFIG_CACHE is None:
         load_config()
-    
+
     keys = key.split(".")
     value = _CONFIG_CACHE
-    
+
     for k in keys:
         if isinstance(value, dict) and k in value:
             value = value[k]
         else:
             return default
-    
+
     return value
 
 
@@ -87,8 +89,8 @@ def reload_config(config_path: str | Path | None = None) -> dict[str, Any]:
     """
     global _CONFIG_CACHE, _CONFIG_PATH
     _CONFIG_CACHE = None
-    
+
     if config_path is not None:
         _CONFIG_PATH = Path(config_path)
-    
+
     return load_config()

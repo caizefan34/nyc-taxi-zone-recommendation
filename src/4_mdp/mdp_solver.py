@@ -9,11 +9,12 @@ This module provides an offline precomputation approach:
 - Compatible with the existing recommend() interface
 """
 from __future__ import annotations
+
 import math
 from datetime import datetime
 
-from src.common.data_loader import DataLoader
 from src.common.config import get_config
+from src.common.data_loader import DataLoader
 from src.common.logging_utils import get_logger
 
 logger = get_logger(__name__)
@@ -94,7 +95,10 @@ class MDPValueIteration:
                             arr_state = self._compute_arrival_state(origin_idx, dest_idx, state)
                             if arr_state < 0:
                                 continue
-                            reward = self._compute_reward(origin_idx, dest_idx, arr_state // SLOT_COUNT, arr_state % SLOT_COUNT)
+                            reward = self._compute_reward(
+                            origin_idx, dest_idx,
+                            arr_state // SLOT_COUNT, arr_state % SLOT_COUNT
+                        )
                             arr_wd = arr_state // SLOT_COUNT
                             arr_sl = arr_state % SLOT_COUNT
                             future = self.gamma * V[arr_wd][arr_sl][dest_idx]

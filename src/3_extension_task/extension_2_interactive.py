@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 """Extension 2: Interactive Recommendation System with Data Analysis."""
 from __future__ import annotations
-import csv, os
+
+import csv
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
+
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,7 +57,11 @@ def baseline_2_recommend(dt, loc, demand, mf, tt):
     target = _next_half_hour(dt)
     slot = target.hour * 2 + target.minute // 30; wd = target.weekday()
     times = tt[loc - 1]
-    scores = [demand[wd][slot][j] * mf[wd][slot][j] / (times[j] + 1.0) if np.isfinite(times[j]) else 0.0 for j in range(ZONE_COUNT)]
+    scores = [
+        demand[wd][slot][j] * mf[wd][slot][j] / (times[j] + 1.0)
+        if np.isfinite(times[j]) else 0.0
+        for j in range(ZONE_COUNT)
+    ]
     ordered = sorted(range(1, ZONE_COUNT + 1), key=lambda z: (-scores[z - 1], z))
     return ordered[:3]
 
@@ -61,9 +69,21 @@ def improved_recommend(dt, loc, demand, mf, tt):
     ZC=ZONE_COUNT; SC=SLOT_COUNT; WSC=7*SC; origin=loc-1
     target=_next_half_hour(dt); slot=target.hour*2+target.minute//30; wd=target.weekday(); state=wd*SC+slot
     times=tt[origin]
-    base=[demand[wd][slot][j]*mf[wd][slot][j]/(times[j]+1.0) if np.isfinite(times[j]) and times[j]>=0 else 0.0 for j in range(ZC)]
+    base=[
+        demand[wd][slot][j] * mf[wd][slot][j] / (times[j] + 1.0)
+        if np.isfinite(times[j]) and times[j] >= 0 else 0.0
+        for j in range(zc)
+    ]
     ordered=sorted(range(ZC), key=lambda z: (-base[z], z)); candidates=set(ordered[:50]); candidates.add(origin)
-    arr_slots=[state if j==origin else ((state+int(np.floor(times[j]/30.0+0.5)))%WSC if np.isfinite(times[j]) and times[j]>=0 else -1) for j in range(ZC)]
+    arr_slots=[
+        state
+        if j == origin
+        else (
+            (state + int(np.floor(times[j] / 30.0 + 0.5))) % wsc
+            if np.isfinite(times[j]) and times[j] >= 0 else -1
+        )
+        for j in range(zc)
+    ]
     two_step=list(base)
     for z in candidates:
         if arr_slots[z]<0: continue
@@ -124,7 +144,13 @@ def _plot_top_zones(demand, output_dir, zone_info):
     print("  [OK] chart_top_zones.png")
 
 def _plot_fare_distribution(demand, mf, output_dir):
-    fares = [mf[wd][ts][z] for wd in range(7) for ts in range(SLOT_COUNT) for z in range(ZONE_COUNT) if demand[wd][ts][z]>0 and mf[wd][ts][z]>0]
+    fares = [
+        mf[wd][ts][z]
+        for wd in range(7)
+        for ts in range(SLOT_COUNT)
+        for z in range(ZONE_COUNT)
+        if demand[wd][ts][z] > 0 and mf[wd][ts][z] > 0
+    ]
     fig, ax = plt.subplots(figsize=(8, 4))
     ax.hist(fares, bins=50, color="#9b59b6", alpha=0.7, edgecolor="white")
     ax.set_xlabel("Mean Fare Amount ($)")
@@ -180,7 +206,7 @@ def _interactive_loop(demand, mf, tt, zinfo):
             if not 1 <= loc <= ZONE_COUNT: print("  [ERROR] Location ID must be 1-263"); continue
             print()
             slot = dt.hour * 2 + dt.minute // 30
-            print(f"  Current: {dt.strftime("%Y-%m-%d %H:%M")} (WD={dt.weekday()}, Slot={slot})")
+            print(f"  Current: {dt.strftime('%Y-%m-%d %H:%M')} (WD={dt.weekday()}, Slot={slot})")
             zn = zinfo.get(loc, {}).get("zone", "Unknown")
             print(f"  Location: Zone {loc} ({zn})")
             top3_b2 = baseline_2_recommend(dt, loc, demand, mf, tt)

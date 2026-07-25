@@ -1,7 +1,7 @@
 ﻿"""Tests for core algorithm math (stateless logic only)."""
 from __future__ import annotations
+
 import math
-import pytest
 from datetime import datetime
 
 
@@ -11,7 +11,7 @@ class TestDataLoaderHelpers:
     def test_next_half_hour_regular(self):
         """next_half_hour should round up to the next :00 or :30."""
         from src.common.data_loader import DataLoader
-        
+
         dt = datetime(2023, 1, 15, 8, 15)
         result = DataLoader.next_half_hour(dt)
         assert result.hour == 8
@@ -21,7 +21,7 @@ class TestDataLoaderHelpers:
     def test_next_half_hour_exact(self):
         """next_half_hour of :30 should go to next hour."""
         from src.common.data_loader import DataLoader
-        
+
         dt = datetime(2023, 1, 15, 8, 30)
         result = DataLoader.next_half_hour(dt)
         assert result.hour == 9
@@ -31,7 +31,7 @@ class TestDataLoaderHelpers:
     def test_next_half_hour_exact_hour(self):
         """next_half_hour of :00 should go to :30."""
         from src.common.data_loader import DataLoader
-        
+
         dt = datetime(2023, 1, 15, 8, 0)
         result = DataLoader.next_half_hour(dt)
         assert result.hour == 8
@@ -41,7 +41,7 @@ class TestDataLoaderHelpers:
     def test_next_half_hour_midnight(self):
         """next_half_hour should handle midnight boundary."""
         from src.common.data_loader import DataLoader
-        
+
         dt = datetime(2023, 1, 15, 23, 45)
         result = DataLoader.next_half_hour(dt)
         assert result.hour == 0
@@ -58,7 +58,7 @@ class TestDataLoaderHelpers:
         - state = 0*48 + 17 = 17
         """
         from src.common.data_loader import DataLoader
-        
+
         loader = DataLoader()
         dt = datetime(2023, 1, 2, 8, 0)  # Monday
         state = loader.datetime_to_state(dt)
@@ -74,7 +74,7 @@ class TestDataLoaderHelpers:
         - state = 0*48 + 1 = 1
         """
         from src.common.data_loader import DataLoader
-        
+
         loader = DataLoader()
         dt = datetime(2023, 1, 2, 0, 15)
         state = loader.datetime_to_state(dt)
@@ -89,7 +89,7 @@ class TestDataLoaderHelpers:
         - state = 6*48 + 25 = 288 + 25 = 313
         """
         from src.common.data_loader import DataLoader
-        
+
         loader = DataLoader()
         dt = datetime(2023, 1, 1, 12, 0)  # Sunday
         state = loader.datetime_to_state(dt)
@@ -109,7 +109,7 @@ class TestDataLoaderHelpers:
         - slot = 0*2 + 30//30 = 1
         """
         from src.common.data_loader import DataLoader
-        
+
         loader = DataLoader()
         dt = datetime(2023, 1, 2, 0, 0)
         state = loader.datetime_to_state(dt)

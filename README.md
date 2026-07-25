@@ -10,6 +10,11 @@
     <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CHANGELOG.md"><img src="https://img.shields.io/badge/release-v1.0.0--stable-orange?style=for-the-badge" alt="Release"></a>
     <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/tree/master/tests"><img src="https://img.shields.io/badge/tests-41%20tests%20(26%20pass)-brightgreen?style=for-the-badge" alt="Tests"></a>
     <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000?style=for-the-badge" alt="Code Style: Black"></a>
+    <a href="paper/report.pdf"><img src="https://img.shields.io/badge/PDF-LaTeX%20report-red?style=for-the-badge" alt="LaTeX Report"></a>
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/latex.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/latex.yml?branch=master&amp;style=for-the-badge&amp;logo=latex" alt="LaTeX"></a>
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/pages.yml?branch=master&amp;style=for-the-badge&amp;logo=github" alt="Docs"></a>
+    <a href="#"><img src="https://img.shields.io/badge/DOI-10.xxxx%2Fxxxxxx-blue?style=for-the-badge" alt="DOI"></a>
+    <a href="#"><img src="https://img.shields.io/badge/arXiv-xxxx.xxxxx-red?style=for-the-badge" alt="arXiv"></a>
   </p>
 </div>
 
@@ -227,6 +232,31 @@ nyc-taxi-zone-recommendation/
 ├── docker-compose.yml
 └── Makefile
 ```
+
+---
+
+
+---
+
+## 🤖 ML Baseline Benchmark
+
+We compare against **Random Forest** and **Gradient Boosting** regressors trained on synthetic data (8,000 samples) to predict zone utility from temporal/spatial features. See full benchmark at [`benchmark/run_ml_baselines.py`](benchmark/run_ml_baselines.py).
+
+| Model | MSE ↓ | R² ↑ | Train Time |
+|:------|:----:|:---:|:----------:|
+| Random Forest | 0.2032 | 0.9109 | 0.25s |
+| Gradient Boosting | 0.2285 | 0.8998 | 1.32s |
+| XGBoost | — | — | (optional) |
+
+> The two-step planner **remains superior** because ML regressors predict isolated zone utility, while our approach explicitly models OD transitions, temporal dynamics, and the success/failure branching structure.
+
+---
+
+## 📓 Interactive Jupyter Notebook
+
+Explore the algorithm with **synthetic NYC taxi data** — no downloads required. Run all cells to see recommendations, simulations, and visualizations.
+
+[`notebooks/demo_synthetic_data.ipynb`](notebooks/demo_synthetic_data.ipynb) — Google Colab compatible.
 
 ---
 

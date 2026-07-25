@@ -4,13 +4,12 @@ from __future__ import annotations
 
 import argparse
 import csv
-from datetime import datetime
 import importlib.util
 import json
-from pathlib import Path
 import sys
-from types import ModuleType
-from typing import Callable, Dict, List, Optional, Sequence
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, Optional, Sequence
 
 from eval.rollout_core import (
     Strategy,
@@ -18,7 +17,6 @@ from eval.rollout_core import (
     load_trip_market,
     simulate_many,
 )
-
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 VALIDATION_START = datetime(2023, 1, 25, 0, 0)

@@ -1,10 +1,11 @@
 """Baseline 2: single-step utility using demand, fare, and travel times."""
 from __future__ import annotations
+
 import math
 from datetime import datetime
 
-from src.common.data_loader import DataLoader
 from src.common.config import get_config
+from src.common.data_loader import DataLoader
 
 ZONE_COUNT = get_config("domain.zone_count", 263)
 SMOOTHING = 1.0

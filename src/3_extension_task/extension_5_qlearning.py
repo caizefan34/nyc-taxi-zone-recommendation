@@ -5,9 +5,13 @@ Direction 5: Reinforcement Learning Strategy.
 Trains a Q-learning agent on historical taxi trip data to recommend zones.
 """
 from __future__ import annotations
-import csv, json, math, os, random, sys
-from datetime import datetime, timedelta
+
+import csv
+import json
+import random
+from datetime import timedelta
 from pathlib import Path
+
 import numpy as np
 import pyarrow.parquet as pq
 
@@ -32,7 +36,10 @@ CANDIDATE_K = 50   # top K candidate actions
 def load_statistics():
     demand = [[[0.0]*ZONE_COUNT for _ in range(SLOT_COUNT)] for _ in range(7)]
     mf = [[[0.0]*ZONE_COUNT for _ in range(SLOT_COUNT)] for _ in range(7)]
-    for row in pq.read_table(STATISTICS_PATH, columns=["pickup_location_id","weekday","time_slot","pickup_count","mean_fare_amount"]).to_pylist():
+    for row in pq.read_table(
+            STATISTICS_PATH,
+            columns=["pickup_location_id", "weekday", "time_slot", "pickup_count", "mean_fare_amount"]
+        ).to_pylist():
         loc = int(row["pickup_location_id"]) - 1
         wd = int(row["weekday"]); ts = int(row["time_slot"])
         if 0 <= loc < ZONE_COUNT:
@@ -89,7 +96,11 @@ class QLearningAgent:
         zone = state % ZONE_COUNT
         w_slot = state // ZONE_COUNT
         wd = w_slot // SLOT_COUNT; slot = w_slot % SLOT_COUNT
-        scores = [self.demand[wd][slot][z] * self.mf[wd][slot][z] / (self.tt[zone][z] + 1.0) if np.isfinite(self.tt[zone][z]) else 0.0 for z in range(ZONE_COUNT)]
+        scores = [
+            self.demand[wd][slot][z] * self.mf[wd][slot][z]
+            / (self.tt[zone][z] + 1.0)
+            if np.isfinite(self.tt[zone][z]) else 0.0
+            for z in range(ZONE_COUNT)]
         ordered = sorted(range(ZONE_COUNT), key=lambda z: (-scores[z], z))[:CANDIDATE_K]
         if zone not in ordered:
             ordered = [zone] + ordered[:CANDIDATE_K-1]
@@ -202,7 +213,8 @@ def train_agent(agent, episodes=5000):
         epsilon = max(EPSILON_MIN, epsilon * EPSILON_DECAY)
         if (ep + 1) % 500 == 0:
             avg_r = np.mean(total_rewards[-500:])
-            print(f"  Episode {ep+1}/{episodes}, Avg Reward: {avg_r:.2f}, Epsilon: {epsilon:.3f}, Q-table size: {len(agent.q_table)}")
+            print(f"  Episode {ep+1}/{episodes}, Avg Reward: {avg_r:.2f}, "
+                f"Epsilon: {epsilon:.3f}, Q-table size: {len(agent.q_table)}")
     return total_rewards
 
 
@@ -243,7 +255,12 @@ def evaluate_agent(agent, n_episodes=100):
         state = wd * SLOT_COUNT + slot
         ep_reward = 0.0
         for step in range(MAX_STEPS):
-            scores = [demand[wd][slot][z] * mf[wd][slot][z] / (tt[zone][z] + 1.0) if np.isfinite(tt[zone][z]) else 0.0 for z in range(ZONE_COUNT)]
+            scores = [
+            demand[wd][slot][z] * mf[wd][slot][z]
+            / (tt[zone][z] + 1.0)
+            if np.isfinite(tt[zone][z]) else 0.0
+            for z in range(ZONE_COUNT)
+        ]
             best_zone = max(range(ZONE_COUNT), key=lambda z: (scores[z], -z))
             move_min = 0.0 if zone == best_zone else tt[zone][best_zone]
             if not np.isfinite(move_min) or move_min < 0: break
@@ -279,7 +296,12 @@ def _evaluate_baseline(agent, n_episodes=100):
         ep_reward = 0.0
         for step in range(MAX_STEPS):
             times = agent.tt[zone]
-            scores = [agent.demand[wd][slot][z] * agent.mf[wd][slot][z] / (times[z] + 1.0) if np.isfinite(times[z]) else 0.0 for z in range(ZONE_COUNT)]
+            scores = [
+            agent.demand[wd][slot][z] * agent.mf[wd][slot][z]
+            / (times[z] + 1.0)
+            if np.isfinite(times[z]) else 0.0
+            for z in range(ZONE_COUNT)
+        ]
             best_zone = max(range(ZONE_COUNT), key=lambda z: (scores[z], -z))
             move_min = 0.0 if zone == best_zone else agent.tt[zone][best_zone]
             if not np.isfinite(move_min) or move_min < 0: break
@@ -342,11 +364,17 @@ def main():
     result = {
         "algorithm": "Q-learning",
         "hyperparameters": {
-            "gamma": GAMMA, "alpha": ALPHA, "epsilon_start": EPSILON, "epsilon_decay": EPSILON_DECAY, "epsilon_min": EPSILON_MIN, "episodes": NUM_EPISODES, "max_steps": MAX_STEPS, "candidate_k": CANDIDATE_K,
+            "gamma": GAMMA, "alpha": ALPHA, "epsilon_start": EPSILON,
+            "epsilon_decay": EPSILON_DECAY, "epsilon_min": EPSILON_MIN,
+            "episodes": NUM_EPISODES, "max_steps": MAX_STEPS, "candidate_k": CANDIDATE_K,
         },
         "q_learning_evaluation": rl_result,
         "baseline_2_comparison": bl_result,
-        "improvement_pct": round((rl_result["avg_reward"] - bl_result["avg_reward"]) / bl_result["avg_reward"] * 100, 2) if bl_result["avg_reward"] > 0 else 0,
+        "improvement_pct": (
+            round((rl_result["avg_reward"] - bl_result["avg_reward"])
+                  / bl_result["avg_reward"] * 100, 2)
+            if bl_result["avg_reward"] > 0 else 0
+        ),
         "training_rewards_summary": {
             "mean": float(np.mean(train_rewards)),
             "std": float(np.std(train_rewards)),

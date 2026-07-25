@@ -1,7 +1,7 @@
-import pytest
-from pathlib import Path
 
-from src.common.config import load_config, get_config, reload_config
+import pytest
+
+from src.common.config import get_config, load_config, reload_config
 
 
 class TestConfig:

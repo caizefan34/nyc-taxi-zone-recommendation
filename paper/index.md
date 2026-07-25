@@ -87,3 +87,19 @@ where:
 - [Problem Statement](../docs/problem_statement.md)
 - [Methodology](../docs/methodology.md)
 - [Ablation Study](../docs/ablation_study.md)
+
+
+---
+
+## 📄 Full Report
+
+A detailed LaTeX report (in Chinese) is available:
+- [paper/report.pdf](report.pdf) — Compiled PDF
+- [
+eport/report.tex](../report/report.tex) — LaTeX source
+
+---
+
+## 📊 ML Baseline Comparison
+
+We benchmark ML regression models against the proposed two-step planner. See [enchmark/run_ml_baselines.py](../benchmark/run_ml_baselines.py) and [enchmark/ml_benchmark_results.json](../benchmark/ml_benchmark_results.json).

@@ -3,6 +3,7 @@ import csv
 import math
 from datetime import datetime, timedelta
 from pathlib import Path
+
 import pyarrow.parquet as pq
 
 ZONE_COUNT = 263
@@ -52,7 +53,10 @@ def recommend(current_datetime, current_location_id):
                 next_weekday = next_state // SLOT_COUNT
                 next_slot = next_state % SLOT_COUNT
                 d2 = demand[next_weekday][next_slot][dropoff_z]
-                v_drop = (d2 / (d2 + PICKUP_HALF_SATURATION) * mean_fare[next_weekday][next_slot][dropoff_z]) if d2 > 0 else 0.0
+                v_drop = (
+                    d2 / (d2 + PICKUP_HALF_SATURATION)
+                    * mean_fare[next_weekday][next_slot][dropoff_z]
+                ) if d2 > 0 else 0.0
                 future_success += trans_prob * v_drop
         next_state_fail = (arrival + 1) % WEEK_SLOT_COUNT
         fail_weekday = next_state_fail // SLOT_COUNT
@@ -100,7 +104,11 @@ def _compute_arrival_slots(origin_index, state):
 def _load_zone_statistics():
     demand = [[[0.0] * ZONE_COUNT for _ in range(SLOT_COUNT)] for _ in range(7)]
     mean_fare = [[[0.0] * ZONE_COUNT for _ in range(SLOT_COUNT)] for _ in range(7)]
-    for row in pq.read_table(STATISTICS_PATH, columns=["pickup_location_id","weekday","time_slot","pickup_count","mean_fare_amount"]).to_pylist():
+    for row in pq.read_table(
+            STATISTICS_PATH,
+            columns=["pickup_location_id", "weekday", "time_slot",
+                     "pickup_count", "mean_fare_amount"]
+        ).to_pylist():
         loc = int(row["pickup_location_id"])
         wd = int(row["weekday"])
         ts = int(row["time_slot"])
