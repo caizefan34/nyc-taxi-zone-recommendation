@@ -11,6 +11,7 @@ scientifically bounded evaluation.
    problem_statement
    methodology
    forecasting
+   graph_learning
    ablation_study
 
 .. toctree::
