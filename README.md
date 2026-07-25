@@ -21,6 +21,8 @@ The project includes:
 - a directed OD travel-time graph and all-pairs shortest paths;
 - hot-zone, single-step, and finite-horizon planning strategies;
 - static reference-objective diagnostics and a fixed stochastic rollout;
+- a finite-demand multi-agent simulator with explicit driver competition;
+- Gymnasium-compatible DQN and Double-DQN baselines with masked candidate actions;
 - paired statistical tests, horizon experiments, robustness checks, and exposure-concentration analysis;
 - a corrected model-based MDP implementation;
 - a reproducible simulator-trained Q-learning extension.
@@ -93,6 +95,34 @@ GraphSAGE reduces MAE by 0.0077 (0.51%), but its timestamp-level 95% CI [-0.0042
 | Adaptive | 0.9559 | $573.31 |
 
 The result is intentionally reported because it shows that higher reference-objective NDCG does not imply higher simulated fare.
+
+### Finite-demand, 50-driver benchmark
+
+The multi-agent simulator processes simultaneous arrivals together and assigns every finite trip at most once. With demand/supply ratio 1.0 over 30 paired seven-day seeds:
+
+| Strategy | Revenue/driver | Fulfilled trips | Utilization | Saturated attempts |
+|---|---:|---:|---:|---:|
+| Hot Zone | $1,233.41 | 2,965.8 | 7.31% | 95.83% |
+| Single-Step | **$1,764.56** | **3,133.6** | **11.11%** | **88.39%** |
+| Two-Step | $1,508.71 | 2,094.4 | 9.51% | 94.85% |
+
+Single-Step minus Hot Zone is +$531.16 per driver, 95% paired bootstrap CI [$525.64, $536.67]. Two-Step minus Single-Step is -$255.86, 95% CI [-$259.50, -$252.30]. This reversal from the legacy single-driver rollout is evidence that recommendation concentration and competition materially change policy rankings.
+
+At fixed fleet size, raising the configured demand/supply ratio from 0.5 to 2.0 increases Single-Step utilization from 6.42% to 18.53% and reduces saturated attempts from 95.30% to 73.06%. See [`outputs/multi_agent_benchmark.md`](outputs/multi_agent_benchmark.md).
+
+### Simulator-trained deep RL benchmark
+
+DQN and Double DQN train for 300 episodes on Jan 18--24 only, then run in the same 50-driver finite-demand simulator on Jan 25--31 over 20 paired evaluation seeds:
+
+| Strategy | Revenue/driver | Fulfilled trips | Utilization |
+|---|---:|---:|---:|
+| Hot Zone | $1,235.71 | 2,968.7 | 7.31% |
+| Single-Step | $1,768.04 | 3,134.2 | 11.15% |
+| Finite Horizon | $1,511.16 | 2,094.8 | 9.52% |
+| DQN | **$1,821.77** | **3,950.7** | **11.21%** |
+| Double DQN | $1,742.77 | 3,410.8 | 10.69% |
+
+DQN minus Single-Step is +$53.74 per driver, 95% paired bootstrap CI [$46.21, $61.57]. Double DQN minus Single-Step is -$25.27, CI [-$32.77, -$17.97]. These intervals cover evaluation-market seeds for one trained network per algorithm, not training uncertainty or real deployment effects. The default recommender remains unchanged. See [`outputs/rl_benchmark.md`](outputs/rl_benchmark.md).
 
 ## Method
 
@@ -195,6 +225,8 @@ python -m scripts.run_horizon_audit --runs 100
 python -m scripts.run_research_audit
 python -m scripts.run_robustness_audit
 python -m scripts.generate_evaluation_report
+python -m scripts.run_multi_agent_benchmark --drivers 50 --runs 30 --sensitivity-runs 10
+python -m scripts.train_rl_baselines --episodes 300 --drivers 50 --runs 20
 ```
 
 ## Forecast training and benchmark
@@ -225,11 +257,11 @@ python -m pytest tests -q
 ruff check src tests scripts
 ```
 
-Tests with the full local dataset cover strategy integration. Small synthetic fixtures cover raw temporal splitting, leakage checks, counterfactual estimators, statistical metrics, MDP Bellman transitions, and Q-learning reproducibility.
+Tests with the full local dataset cover strategy integration. Small synthetic fixtures cover raw temporal splitting, leakage checks, counterfactual estimators, statistical metrics, MDP Bellman transitions, Gymnasium contracts, DQN/Double-DQN target semantics, action masking, and seeded training reproducibility.
 
 ## Simulator boundary
 
-The rollout is useful for controlled strategy comparison, but it has material limitations:
+The legacy rollout is useful for controlled single-driver comparison, but it has material limitations:
 
 - one driver;
 - immutable historical demand cells;
@@ -240,6 +272,8 @@ The rollout is useful for controlled strategy comparison, but it has material li
 - fixed 60%/30%/10% compliance over the ranked Top-3.
 
 Consequently, rollout improvements must not be presented as production revenue lift.
+
+The multi-agent simulator addresses the first four items by using a configurable fleet, finite trip inventory, simultaneous competition, explicit demand depletion, and a configurable demand/supply ratio. It reports fulfilled trips, idle time, utilization, average driver revenue, and zone saturation. It still omits congestion, airport queue rules, endogenous passenger demand, strategic driver adaptation, and market equilibrium, so its revenue remains a simulator outcome rather than a deployment estimate.
 
 ## Counterfactual and offline-RL boundary
 
@@ -260,7 +294,9 @@ src/
   1_data_clean/                 raw split, cleaning, statistics
   2_recommendation_algorithm/  baselines, two-step, finite horizons, parameter selection
   3_extension_task/            temporal analysis, sensitivity, simulator Q-learning
-  eval/                         static diagnostic and rollout
+  eval/                         static diagnostic and legacy rollout
+  simulator/multi_agent/       finite demand, competing drivers, saturation metrics
+  rl/                          Gymnasium environment, DQN, Double DQN, strategy adapter
   mdp/                          corrected model-based value iteration
   forecasting/                  causal features, tree models, evaluation, strategy adapter
   graph/                        leakage-safe OD graph, GraphSAGE, GAT, message features

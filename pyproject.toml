@@ -49,6 +49,10 @@ forecasting = [
 graph = [
     "torch>=2.2",
 ]
+rl = [
+    "gymnasium>=1.0,<2",
+    "torch>=2.2",
+]
 docs = [
     "sphinx>=7.0",
     "sphinx-rtd-theme>=2.0",

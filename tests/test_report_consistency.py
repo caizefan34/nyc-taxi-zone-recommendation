@@ -69,3 +69,35 @@ def test_graph_snapshot_is_leakage_safe_and_documents_uncertainty():
     assert comparison["ci95_low"] < 0.0 < comparison["ci95_high"]
     assert f"{graphsage['mae']:.4f}" in readme
     assert "graph-neural contribution is not statistically supported" in report
+
+
+def test_multi_agent_snapshot_conserves_demand_and_documents_competition():
+    snapshot = json.loads((ROOT / "outputs/multi_agent_benchmark.json").read_text(encoding="utf-8"))
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    for strategy in snapshot["strategies"].values():
+        run = strategy["first_run"]
+        assert run["initial_trip_inventory"] == run["fulfilled_trips"] + run["remaining_trip_inventory"]
+        assert run["competing_pickup_attempts"] > 0
+        assert run["realized_demand_supply_ratio"] == snapshot["demand_supply_ratio"]
+    sensitivity = snapshot["ratio_sensitivity"]
+    assert sensitivity["0.50"]["driver_utilization"] < sensitivity["2.00"]["driver_utilization"]
+    assert sensitivity["0.50"]["zone_saturation_rate"] > sensitivity["2.00"]["zone_saturation_rate"]
+    comparison = snapshot["paired_revenue"]["single_step_vs_hot_zone"]
+    assert comparison["ci95_low"] > 0.0
+    assert f"{comparison['mean_difference']:.2f}" in readme
+
+
+def test_rl_snapshot_is_temporally_isolated_and_matches_readme():
+    snapshot = json.loads((ROOT / "outputs/rl_benchmark.json").read_text(encoding="utf-8"))
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    report = (ROOT / "outputs/rl_benchmark.md").read_text(encoding="utf-8")
+    assert snapshot["training_window"]["end_exclusive"] == snapshot["evaluation_window"]["start"]
+    for strategy in snapshot["evaluation"]["strategies"].values():
+        run = strategy["first_run"]
+        assert run["initial_trip_inventory"] == run["fulfilled_trips"] + run["remaining_trip_inventory"]
+    dqn = snapshot["evaluation"]["paired_revenue"]["dqn_vs_single_step"]
+    double_dqn = snapshot["evaluation"]["paired_revenue"]["double_dqn_vs_single_step"]
+    assert dqn["ci95_low"] > 0.0
+    assert double_dqn["ci95_high"] < 0.0
+    assert f"{dqn['mean_difference']:.2f}" in readme
+    assert "not training uncertainty or causal deployment lift" in report
