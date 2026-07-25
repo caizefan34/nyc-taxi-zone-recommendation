@@ -119,7 +119,7 @@ to transitions sampled from its learned simulator. It is online learning in a mo
 The intended objective is Bellman optimality:
 
 $$
-V^{*}(s)=\max_a\left[R(s,a)+\gamma\mathbb E[V^{*}(s')\mid s,a]\right].
+V^{\star}(s)=\max_a\left[R(s,a)+\gamma\mathbb E[V^{\star}(s')\mid s,a]\right].
 $$
 
 The implementation does not realize this taxi MDP correctly; details appear in the high-severity findings.

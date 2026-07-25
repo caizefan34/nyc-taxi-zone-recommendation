@@ -4,7 +4,7 @@
 
 ### Definition
 
-Given a taxi driver's current state $(z_t, t)$ where $z_t \in \{1, 2, \ldots, 263\}$ is the current zone and $t$ is the current timestamp, the goal is to recommend a set of **top-3 zones** $R = \{z_1^{*}, z_2^{*}, z_3^{*}\}$ that maximizes the driver's expected cumulative revenue over a planning horizon.
+Given a taxi driver's current state $(z_t, t)$ where $z_t \in \{1, 2, \ldots, 263\}$ is the current zone and $t$ is the current timestamp, the goal is to recommend a set of **top-3 zones** $R = \{z_1^{\star}, z_2^{\star}, z_3^{\star}\}$ that maximizes the driver's expected cumulative revenue over a planning horizon.
 
 ### State Space
 

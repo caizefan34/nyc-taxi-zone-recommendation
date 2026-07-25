@@ -32,6 +32,7 @@ def test_markdown_uses_github_compatible_display_math_delimiters():
             or "\n\\]" in text
             or "\\operatorname" in text
             or "^*" in text
+            or "^{*}" in text
         ):
             offenders.append(str(path.relative_to(ROOT)))
     assert offenders == []
