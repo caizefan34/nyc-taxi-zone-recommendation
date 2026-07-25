@@ -1,8 +1,10 @@
-.PHONY: help install test lint format clean train sanity static rollout parameters audit report evaluate docker-build docker-test
+.PHONY: help install test lint format clean train forecast-train forecast-benchmark sanity static rollout parameters audit report evaluate docker-build docker-test
 
 help:
 	@echo "NYC Taxi Zone Recommendation"
 	@echo "  make train       Split raw data, clean, and build travel times"
+	@echo "  make forecast-train      Train and evaluate demand/fare models"
+	@echo "  make forecast-benchmark  Run paired 100-seed forecast benchmark"
 	@echo "  make sanity      Validate schemas, matrix, and strategy interfaces"
 	@echo "  make static      Run static diagnostics for all three strategies"
 	@echo "  make rollout     Run paired 100-seed rollout statistics"
@@ -31,6 +33,12 @@ clean:
 train:
 	python -m scripts.run_data_pipeline --force-split
 	python -m scripts.build_travel_time_matrix
+
+forecast-train:
+	python -m scripts.train_forecaster
+
+forecast-benchmark:
+	python -m scripts.run_forecasting_benchmark --runs 100
 
 sanity:
 	python -m src.eval.sanity_check --train-cleaned data/processed/train_cleaned.parquet --validation-cleaned data/processed/validation_cleaned.parquet --statistics data/processed/zone_time_statistics.parquet --travel-times data/processed/travel_time_matrix_dijkstra.csv --baseline-1 src/2_recommendation_algorithm/baseline_1.py --baseline-2 src/2_recommendation_algorithm/baseline_2_2.py --strategy src/2_recommendation_algorithm/improved_strategy.py --output outputs/sanity_report.json

@@ -16,9 +16,7 @@ jobs:
           python-version: "3.12"
           cache: "pip"
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install ruff
+        run: pip install -e ".[dev,forecasting]"
       - name: Lint with ruff
         run: ruff check src/ tests/ scripts/
 
@@ -32,9 +30,7 @@ jobs:
           python-version: "3.12"
           cache: "pip"
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-cov
+        run: pip install -e ".[dev,forecasting]"
       - name: Test with pytest
         run: pytest tests/ -v --cov=src/ --cov-report=term-missing
 
@@ -48,9 +44,7 @@ jobs:
           python-version: "3.12"
           cache: "pip"
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-cov
+        run: pip install -e ".[dev,forecasting]"
       - name: Generate coverage report
         run: |
           pytest tests/ --cov=src/ --cov-report=xml
