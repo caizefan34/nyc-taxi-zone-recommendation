@@ -7,19 +7,19 @@ __pycache__/
 dist/
 build/
 
-# Data (large parquet files, not suitable for git)
+# Data (large parquet files)
 data/
 *.parquet
 *.parquet.zstd
 
-# Outputs (generated artifacts)
+# Output artifacts
 outputs/
 
 # Temp files
 tmp/
 *.tmp
 
-# OS
+# IDE
 .DS_Store
 Thumbs.db
 .vscode/
@@ -32,3 +32,21 @@ Thumbs.db
 *.bbl
 *.blg
 *.synctex.gz
+*.fdb_latexmk
+*.fls
+
+# Testing
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# Sphinx build
+docs/_build/
+docs/api/generated/
+
+# OS
+*.swp
+*.swo
+*~
+.DS_Store?

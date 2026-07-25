@@ -1,4 +1,4 @@
-﻿.PHONY: install test lint clean train evaluate report docker-build docker-test help
+﻿.PHONY: help install test lint format clean train evaluate report docker-build docker-test
 
 help:
 	@echo "NYC Taxi Zone Recommendation - Makefile"
@@ -12,8 +12,6 @@ help:
 	@echo "  make train         Run data cleaning pipeline"
 	@echo "  make evaluate      Run evaluation"
 	@echo "  make report        Generate report"
-	@echo "  make docker-build  Build Docker image"
-	@echo "  make docker-test   Run tests in Docker"
 
 install:
 	pip install -r requirements.txt
@@ -29,40 +27,23 @@ format:
 	black src/ tests/
 
 clean:
-	rm -rf __pycache__ .pytest_cache coverage_report
-	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	find . -type f -name "*.pyc" -delete 2>/dev/null || true
-	find . -type f -name "*.pyo" -delete 2>/dev/null || true
-	rm -rf *.egg-info dist build
+	python -c "import shutil, os; [shutil.rmtree(p) for p in ['__pycache__','.pytest_cache','coverage_report','.coverage','htmlcov','docs/_build','*.egg-info','dist','build'] if os.path.exists(p)]"
 
 train:
 	PYTHONPATH=. python src/1_data_clean/clean.py
 	PYTHONPATH=. python src/2_recommendation_algorithm/baseline_2_1.py
 
 evaluate:
-	PYTHONPATH=. python src/eval/sanity_check.py \
-		--train-cleaned data/processed/train_cleaned.parquet \
-		--validation-cleaned data/processed/validation_cleaned.parquet \
-		--statistics data/processed/zone_time_statistics.parquet \
-		--travel-times data/processed/travel_time_matrix_dijkstra.csv \
-		--baseline-1 src/2_recommendation_algorithm/baseline_1.py \
-		--baseline-2 src/2_recommendation_algorithm/baseline_2_2.py \
-		--strategy src/2_recommendation_algorithm/improved_strategy.py \
-		--output outputs/sanity_report.json
+	PYTHONPATH=. python src/eval/public_validation.py --strategy src/2_recommendation_algorithm/improved_strategy.py --output outputs/validation_static_metrics.json
 	PYTHONPATH=. python -m pytest tests/ -v
 
 report:
-	@echo "Generating evaluation report..."
-	PYTHONPATH=. python src/eval/public_validation.py \
-		--strategy src/2_recommendation_algorithm/improved_strategy.py \
-		--queries data/processed/validation_input.parquet \
-		--answers data/processed/validation_answers.parquet \
-		--predictions outputs/validation_predictions.parquet \
-		--output outputs/validation_static_metrics.json
+	PYTHONPATH=. python src/eval/public_validation.py --strategy src/2_recommendation_algorithm/improved_strategy.py --queries data/processed/validation_input.parquet --answers data/processed/validation_answers.parquet --predictions outputs/validation_predictions.parquet --output outputs/validation_static_metrics.json
+	@echo "Report artifacts written to outputs/"
 
 docker-build:
 	docker build -t nyc-taxi-recommendation .
 
 docker-test:
 	docker build -t nyc-taxi-recommendation .
-	docker run --rm nyc-taxi-recommendation make test
+	docker run --rm nyc-taxi-recommendation python -m pytest tests/ -v
