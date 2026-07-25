@@ -11,6 +11,7 @@ scientifically bounded evaluation.
    problem_statement
    methodology
    multi_agent_simulator
+   rl_baselines
    ablation_study
 
 .. toctree::
