@@ -1,64 +1,35 @@
-"""Baseline 1 strategy: rank zones by historical next-slot pickup demand."""
+"""Baseline 1: rank zones by historical next-slot pickup demand."""
 from __future__ import annotations
 from datetime import datetime, timedelta
 from pathlib import Path
-import pyarrow.parquet as pq
 
-ZONE_COUNT = 263
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-STATISTICS_PATH = PROJECT_ROOT / "data/processed/zone_time_statistics.parquet"
+from src.common.data_loader import DataLoader
+from src.common.config import get_config
+
+ZONE_COUNT = get_config("domain.zone_count", 263)
+loader = DataLoader()
 
 
-def recommend(
-    current_datetime: datetime,
-    current_location_id: int,
-) -> list[int]:
+def recommend(current_datetime: datetime, current_location_id: int) -> list[int]:
     """Return the Top-3 LocationIDs for one simulator state."""
     if not isinstance(current_datetime, datetime):
         raise TypeError("current_datetime must be a datetime")
     if not 1 <= current_location_id <= ZONE_COUNT:
         raise ValueError("current_location_id must be in 1..263")
 
-    target_time = _next_half_hour(current_datetime)
+    target_time = loader.next_half_hour(current_datetime)
     slot = target_time.hour * 2 + target_time.minute // 30
     weekday = target_time.weekday()
 
-    # Build scores for all 263 zones using historical pickup_count
-    scores = [counts[weekday][slot][zone_index] for zone_index in range(ZONE_COUNT)]
-
-    # Top-3 selection: descending score, break ties by smaller LocationID
-    ordered = sorted(
-        range(1, ZONE_COUNT + 1),
-        key=lambda zone: (-scores[zone - 1], zone),
-    )
+    scores = [counts[weekday][slot][i] for i in range(ZONE_COUNT)]
+    ordered = sorted(range(1, ZONE_COUNT + 1), key=lambda z: (-scores[z - 1], z))
     return ordered[:3]
 
 
-def _load_pickup_counts() -> list[list[list[float]]]:
-    """Load the provided weekday x slot x zone pickup-count table once."""
-    counts = [[[0.0] * ZONE_COUNT for _ in range(48)] for _ in range(7)]
-    for row in pq.read_table(
-        STATISTICS_PATH,
-        columns=["pickup_location_id", "weekday", "time_slot", "pickup_count"],
-    ).to_pylist():
-        location_id = int(row["pickup_location_id"])
-        weekday = int(row["weekday"])
-        time_slot = int(row["time_slot"])
-        if 1 <= location_id <= ZONE_COUNT:
-            counts[weekday][time_slot][location_id - 1] = float(
-                row["pickup_count"]
-            )
-    return counts
+def _load_pickup_counts():
+    """Load the weekday x slot x zone pickup-count table."""
+    demand, _ = loader.load_zone_statistics()
+    return demand
 
 
-def _next_half_hour(value: datetime) -> datetime:
-    slot_start = value.replace(
-        minute=(value.minute // 30) * 30,
-        second=0,
-        microsecond=0,
-    )
-    return slot_start + timedelta(minutes=30)
-
-
-# Read the statistics once when the strategy file is loaded.
 counts = _load_pickup_counts()

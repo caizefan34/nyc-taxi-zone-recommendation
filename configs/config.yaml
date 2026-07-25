@@ -1,0 +1,76 @@
+﻿# =============================================================================
+# NYC Taxi Zone Recommendation - Unified Configuration
+# =============================================================================
+# All hyperparameters, paths, and constants in one place.
+# Load with: from src.common.config import Config
+# =============================================================================
+
+# --- Project Structure ---
+project:
+  name: "NYC Taxi Zone Recommendation"
+  version: "1.0.0"
+  root: "."  # Resolved at runtime
+
+# --- Data Paths ---
+paths:
+  raw_data: "data/raw/yellow_tripdata_2023-01.parquet"
+  train_uncleaned: "data/raw/yellow_tripdata_2023-01.parquet"
+  train_cleaned: "data/processed/train_cleaned.parquet"
+  validation_cleaned: "data/processed/validation_cleaned.parquet"
+  validation_input: "data/processed/validation_input.parquet"
+  validation_answers: "data/processed/validation_answers.parquet"
+  zone_statistics: "data/processed/zone_time_statistics.parquet"
+  travel_time_matrix: "data/processed/travel_time_matrix_dijkstra.csv"
+  taxi_zone_lookup: "data/meta/taxi_zone_lookup.csv"
+  output_dir: "outputs"
+
+# --- Domain Constants ---
+domain:
+  zone_count: 263       # NYC taxi zones (TLC definition)
+  slot_count: 48        # Half-hour slots per day
+  week_slot_count: 336  # 7 * 48
+
+# --- Data Cleaning ---
+cleaning:
+  train_boundary: ["2023-01-01", "2023-01-25"]
+  validation_boundary: ["2023-01-25", "2023-02-01"]
+  max_trip_duration_minutes: 240.0
+  min_trip_duration_minutes: 1.0
+  max_fare: 200.0
+  min_fare: 0.0
+  max_trip_distance: 100.0
+  min_trip_distance: 0.1
+  max_speed_mph: 80.0
+
+# --- Recommendation Algorithm ---
+algorithm:
+  # Two-step planning hyperparameters
+  gamma: 0.5                    # Discount factor for future utility
+  lambda_param: 1.0             # Relocation cost normalization
+  pickup_half_saturation: 240.0 # Half-saturation for pickup probability
+  candidate_pool_size: 100      # Number of candidates for two-step computation
+  top_k: 3                      # Number of zones to recommend
+  default_same_zone_time: 10.0  # Default travel time for same-zone (minutes)
+
+# --- Q-Learning ---
+qlearning:
+  gamma: 0.9           # Discount factor
+  alpha: 0.1           # Learning rate
+  epsilon: 0.3         # Initial exploration rate
+  epsilon_decay: 0.995 # Exploration decay per episode
+  epsilon_min: 0.01    # Minimum exploration rate
+  num_episodes: 5000   # Training episodes
+  max_steps: 50        # Max steps per episode
+  candidate_k: 50      # Top K candidate actions
+  seed: 20230722       # Random seed for reproducibility
+
+# --- Parameter Selection Grid ---
+parameter_grid:
+  lambda_values: [0.5, 1.0, 2.0]
+  gamma_values: [0.25, 0.5, 0.75]
+
+# --- Logging ---
+logging:
+  level: "INFO"
+  format: "%(asctime)s %(levelname)s %(name)s: %(message)s"
+  date_format: "%Y-%m-%d %H:%M:%S"

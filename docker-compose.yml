@@ -1,0 +1,38 @@
+﻿version: "3.9"
+
+services:
+  nyc-taxi:
+    build: .
+    image: nyc-taxi-recommendation
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    environment:
+      - PYTHONPATH=/app
+    working_dir: /app
+    entrypoint: ["make"]
+    command: ["help"]
+
+  test:
+    build: .
+    image: nyc-taxi-recommendation
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    environment:
+      - PYTHONPATH=/app
+    working_dir: /app
+    entrypoint: ["make"]
+    command: ["test"]
+
+  train:
+    build: .
+    image: nyc-taxi-recommendation
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    environment:
+      - PYTHONPATH=/app
+    working_dir: /app
+    entrypoint: ["make"]
+    command: ["train"]
