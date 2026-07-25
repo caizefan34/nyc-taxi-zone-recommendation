@@ -1,4 +1,4 @@
-.PHONY: help install test lint format clean train forecast-train forecast-benchmark graph-benchmark multi-agent-benchmark rl-benchmark sanity static rollout parameters audit report evaluate docker-build docker-test
+.PHONY: help install test lint format clean train forecast-train forecast-benchmark graph-benchmark multi-agent-benchmark rl-benchmark combined-benchmark sanity static rollout parameters audit report evaluate docker-build docker-test
 
 help:
 	@echo "NYC Taxi Zone Recommendation"
@@ -8,6 +8,7 @@ help:
 	@echo "  make graph-benchmark     Compare OD, GraphSAGE, and GAT features"
 	@echo "  make multi-agent-benchmark  Run finite-demand 50-driver benchmark"
 	@echo "  make rl-benchmark  Train and evaluate DQN and Double DQN"
+	@echo "  make combined-benchmark  Generate endpoint-aware final report"
 	@echo "  make sanity      Validate schemas, matrix, and strategy interfaces"
 	@echo "  make static      Run static diagnostics for all three strategies"
 	@echo "  make rollout     Run paired 100-seed rollout statistics"
@@ -51,6 +52,9 @@ multi-agent-benchmark:
 
 rl-benchmark:
 	python -m scripts.train_rl_baselines --episodes 300 --drivers 50 --runs 20
+
+combined-benchmark:
+	python -m scripts.generate_combined_benchmark
 
 sanity:
 	python -m src.eval.sanity_check --train-cleaned data/processed/train_cleaned.parquet --validation-cleaned data/processed/validation_cleaned.parquet --statistics data/processed/zone_time_statistics.parquet --travel-times data/processed/travel_time_matrix_dijkstra.csv --baseline-1 src/2_recommendation_algorithm/baseline_1.py --baseline-2 src/2_recommendation_algorithm/baseline_2_2.py --strategy src/2_recommendation_algorithm/improved_strategy.py --output outputs/sanity_report.json
