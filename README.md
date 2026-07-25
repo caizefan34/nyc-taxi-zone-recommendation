@@ -69,18 +69,18 @@ The result is intentionally reported because it shows that higher reference-obje
 
 For candidate zone `z` at arrival state `s`, the two-step score uses
 
-\[
+$$
 p(s,z)=\frac{D(s,z)}{D(s,z)+240},
-\]
+$$
 
-\[
+$$
 V_1(s,z)=p(s,z)\bar f(s,z),
-\]
+$$
 
-\[
+$$
 Q_2(o,z,s)=\frac{p(s,z)\left[\bar f(s,z)+\gamma\sum_{z'}P(z'\mid z)V_1(s',z')\right]
  +(1-p(s,z))\gamma V_1(s+1,z)}{m(o,z)+1}.
-\]
+$$
 
 `m(o,z)` is rounded relocation time in half-hour slots. The continuation policy waits in the reached zone; therefore this is truncated lookahead with a terminal heuristic, not a full horizon-2 Bellman-optimal policy.
 

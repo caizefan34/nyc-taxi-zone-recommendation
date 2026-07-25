@@ -21,3 +21,12 @@ def test_generated_report_contains_interpretation_boundary():
     report = (ROOT / "outputs/evaluation_report.md").read_text(encoding="utf-8")
     assert "single-driver historical-market simulator" in report
     assert "not identifiable" in report
+
+
+def test_markdown_uses_github_compatible_display_math_delimiters():
+    offenders = []
+    for path in ROOT.rglob("*.md"):
+        text = path.read_text(encoding="utf-8")
+        if "\\[\n" in text or "\n\\]" in text:
+            offenders.append(str(path.relative_to(ROOT)))
+    assert offenders == []

@@ -58,9 +58,9 @@ flowchart TD
 
 For query time `t`, let `next(t)` be the strictly next half-hour slot. The strategy returns
 
-\[
+$$
 \operatorname{TopK}_z D(z,\operatorname{next}(t)),
-\]
+$$
 
 where `D` is the training pickup count. It ignores origin, travel time, fare, supply, and uncertainty.
 
@@ -68,9 +68,9 @@ where `D` is the training pickup count. It ignores origin, travel time, fare, su
 
 For origin `o`, destination `z`, and the next slot used by the implementation:
 
-\[
+$$
 U_{B2}(o,z,t)=\frac{D(z,t)\bar f(z,t)}{T(o,z)+1}.
-\]
+$$
 
 The code does not convert demand to pickup probability. The denominator is minutes plus one, while other modules normalize by rounded 30-minute slots, so objectives are inconsistent across the repository.
 
@@ -78,18 +78,18 @@ The code does not convert demand to pickup probability. The denominator is minut
 
 For a candidate zone `z` at rounded arrival state `s_z`:
 
-\[
+$$
 p_z=\frac{D(s_z,z)}{D(s_z,z)+240},
-\]
+$$
 
-\[
+$$
 V_1(s,z)=p(s,z)\bar f(s,z),
-\]
+$$
 
-\[
+$$
 Q_2(o,z,s)=\frac{p_z\left[\bar f(s_z,z)+\gamma\sum_{z'}P(z'\mid z)V_1(s',z')\right]
  +(1-p_z)\gamma V_1(s_z+1,z)}{m(o,z)+1}.
-\]
+$$
 
 Here `m` is rounded relocation slots. The implementation uses a zone-level, time-invariant OD distribution and one mean duration per pickup zone for every dropoff destination.
 
@@ -97,10 +97,10 @@ Here `m` is rounded relocation slots. The implementation uses a zone-level, time
 
 The added audit planner evaluates the repository's fixed continuation assumption recursively:
 
-\[
+$$
 V_h(s,z)=p(s,z)\left[\bar f(s,z)+\gamma\sum_{z'}P(z'\mid z)V_{h-1}(s+1+\tau_z,z')\right]
  +(1-p(s,z))\gamma V_{h-1}(s+1,z).
-\]
+$$
 
 This is truncated policy evaluation for “wait in the reached zone,” not full dynamic programming over future relocation actions.
 
@@ -108,9 +108,9 @@ This is truncated policy evaluation for “wait in the reached zone,” not full
 
 The extension applies the tabular update
 
-\[
+$$
 Q(s,a)\leftarrow Q(s,a)+\alpha\left[r+\gamma\max_{a'}Q(s',a')-Q(s,a)\right]
-\]
+$$
 
 to transitions sampled from its learned simulator. It is online learning in a model-generated environment, not offline learning directly from a fixed transition dataset.
 
@@ -118,9 +118,9 @@ to transitions sampled from its learned simulator. It is online learning in a mo
 
 The intended objective is Bellman optimality:
 
-\[
+$$
 V^*(s)=\max_a\left[R(s,a)+\gamma\mathbb E[V^*(s')\mid s,a]\right].
-\]
+$$
 
 The implementation does not realize this taxi MDP correctly; details appear in the high-severity findings.
 
@@ -443,15 +443,15 @@ To enable valid OPE, a future deployment must log context, complete candidate se
 
 Let `B` be the Bellman expectation operator under a fixed continuation policy that waits in the reached zone. With terminal heuristic `V1=p×fare`, the repository computes approximately
 
-\[
+$$
 Q_2(s,a)=r(s,a)+\gamma\mathbb E[V_1(s')\mid s,a],
-\]
+$$
 
 followed by an external relocation normalization and candidate pruning. This is one truncated backup. It is not full Bellman optimality because the continuation is not
 
-\[
+$$
 \max_{a'}Q_1(s',a').
-\]
+$$
 
 It is also not standard exact finite-horizon DP because transitions use aggregated zone-only OD probabilities and mean duration, and the objective divides by movement slots outside the transition/reward model.
 

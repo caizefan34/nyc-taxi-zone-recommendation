@@ -34,17 +34,17 @@ The cleaning command can now split the official monthly parquet into chronologic
 
 For the strictly next half-hour boundary:
 
-\[
+$$
 U_{B1}(z,t)=D(z,\operatorname{next}(t)).
-\]
+$$
 
 The three largest training pickup counts are returned.
 
 ## Baseline 2: single-step utility
 
-\[
+$$
 U_{B2}(o,z,t)=\frac{D(z,t)\bar f(z,t)}{T(o,z)+1}.
-\]
+$$
 
 `T` is the directed Dijkstra travel-time matrix estimated from training OD durations.
 
@@ -52,22 +52,22 @@ U_{B2}(o,z,t)=\frac{D(z,t)\bar f(z,t)}{T(o,z)+1}.
 
 Pickup probability is a scenario model, not an empirically identified probability:
 
-\[
+$$
 p(s,z)=\frac{D(s,z)}{D(s,z)+240}.
-\]
+$$
 
 The terminal one-step value is
 
-\[
+$$
 V_1(s,z)=p(s,z)\bar f(s,z).
-\]
+$$
 
 For `h > 1`:
 
-\[
+$$
 V_h(s,z)=p(s,z)\left[\bar f(s,z)+\gamma\sum_{z'}P(z'\mid z)V_{h-1}(s+1+\tau_z,z')\right]
  +(1-p(s,z))\gamma V_{h-1}(s+1,z).
-\]
+$$
 
 The initial action is normalized by rounded relocation slots. The continuation policy waits in the reached zone; it does not optimize a new relocation action. This is truncated fixed-policy lookahead, not full finite-horizon Bellman optimality.
 
@@ -84,9 +84,9 @@ Unlike the earlier implementation, every pickup attempt advances time and policy
 
 The public answer for each query is a 263-zone reference-utility vector. Metrics are:
 
-\[
+$$
 NDCG@3=\frac{DCG@3}{IDCG@3}
-\]
+$$
 
 and Hit@3, which checks whether the reference-optimal zone appears in the returned Top-3.
 

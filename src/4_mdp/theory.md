@@ -17,14 +17,14 @@ After relocation to action zone `a`:
 
 ## Bellman backup
 
-\[
+$$
 Q(s,a)=p_a\left[f_a+\gamma\sum_{s'}P_{success}(s'\mid s,a)V(s')\right]
  +(1-p_a)\gamma V(s'_{failure}),
-\]
+$$
 
-\[
+$$
 V_{k+1}(s)=\max_a Q_k(s,a).
-\]
+$$
 
 Backups are synchronous. Time advances after every pickup attempt, including stay actions. Policy extraction uses the actual current origin and action-specific relocation time.
 
