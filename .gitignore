@@ -18,6 +18,7 @@ outputs/*.csv
 outputs/tmp/
 !outputs/reference_metrics.json
 !outputs/parameter_selection.json
+!outputs/multi_agent_benchmark.json
 
 # Temp files
 tmp/
