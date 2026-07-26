@@ -1,0 +1,57 @@
+// ===== Interactive Simulation Platform - Main Entry =====
+var AppState = { zones: [], selectedZone: null };
+
+var App = {
+    init: function() {
+        var self = this;
+        this.loadZones().then(function() {
+            MapModule.init();
+            ChartsModule.init();
+            self.setupEventListeners();
+        });
+    },
+    loadZones: function() {
+        return fetch("data/zones.json")
+            .then(function(r) { return r.json(); })
+            .then(function(data) { AppState.zones = data.zones; })
+            .catch(function() {
+                AppState.zones = [
+                    {id:237,name:"Upper East Side North",borough:"Manhattan",lat:40.776,lng:-73.949,demand_avg:28,supply_avg:35,pickup_prob:0.72,competition:"Medium",avg_fare:18.5},
+                    {id:236,name:"Upper East Side South",borough:"Manhattan",lat:40.768,lng:-73.962,demand_avg:25,supply_avg:30,pickup_prob:0.68,competition:"Medium",avg_fare:16.2},
+                    {id:170,name:"Murray Hill",borough:"Manhattan",lat:40.749,lng:-73.978,demand_avg:22,supply_avg:28,pickup_prob:0.61,competition:"Low",avg_fare:14.8},
+                    {id:161,name:"Midtown Center",borough:"Manhattan",lat:40.756,lng:-73.985,demand_avg:45,supply_avg:50,pickup_prob:0.78,competition:"High",avg_fare:12.5},
+                    {id:162,name:"Midtown East",borough:"Manhattan",lat:40.758,lng:-73.971,demand_avg:42,supply_avg:48,pickup_prob:0.75,competition:"High",avg_fare:13.0},
+                    {id:48,name:"Times Square",borough:"Manhattan",lat:40.758,lng:-73.985,demand_avg:55,supply_avg:65,pickup_prob:0.82,competition:"Very High",avg_fare:10.5},
+                    {id:90,name:"Chelsea",borough:"Manhattan",lat:40.746,lng:-74.001,demand_avg:30,supply_avg:32,pickup_prob:0.70,competition:"Medium",avg_fare:15.0},
+                    {id:100,name:"East Village",borough:"Manhattan",lat:40.727,lng:-73.984,demand_avg:20,supply_avg:18,pickup_prob:0.58,competition:"Low",avg_fare:13.5},
+                    {id:224,name:"Upper West Side South",borough:"Manhattan",lat:40.779,lng:-73.976,demand_avg:24,supply_avg:28,pickup_prob:0.65,competition:"Low",avg_fare:17.0},
+                    {id:132,name:"Garment District",borough:"Manhattan",lat:40.752,lng:-73.990,demand_avg:35,supply_avg:30,pickup_prob:0.74,competition:"High",avg_fare:11.8}
+                ];
+            });
+    },
+    setupEventListeners: function() {
+        document.querySelectorAll(".nav-links a").forEach(function(link) {
+            link.addEventListener("click", function(e) {
+                e.preventDefault();
+                var target = document.querySelector(link.getAttribute("href"));
+                if (target) target.scrollIntoView({ behavior: "smooth" });
+                document.querySelector(".nav-links").classList.remove("open");
+            });
+        });
+        document.querySelector(".mobile-toggle").addEventListener("click", function() {
+            document.querySelector(".nav-links").classList.toggle("open");
+        });
+        document.getElementById("runSimBtn").addEventListener("click", function() { SimulationModule.run(); });
+        document.getElementById("applyDecisionBtn").addEventListener("click", function() { SimulationModule.applyDecision(); });
+        document.getElementById("scrollToMapBtn").addEventListener("click", function() {
+            document.getElementById("mapSection").scrollIntoView({ behavior: "smooth" });
+        });
+        document.getElementById("scrollToSimBtn").addEventListener("click", function() {
+            document.getElementById("simSection").scrollIntoView({ behavior: "smooth" });
+        });
+        document.getElementById("scrollToBenchBtn").addEventListener("click", function() {
+            document.getElementById("benchmarkSection").scrollIntoView({ behavior: "smooth" });
+        });
+    }
+};
+document.addEventListener("DOMContentLoaded", function() { App.init(); });
