@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="dns-prefetch" href="https://unpkg.com">
+<link rel="dns-prefetch" href="https://cdn.plot.ly">
+<link rel="dns-prefetch" href="https://{s}.basemaps.cartocdn.com">
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="preconnect" href="https://cdn.plot.ly">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NYC Mobility AI — Interactive Simulation Platform</title>
 <meta name="description" content="Interactive simulation platform for NYC taxi zone recommendation research.">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 <link rel="stylesheet" href="css/style.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 </head>
 <body>
 
@@ -47,7 +50,7 @@
       <h2>NYC Taxi Zone Map</h2>
       <p>Interactive map of Manhattan taxi zones with demand levels. Click a zone to view details and run simulations.</p>
     </div>
-    <div class="map-container">
+    <div class="map-container"><div id="mapLoading" style="display:flex;align-items:center;justify-content:center;height:400px;background:#1a1a2e;color:#888;font-size:1.1rem;">Loading NYC zone map...</div>
       <div id="map"></div>
       <div class="map-sidebar">
         <h3 id="selectedZone">Select a Zone</h3>
@@ -287,9 +290,12 @@
   Powered by NYC TLC Trip Record Data. Not affiliated with NYC TLC or any government agency.</p>
 </footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js" defer></script>
 <script src="js/main.js"></script>
 <script src="js/map.js"></script>
 <script src="js/simulation.js"></script>
 <script src="js/charts.js"></script>
+<script>document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){var el=document.getElementById("mapLoading");if(el)el.style.display="none";},4000);});</script>
 </body>
 </html>
