@@ -1,6 +1,8 @@
 """Generate release dashboard visualization."""
-import json, sys
+import json
+import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 try:
     import matplotlib
@@ -33,7 +35,8 @@ def generate_dashboard():
     axes[0, 0].set_ylabel("MAE")
     axes[0, 0].tick_params(axis="x", rotation=30)
     for bar, val in zip(bars, mae_vals):
-        axes[0, 0].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.02, f"{val:.3f}", ha="center", va="bottom", fontsize=8)
+        axes[0, 0].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.02,
+                f"{val:.3f}", ha="center", va="bottom", fontsize=8)
 
     # 2. Policy performance
     methods = ["Hot Zone", "Two-Step", "Single-Step", "Double DQN", "DQN"]
@@ -48,7 +51,8 @@ def generate_dashboard():
     axes[0, 1].set_ylabel("Revenue")
     axes[0, 1].tick_params(axis="x", rotation=30)
     for bar, val in zip(bars2, revenues):
-        axes[0, 1].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 10, f"${val:.0f}", ha="center", va="bottom", fontsize=8)
+        axes[0, 1].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 10,
+                f"${val:.0f}", ha="center", va="bottom", fontsize=8)
 
     # 3. Calibration
     dims = ["Fare RMSE", "Travel MAE"]

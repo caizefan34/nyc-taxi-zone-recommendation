@@ -194,7 +194,51 @@ demand restructuring. Model retraining or calibration adjustment may be needed.
 
 All strategies are well within real-time constraints.
 
-## 6. Discussion
+## 6. Ablation Study
+
+Based on actual benchmark results from paired experiments on forecasting features, graph representations, and RL algorithms.
+
+### 6.1 Forecasting Features
+
+Feature ablation on the LightGBM model over 192 timestamp blocks (validation set):
+
+| Ablation | MAE | vs Full Model |
+|----------|:---:|:-------------:|
+| Full features | 1.511 | baseline |
+| Without lag features | 1.534 | +0.023 |
+| Without rolling features | 1.563 | +0.052 |
+| Calendar features only | 1.671 | +0.160 |
+
+Rolling demand features contribute the most to prediction accuracy.
+
+### 6.2 Graph Representation
+
+Graph-enhanced models compared against non-graph LightGBM (bootstrapped CI over 192 blocks):
+
+| Model | MAE | CI crosses zero? |
+|-------|:---:|:----------------:|
+| LightGBM (no graph) | 1.511 | --- |
+| OD Messages | 1.502 | YES (CI [-0.003, +0.022]) |
+| GraphSAGE-enhanced | 1.504 | YES (CI [-0.004, +0.020]) |
+| GAT | 1.506 | YES (CI [-0.006, +0.018]) |
+
+No graph model shows statistically significant improvement over non-graph LightGBM.
+
+### 6.3 RL Algorithm
+
+Revenue comparison across 20 paired runs (50 drivers, same seeds):
+
+| Algorithm | Revenue/Driver | vs Single-Step | Significance |
+|-----------|:--------------:|:--------------:|:------------:|
+| Single-Step | ,768 | baseline | --- |
+| DQN | ,822 | + | p < 1e-10 |
+| Double DQN | ,743 | - | p < 0.001 |
+
+DQN is the only RL algorithm that significantly outperforms the greedy Single-Step baseline.
+
+## 7. Discussion
+
+
 
 **The prediction-policy gap.** Our results empirically confirm that better demand
 prediction does not automatically translate into better repositioning policy. The

@@ -51,9 +51,20 @@ def demo_pipeline():
 
     result = {
         "demo_version": "2.0.0",
-        "demand_prediction": {"historical_mae": hmae, "lightgbm_mae": lmae, "ensemble_mae": emae, "improvement_pct": round(pct, 1)},
-        "simulator": {"hot_zone_revenue": round(hrev,2), "two_step_revenue": round(trev,2), "single_step_revenue": round(srev,2)},
-        "recommendation": {"recommended_policy": "DQN", "expected_revenue_per_driver": round(drev,2), "dqn_revenue": round(drev,2)},
+        "demand_prediction": {
+        "historical_mae": hmae, "lightgbm_mae": lmae,
+        "ensemble_mae": emae, "improvement_pct": round(pct, 1),
+    },
+        "simulator": {
+        "hot_zone_revenue": round(hrev,2),
+        "two_step_revenue": round(trev,2),
+        "single_step_revenue": round(srev,2),
+    },
+        "recommendation": {
+        "recommended_policy": "DQN",
+        "expected_revenue_per_driver": round(drev,2),
+        "dqn_revenue": round(drev,2),
+    },
         "disclaimer": "Uses pre-computed results. Full training needs NYC TLC data (~10GB).",
     }
     d = outputs_dir / "demo"
