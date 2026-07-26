@@ -1,62 +1,91 @@
-# External Validation Plan
+﻿# External Validation Plan
 
-## Overview
-This document outlines plans for future external validation of the NYC Taxi Zone Recommendation system. These are **planned future activities**, not completed work.
+> **Status**: Framework designed. Validation not yet executed.
+> **Current completion**: Level 1–2 complete. Level 3–4 planned.
 
-## 1. Cross-City Validation
-**Status:** Framework designed, not executed.
+---
 
-**Goal:** Validate that the framework generalizes to other cities.
+## Validation Levels
 
-**Steps:**
+### Level 1: Simulation Validation ✅ Completed
+
+**What**: Internal consistency checks within the simulator environment.
+
+**Completed validations**:
+- Simulator revenue distributions align with historical data patterns
+- Multi-agent competition produces realistic utilization rates
+- Demand depletion mechanics behave as expected
+- All 328 tests pass, including simulator validation tests
+
+**Verification**: Run `pytest tests/test_simulator_validation.py -v`
+
+---
+
+### Level 2: Historical Replay ✅ Completed
+
+**What**: Compare policy recommendations against actual historical driver behavior.
+
+**Completed validations**:
+- Historical replay benchmark implemented
+- NDCG@3 and Hit@3 metrics computed against 3,360 public validation queries
+- Time-based train/validation/test splits prevent leakage
+- Exposure analysis across time periods and zone types
+
+**Verification**: Run `pytest tests/test_historical_replay.py -v`
+
+---
+
+### Level 3: Cross-City Validation 🔮 Planned
+
+**Status**: Framework designed, not executed.
+
+**Goal**: Validate that the framework generalizes to other cities.
+
+**Plan**:
 1. Download Chicago taxi trip data (publicly available)
-2. Adapt data pipeline for Chicago format
-3. Train forecasting models
-4. Calibrate simulator for Chicago
-5. Run benchmark and compare with NYC results
+2. Adapt data pipeline for Chicago format and zone structure
+3. Train forecasting models on Chicago data
+4. Calibrate simulator for Chicago geography and demand patterns
+5. Run full benchmark and compare with NYC results
 
-**Expected insight:** How much does city-specific calibration matter?
+**Expected insight**: How much does city-specific calibration matter? Are the policy rankings consistent across cities?
 
-## 2. Real Driver Feedback
-**Status:** Not started. Requires IRB approval.
+**Resources needed**: Chicago dataset (~50GB), adaptation pipeline (~2 weeks engineering)
 
-**Goal:** Collect feedback from actual taxi drivers on recommendations.
+---
 
-**Method:**
+### Level 4: Real-World Pilot 🔮 Planned
+
+**Status**: Not started. Requires external partnership and IRB approval.
+
+**Components**:
+
+#### 4a. Real Driver Feedback
 - Survey or interview study with NYC taxi drivers
 - Compare driver preferences with policy recommendations
-- Identify practical deployment barriers
+- Identify practical deployment barriers (UI, trust, adoption)
+- **Requires**: IRB approval, driver recruitment
 
-## 3. Online A/B Testing
-**Status:** Not started. Requires production infrastructure.
+#### 4b. Online A/B Testing
+- Deploy recommendation system to a small fleet
+- Randomized assignment: control (no recommendation) vs treatment
+- Metrics: revenue per shift, utilization rate, driver satisfaction
+- **Requires**: Fleet partnership, real-time data pipeline, monitoring
 
-**Goal:** Measure policy impact in a real deployment.
+#### 4c. Longitudinal Study
+- Track policy performance over months
+- Measure adaptation to seasonal demand shifts
+- Evaluate driver retention and long-term revenue trends
 
-**Requirements:**
-- Partner with dispatch platform or fleet operator
-- Implement real-time recommendation API
-- Track revenue, utilization, driver satisfaction
-- Randomize recommendations across drivers
+---
 
-## 4. Production Deployment
-**Status:** Not started.
+## Summary
 
-**Requirements:**
-- Real-time data ingestion pipeline
-- Low-latency inference (< 100ms)
-- Monitoring and alerting
-- Gradual rollout with safety constraints
+| Level | Description | Status | Timeline |
+|---|---|---|---|
+| Level 1 | Simulation validation | ✅ Done | Completed |
+| Level 2 | Historical replay | ✅ Done | Completed |
+| Level 3 | Cross-city validation | 🔮 Planned | 1–3 months (with data) |
+| Level 4 | Real-world pilot | 🔮 Planned | 6–12 months (with partners) |
 
-## Timeline (Provisional)
-| Phase | Activity | Estimated Duration |
-|-------|----------|-------------------|
-| 1 | Cross-city validation | 3-6 months |
-| 2 | Driver feedback study | 6-12 months |
-| 3 | A/B testing design | 12-18 months |
-| 4 | Production deployment | 18-24 months |
-
-## Limitations
-- All items are FUTURE WORK, not completed
-- Timelines are estimates and depend on resources
-- Cross-city validation requires new data downloads
-- Real driver studies require additional approvals
+> **Note**: All planned items require external resources and partnerships. They are deliberately not automated.

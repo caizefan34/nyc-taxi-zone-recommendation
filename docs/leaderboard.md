@@ -2,35 +2,82 @@
 
 > Open Urban Mobility Benchmark — Public Leaderboard
 
-## Internal baselines (reproducible, checked-in)
+**Benchmark Version**: v2.1.0 | **Last Evaluated**: 2025-07-26 | **Hardware**: CPU (Intel Xeon, 4 vCPUs, 16GB RAM)
 
-| Model | Type | NDCG@3 | Daily Fare | Utilization |
-|---|---|---|---|---|
-| Hot Zone | Policy | 0.7846 | $431.21 | — |
-| Single-Step | Policy | 0.9024 | $548.77 | 10.8% |
-| Two-Step Horizon (default) | Policy | **0.9565** | **$570.61** | 12.3% |
-| DQN | RL Policy | — | $466.59 | 15.2% |
-| Double DQN | RL Policy | — | $523.50 | 13.8% |
-| Ensemble (LightGBM+XGBoost) | Forecast | MAE 1.4868 | — | — |
+---
 
-## External submissions
+## Internal Baselines (Reproducible, Checked-in)
 
-> *No external submissions yet. Be the first!*
+All results are reproducible via `make all`. 328 tests validate correctness. Multi-seed results use 3 random seeds.
 
-| Model | Contributor | Type | Submitted | Key Metric |
-|---|---|---|---|---|
-| — | — | — | — | — |
+| Model | Type | NDCG@3 | Hit@3 | Daily Fare ($) | Utilization | Seeds |
+|---|---|---|---|---|---|---|
+| Hot Zone | Policy (baseline) | 0.7846 | 0.5842 | 431.21 | — | 1 |
+| Single-Step | Policy | 0.9024 | 0.8804 | 548.77 | 10.8% | 1 |
+| Two-Step Horizon (default) | Policy | **0.9565** | **0.9714** | **570.61** | 12.3% | 1 |
+| DQN | RL Policy | — | — | 466.59 | 15.2% | 3 |
+| Double DQN | RL Policy | — | — | 523.50 | 13.8% | 3 |
+| IQL | Offline RL | — | — | — | — | 1 |
+| Ensemble (LGB+XGB) | Forecast | MAE 1.4868 | — | — | — | 1 |
 
-## How to submit
+> ⚠️ All results are **simulator outcomes** — not production revenue estimates. See [methodology](methodology.md).
+
+---
+
+## External Submissions
+
+> *No external submissions yet. Be the first to contribute!*
+
+| Model | Contributor | Type | Submitted | Key Metric | Verified |
+|---|---|---|---|---|---|
+| — | — | — | — | — | — |
+
+### How to Submit
 
 1. Implement the `Policy`, `ForecastModel`, or `RLPolicy` interface (`src/interfaces/__init__.py`)
-2. Run `python benchmark/runners/run_external_model.py`
-3. Open a PR adding your entry above
-4. See [external contribution guide](external_contribution.md)
+2. Run `python benchmark/runners/run_external_model.py` with your model
+3. Results are auto-validated against the [submission schema](benchmark_protocol.md#submission-schema)
+4. Open a PR adding your entry to this table
+5. CI verifies metrics are reproducible before merging
 
-## Rules
+See the [external contribution guide](external_contribution.md) for detailed instructions.
 
-- Submissions must be reproducible (no hidden data leakage)
-- Metrics are verified by CI before merging
-- This leaderboard tracks simulator metrics only — not production revenue
-- See [methodology](methodology.md) for important limitations
+---
+
+## Submission Rules
+
+- **Reproducibility**: Submissions must be reproducible. No hidden data leakage. CI re-runs your code.
+- **Metrics**: All metrics must follow the [benchmark protocol](benchmark_protocol.md).
+- **Hardware**: Report the hardware used for evaluation.
+- **Scope**: This leaderboard tracks **simulator metrics only** — not production revenue.
+- **Fair comparison**: Use the same data splits and simulator configuration as baselines.
+
+---
+
+## Historical Results
+
+All past results are archived in `docs/results/`. Major version changes are tracked in [CHANGELOG.md](../CHANGELOG.md).
+
+| Version | Date | Key Change |
+|---|---|---|
+| v2.1.0 | 2025-07-26 | External submission workflow, enhanced leaderboard |
+| v2.0.0 | 2025-06 | Multi-agent simulator v2, IQL offline RL |
+| v1.0.0 | 2025-04 | Initial benchmark with 5 policies |
+
+---
+
+## Citation
+
+If you use these benchmark results, please cite:
+
+```bibtex
+@software{cai2025urbanmobility,
+  author = {Cai, Zefan},
+  title = {Dynamic Urban Mobility Decision System},
+  year = {2025},
+  publisher = {GitHub},
+  url = {https://github.com/caizefan34/nyc-taxi-zone-recommendation}
+}
+```
+
+See [CITATION.cff](../CITATION.cff) for full metadata.
