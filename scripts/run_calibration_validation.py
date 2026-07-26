@@ -11,7 +11,11 @@ import argparse
 import sys
 from pathlib import Path
 
+import matplotlib
 import numpy as np
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -89,6 +93,51 @@ def _generate_report(
     return report
 
 
+def _save_plots(
+    real_demand, raw_demand, cal_demand,
+    real_fares, raw_fares, cal_fares,
+    real_travel, raw_travel, cal_travel,
+    output_dir,
+):
+    """Generate comparison plots and save to output_dir."""
+    output_dir = Path(output_dir) if isinstance(output_dir, str) else output_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+
+    # Zone demand distribution
+    axes[0].hist(real_demand, bins=30, alpha=0.5, label="Real", density=True)
+    axes[0].hist(raw_demand, bins=30, alpha=0.5, label="Before Cal", density=True)
+    axes[0].hist(cal_demand, bins=30, alpha=0.3, label="After Cal", density=True)
+    axes[0].set_xlabel("Zone Demand")
+    axes[0].set_ylabel("Density")
+    axes[0].set_title("Zone Demand Distribution")
+    axes[0].legend(fontsize=8)
+
+    # Fare distribution
+    axes[1].hist(real_fares, bins=30, alpha=0.5, label="Real", density=True)
+    axes[1].hist(raw_fares, bins=30, alpha=0.5, label="Before Cal", density=True)
+    axes[1].hist(cal_fares, bins=30, alpha=0.3, label="After Cal", density=True)
+    axes[1].set_xlabel("Fare ($)")
+    axes[1].set_ylabel("Density")
+    axes[1].set_title("Fare Distribution")
+    axes[1].legend(fontsize=8)
+
+    # Travel time distribution
+    axes[2].hist(real_travel, bins=30, alpha=0.5, label="Real", density=True)
+    axes[2].hist(raw_travel, bins=30, alpha=0.5, label="Before Cal", density=True)
+    axes[2].hist(cal_travel, bins=30, alpha=0.3, label="After Cal", density=True)
+    axes[2].set_xlabel("Travel Time (min)")
+    axes[2].set_ylabel("Density")
+    axes[2].set_title("Travel Time Distribution")
+    axes[2].legend(fontsize=8)
+
+    plt.tight_layout()
+    plot_path = output_dir / "calibration_validation_plots.png"
+    plt.savefig(str(plot_path), dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    return plot_path
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "outputs/calibration_validation_report.md")
@@ -127,6 +176,15 @@ def main():
     travel_mae_before = float(np.mean(np.abs(real_travel - raw_travel)))
     travel_mae_after = float(np.mean(np.abs(real_travel - cal_travel)))
 
+    output_dir = args.output.parent if hasattr(args.output, "parent") else Path(args.output).parent
+    plot_path = _save_plots(
+        real_zone_demand, raw_demand, cal_demand,
+        real_fares, raw_fares, cal_fares,
+        real_travel, raw_travel, cal_travel,
+        output_dir,
+    )
+    print(f"Plots saved to {plot_path}")
+
     report = _generate_report(
         before, after,
         fare_rmse_before, fare_rmse_after,
@@ -135,6 +193,8 @@ def main():
     )
     print(report)
     print(f"\nReport written to {args.output}")
+    plots_path = output_dir / "calibration_validation_plots.png"
+    print(f"Plots saved to {plots_path}")
 
 
 if __name__ == "__main__":

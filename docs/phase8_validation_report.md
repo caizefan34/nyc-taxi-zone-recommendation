@@ -46,6 +46,8 @@ This phase closes the 3 gaps identified in the research-grade audit, elevating t
 
 - Script: `scripts/run_calibration_validation.py`
 - Output: `outputs/calibration_validation_report.md`
+- Plots: `outputs/calibration_validation_plots.png`
+  - 3-panel histogram (demand, fare, travel time)
 
 ---
 

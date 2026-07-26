@@ -28,4 +28,4 @@
 - **2/3** dimensions improved after calibration.
 - KL divergence did not improve (calibration factors may need tuning).
 
-*Note: Calibration factors are static defaults from configs/calibration.yaml. Optimal factors may differ per dataset.*
+*Note: Calibration factors are static defaults from configs/calibration.yaml.*
