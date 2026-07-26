@@ -14,6 +14,8 @@
   </p>
 
   <p>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/"><strong>🚀 Live Demo</strong></a>
+    &nbsp;·&nbsp;
     <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/"><strong>📖 Documentation</strong></a>
     &nbsp;·&nbsp;
     <a href="docs/demo_gallery.md"><strong>🎬 Demo Gallery</strong></a>
@@ -139,6 +141,15 @@ git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
 cd nyc-taxi-zone-recommendation
 python -m pip install -e ".[dev,forecasting,graph,rl]"
 ```
+
+### 🚀 Try the interactive demo
+
+```bash
+pip install streamlit
+streamlit run app/app.py
+```
+
+Or visit the [Live Web Demo](https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/).
 
 ### Run the data pipeline
 
