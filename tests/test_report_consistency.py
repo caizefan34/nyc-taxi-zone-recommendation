@@ -101,3 +101,14 @@ def test_graph_snapshot_is_leakage_safe_and_documents_uncertainty():
     assert comparison["ci95_low"] < 0.0 < comparison["ci95_high"]
     assert f"{graphsage['mae']:.4f}" in readme
     assert "graph-neural contribution is not statistically supported" in report
+
+
+def test_social_preview_uses_current_verified_headlines():
+    preview = (ROOT / "assets/social-preview.svg").read_text(encoding="utf-8")
+    combined = json.loads((ROOT / "outputs/benchmark_report.json").read_text(encoding="utf-8"))
+    forecast_mae = combined["methods"]["forecasting_enhanced"]["demand_mae"]
+    dqn_lift = combined["methods"]["dqn"]["difference_vs_original"]["mean_difference"]
+    assert f"{forecast_mae:.4f}" in preview
+    assert f"+${dqn_lift:.2f}" in preview
+    assert "0.9978" not in preview
+    assert "0.9988" not in preview
