@@ -1,0 +1,73 @@
+﻿# =============================================================================
+# Model Configuration
+# =============================================================================
+
+model:
+  # --- Forecasting Models ---
+  forecast:
+    name: "lightgbm"
+    seed: 42
+    n_estimators: 500
+    learning_rate: 0.05
+    max_depth: 8
+    num_leaves: 64
+    min_data_in_leaf: 100
+    feature_fraction: 0.8
+    bagging_fraction: 0.8
+    bagging_freq: 5
+    early_stopping_rounds: 50
+
+  # --- Graph Model ---
+  graph:
+    hidden_dim: 64
+    n_layers: 2
+    dropout: 0.2
+    learning_rate: 0.001
+    epochs: 200
+    patience: 20
+
+  # --- RL Baselines (DQN / Double DQN) ---
+  dqn:
+    gamma: 0.99
+    learning_rate: 0.001
+    batch_size: 64
+    replay_capacity: 20000
+    learning_starts: 500
+    target_update_interval: 250
+    epsilon_start: 1.0
+    epsilon_end: 0.05
+    epsilon_decay_steps: 10000
+    gradient_clip: 10.0
+    hidden_sizes: [128, 128]
+
+  double_dqn:
+    gamma: 0.99
+    learning_rate: 0.001
+    batch_size: 64
+    replay_capacity: 20000
+    learning_starts: 500
+    target_update_interval: 250
+    epsilon_start: 1.0
+    epsilon_end: 0.05
+    epsilon_decay_steps: 10000
+    gradient_clip: 10.0
+    hidden_sizes: [128, 128]
+
+  # --- IQL (Offline RL) ---
+  iql:
+    gamma: 0.99
+    tau: 0.7
+    beta: 3.0
+    learning_rate: 0.0003
+    hidden_dim: 256
+    batch_size: 256
+    n_critics: 2
+    expectile_threshold: 0.005
+    training_steps: 10000
+    log_interval: 500
+
+  # --- Mean Field ---
+  mean_field:
+    smoothing: 0.3
+    n_drivers: 50
+    n_days: 7

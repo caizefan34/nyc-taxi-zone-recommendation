@@ -1,7 +1,8 @@
-"""Offline Policy Evaluation (OPE) for offline RL.
+﻿"""Offline Policy Evaluation (OPE) for offline RL.
 
 Implements:
 - Fitted Q-Evaluation (FQE)
+- Weighted Importance Sampling (WIS)
 - Doubly Robust (DR) estimation
 - Per-timestep metrics
 """
@@ -19,6 +20,7 @@ class OPEMetrics:
     """OPE evaluation metrics."""
     fqe_estimate: float       # FQE-predicted return
     dr_estimate: float        # Doubly Robust estimate
+    wis_estimate: float       # Weighted Importance Sampling estimate
     mean_reward: float        # Empirical mean reward in buffer
     n_transitions: int        # Number of transitions evaluated
     ci95_low: float           # Bootstrap lower bound
@@ -92,6 +94,57 @@ def ope_fqe(
     return float(values.mean())
 
 
+def ope_weighted_importance_sampling(
+    buffer_rewards: np.ndarray,
+    buffer_dones: np.ndarray,
+    behavior_probs: np.ndarray | None = None,
+    *,
+    gamma: float = 0.99,
+    bootstrap_samples: int = 100,
+) -> tuple[float, float, float]:
+    """Weighted Importance Sampling (WIS) for policy evaluation.
+
+    Uses per-step importance weights if behavior_probs are available,
+    otherwise uses uniform weight as a baseline.
+
+    Returns:
+        Tuple of (wis_estimate, ci95_low, ci95_high).
+    """
+    n = len(buffer_rewards)
+    rng = np.random.default_rng(42)
+
+    # If no behavior probs, use uniform weights
+    if behavior_probs is not None and behavior_probs.max() > 0:
+        weights = 1.0 / np.clip(behavior_probs, 1e-8, None)
+    else:
+        weights = np.ones(n)
+
+    # Discounted returns
+    returns = np.zeros(n)
+    cumulative_return = 0.0
+    for t in range(n - 1, -1, -1):
+        cumulative_return = buffer_rewards[t] + gamma * cumulative_return * (1.0 - buffer_dones[t])
+        returns[t] = cumulative_return
+
+    # Weighted importance sampling
+    weighted_returns = weights * returns
+    wis_estimate = float(np.sum(weighted_returns) / max(1e-8, np.sum(weights)))
+
+    # Bootstrap CI
+    bootstrap_estimates = []
+    for _ in range(bootstrap_samples):
+        idx = rng.integers(0, n, size=n)
+        w = weights[idx]
+        r = returns[idx]
+        bs_est = np.sum(w * r) / max(1e-8, np.sum(w))
+        bootstrap_estimates.append(float(bs_est))
+
+    ci_low = float(np.percentile(bootstrap_estimates, 2.5))
+    ci_high = float(np.percentile(bootstrap_estimates, 97.5))
+
+    return wis_estimate, ci_low, ci_high
+
+
 def ope_doubly_robust(
     buffer_states: np.ndarray,
     buffer_actions: np.ndarray,
@@ -101,12 +154,14 @@ def ope_doubly_robust(
     *,
     gamma: float = 0.99,
     bootstrap_samples: int = 100,
+    behavior_probs: np.ndarray | None = None,
     device: str = "cpu",
 ) -> OPEMetrics:
     """Doubly Robust OPE with bootstrap confidence intervals.
 
     Trains a Q-network via FQE, then bootstraps over per-sample
     fitted Q-values to produce non-degenerate confidence intervals.
+    Also computes Weighted Importance Sampling for comparison.
     """
     state_dim = buffer_states.shape[-1]
     action_dim = buffer_actions.shape[-1] if buffer_actions.ndim > 1 else 1
@@ -146,13 +201,20 @@ def ope_doubly_robust(
     ci_low = float(np.percentile(bootstrap_means, 2.5))
     ci_high = float(np.percentile(bootstrap_means, 97.5))
 
+    # Weighted Importance Sampling
+    wis_est, wis_ci_low, wis_ci_high = ope_weighted_importance_sampling(
+        buffer_rewards, buffer_dones, behavior_probs,
+        gamma=gamma, bootstrap_samples=bootstrap_samples,
+    )
+
     return OPEMetrics(
         fqe_estimate=fqe,
         dr_estimate=dr_mean,
+        wis_estimate=wis_est,
         mean_reward=float(buffer_rewards.mean()),
         n_transitions=n,
-        ci95_low=ci_low,
-        ci95_high=ci_high,
+        ci95_low=min(ci_low, wis_ci_low),
+        ci95_high=max(ci_high, wis_ci_high),
     )
 
 
@@ -165,13 +227,18 @@ class OfflineEvaluator:
         self.device = device
 
     def evaluate(self) -> OPEMetrics:
-        """Run FQE and DR evaluation on the buffer."""
+        """Run FQE, WIS, and DR evaluation on the buffer."""
         buf = self.buffer
+        behavior_probs = getattr(buf, 'behavior_probs', None)
+        if behavior_probs is not None:
+            behavior_probs = behavior_probs[:buf.size]
+
         return ope_doubly_robust(
             buf.states[:buf.size],
             buf.actions[:buf.size],
             buf.rewards[:buf.size],
             buf.next_states[:buf.size],
             buf.dones[:buf.size],
+            behavior_probs=behavior_probs,
             device=self.device,
         )

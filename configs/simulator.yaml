@@ -1,0 +1,42 @@
+﻿# =============================================================================
+# Simulator Configuration
+# =============================================================================
+
+simulator:
+  v2:
+    driver_count: 50
+    demand_supply_ratio: 1.0
+    seed: 42
+    start_location_ids: [132]
+    traffic_variation: 0.2
+    weather_variation: 0.1
+    slot_minutes: 30
+    zone_count: 263
+
+  # Supply-demand dynamics
+  dynamics:
+    zone_count: 263
+    base_half_saturation: 40.0
+    supply_elasticity: 0.3
+    traffic_demand_suppression: 0.15
+
+  # Reward components
+  reward:
+    fuel_cost_per_mile: 0.65
+    time_cost_per_minute: 0.30
+    competition_penalty_per_driver: 0.50
+    risk_aversion_factor: 2.0
+    base_fare_per_trip: 15.0
+    fare_per_mile: 2.50
+
+  # Simulation time horizon
+  time:
+    start: "2023-01-25"
+    end: "2023-02-01"
+
+  # Multi-agent v1
+  multi_agent:
+    driver_count: 50
+    background_driver_count: 0
+    demand_supply_ratio: 1.0
+    horizon_days: 7

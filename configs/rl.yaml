@@ -1,0 +1,37 @@
+﻿# =============================================================================
+# RL Configuration
+# =============================================================================
+
+rl:
+  # --- RL Environment ---
+  env:
+    candidate_count: 20
+    background_driver_count: 49
+    demand_supply_ratio: 1.0
+    reward_scale: 0.05
+    relocation_penalty: 0.25
+    failed_pickup_penalty: 1.0
+
+  # --- Training ---
+  training:
+    episodes: 500
+    seed: 20230722
+    device: "cpu"
+
+  # --- Offline RL ---
+  offline:
+    buffer_capacity: 100000
+    state_dim: 7
+    action_dim: 263
+    collect_episodes: 20
+    iql_update_steps: 10000
+    ope_samples: 100
+    device: "cpu"
+
+  # --- Evaluation ---
+  evaluation:
+    runs: 20
+    drivers: 50
+    bootstrap_samples: 1000
+    horizon_days: 7
+    seed: 42

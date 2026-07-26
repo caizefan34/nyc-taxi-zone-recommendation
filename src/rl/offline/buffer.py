@@ -1,11 +1,17 @@
-"""Offline replay buffer for historical trajectory data.
+﻿"""Offline replay buffer for historical trajectory data.
 
 Stores (state, action, reward, next_state, done) transitions
 collected from the v2 simulator or real data.
+
+Enhanced fields:
+- trajectory_id: Identifies which episode/trajectory a transition belongs to
+- timestamp: Simulation timestamp for the transition
+- behavior_prob: Probability of the chosen action under the behavior policy
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 
 import numpy as np
 
@@ -18,6 +24,8 @@ class Trajectory:
     rewards: np.ndarray      # (T,)
     dones: np.ndarray        # (T,)
     next_states: np.ndarray  # (T, state_dim)
+    trajectory_id: int = 0   # Unique trajectory identifier
+    timestamps: np.ndarray | None = None  # (T,) optional timestamps
 
 
 class OfflineBuffer:
@@ -25,6 +33,9 @@ class OfflineBuffer:
 
     Stores transitions collected from the v2 dynamic simulator
     for offline policy learning and evaluation.
+
+    Enhanced with trajectory_id, timestamp, and behavior_policy_probability
+    fields for more detailed OPE and trajectory analysis.
     """
 
     def __init__(self, capacity: int = 100_000, state_dim: int = 7, seed: int = 42) -> None:
@@ -37,6 +48,11 @@ class OfflineBuffer:
         self.rewards = np.zeros(capacity, dtype=np.float32)
         self.next_states = np.zeros((capacity, state_dim), dtype=np.float32)
         self.dones = np.zeros(capacity, dtype=np.float32)
+
+        # Enhanced fields
+        self.trajectory_ids = np.zeros(capacity, dtype=np.int32)
+        self.timestamps = np.zeros(capacity, dtype=np.float64)
+        self.behavior_probs = np.zeros(capacity, dtype=np.float32)
 
         self._size = 0
         self._index = 0
@@ -56,29 +72,55 @@ class OfflineBuffer:
         reward: float,
         next_state: np.ndarray,
         done: bool,
+        *,
+        trajectory_id: int = 0,
+        timestamp: float | None = None,
+        behavior_prob: float = 1.0,
     ) -> None:
-        """Add a single transition to the buffer."""
+        """Add a single transition to the buffer.
+
+        Args:
+            state: Current state vector.
+            action: Chosen action (zone ID).
+            reward: Net reward for this transition.
+            next_state: Resulting state.
+            done: Whether the episode terminated.
+            trajectory_id: Identifier for the trajectory/episode.
+            timestamp: Simulation timestamp (Unix time or relative).
+            behavior_prob: Probability of this action under behavior policy.
+        """
         idx = self._index % self.capacity
         self.states[idx] = np.asarray(state, dtype=np.float32).ravel()
         self.actions[idx] = int(action)
         self.rewards[idx] = float(reward)
         self.next_states[idx] = np.asarray(next_state, dtype=np.float32).ravel()
         self.dones[idx] = float(done)
+
+        # Enhanced fields
+        self.trajectory_ids[idx] = int(trajectory_id)
+        self.timestamps[idx] = float(timestamp) if timestamp is not None else float(self._index)
+        self.behavior_probs[idx] = float(behavior_prob)
+
         self._index += 1
         self._size = min(self._size + 1, self.capacity)
 
     def add_trajectory(self, traj: Trajectory) -> None:
         """Add all transitions from a trajectory."""
         for i in range(len(traj.rewards)):
+            ts = float(traj.timestamps[i]) if traj.timestamps is not None else None
             self.add(
                 traj.states[i], int(traj.actions[i]), float(traj.rewards[i]),
                 traj.next_states[i], bool(traj.dones[i]),
+                trajectory_id=traj.trajectory_id,
+                timestamp=ts,
+                behavior_prob=1.0,
             )
 
     def sample(self, batch_size: int) -> dict[str, np.ndarray]:
         """Sample a random batch of transitions.
 
-        Returns dict with keys: states, actions, rewards, next_states, dones.
+        Returns dict with keys: states, actions, rewards, next_states, dones,
+        trajectory_ids, timestamps, behavior_probs.
         """
         if self._size < batch_size:
             raise ValueError(f"buffer has {self._size} transitions, need {batch_size}")
@@ -89,6 +131,9 @@ class OfflineBuffer:
             "rewards": self.rewards[indices],
             "next_states": self.next_states[indices],
             "dones": self.dones[indices],
+            "trajectory_ids": self.trajectory_ids[indices],
+            "timestamps": self.timestamps[indices],
+            "behavior_probs": self.behavior_probs[indices],
         }
 
     def clear(self) -> None:
@@ -108,19 +153,17 @@ class OfflineBuffer:
         """Collect transitions by running a policy in a simulator.
 
         Args:
-            simulator: Object with ``state`` attribute and ``step(action)`` method.
+            simulator: Object with `state` attribute and `step(action)` method.
             episodes: Number of episodes to run.
             max_steps: Max steps per episode.
             state_fn: Extracts state vector from simulator state.
             reward_fn: Extracts reward from step result.
             policy_fn: Maps state to action.
         """
-        from datetime import datetime
 
         for ep in range(episodes):
             sim = simulator
             if hasattr(sim, "run"):
-                # DynamicSimulator: use run()
                 sim.run(datetime(2023, 1, 25), datetime(2023, 2, 1))
             state = state_fn(sim) if callable(state_fn) else np.zeros(self.state_dim)
             for step in range(max_steps):
@@ -128,7 +171,7 @@ class OfflineBuffer:
                 reward = reward_fn(sim, action) if callable(reward_fn) else 0.0
                 next_state = state_fn(sim) if callable(state_fn) else state
                 done = step == max_steps - 1
-                self.add(state, action, reward, next_state, done)
+                self.add(state, action, reward, next_state, done, trajectory_id=ep)
                 state = next_state
                 if done:
                     break
@@ -138,11 +181,11 @@ class OfflineBuffer:
         simulator,
         episodes: int = 20,
         *,
-        strategy = None,
+        strategy=None,
     ) -> None:
         """Collect realistic transitions from the v2 DynamicSimulator.
 
-        Uses the simulator's ``run()`` method with ``on_transition`` callback
+        Uses the simulator's `run()` method with `on_transition` callback
         to record real (state, action, reward, next_state, done) transitions.
 
         State vector (7-dim):
@@ -155,11 +198,10 @@ class OfflineBuffer:
           [6] zone.traffic_multiplier / 2.0       - normalized traffic
 
         Args:
-            simulator: DynamicSimulator instance with ``run()`` method.
+            simulator: DynamicSimulator instance with `run()` method.
             episodes: Number of simulation runs.
             strategy: Driver strategy function (time, zone, state) -> zone.
         """
-        from datetime import datetime
 
         import numpy as np
 
@@ -187,6 +229,7 @@ class OfflineBuffer:
                 if env is None:
                     return
                 state = _extract_state(env, driver_id)
+                ts = env.current_time.timestamp()
                 next_state = np.array([
                     next_zone / ZONE_COUNT,
                     (env.current_time.hour * 60 + env.current_time.minute) / 1440.0,
@@ -196,7 +239,7 @@ class OfflineBuffer:
                     env.driver_count_in_zone(next_zone) / max(1, env.zones[next_zone].trips_remaining),
                     env.zones[next_zone].traffic_multiplier / 2.0,
                 ], dtype=np.float32)
-                collected.append((state, action_zone, reward, next_state, done))
+                collected.append((state, action_zone, reward, next_state, done, ts))
 
             simulator.run(
                 datetime(2023, 1, 25),
@@ -205,5 +248,6 @@ class OfflineBuffer:
                 on_transition=_transition_cb,
             )
 
-            for state, action, reward, next_state, done in collected:
-                self.add(state, action, reward, next_state, done)
+            for state, action, reward, next_state, done, ts in collected:
+                self.add(state, action, reward, next_state, done,
+                         trajectory_id=ep, timestamp=ts, behavior_prob=1.0)
