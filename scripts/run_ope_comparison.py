@@ -2,12 +2,12 @@
 
 Output: outputs/policy_evaluation_report.md
 """
+# ruff: noqa: E501
 from __future__ import annotations
 
-import json
+import sys
 from datetime import datetime
 from pathlib import Path
-import sys
 
 import numpy as np
 
@@ -17,10 +17,10 @@ sys.path.insert(0, str(ROOT))
 
 def _run_dqn_evaluation(*, drivers: int = 10, seed: int = 42) -> dict:
     """Evaluate DQN policy using OPE methods."""
-    from src.simulator.v2 import DynamicSimulator
-    from src.simulator.v2.engine import SimulatorConfig
     from src.rl.offline import OfflineBuffer
     from src.rl.offline.evaluation import ope_doubly_robust, ope_fqe, ope_weighted_importance_sampling
+    from src.simulator.v2 import DynamicSimulator
+    from src.simulator.v2.engine import SimulatorConfig
 
     buffer = OfflineBuffer(capacity=5000, state_dim=7, seed=seed)
     sim = DynamicSimulator(SimulatorConfig(driver_count=drivers, seed=seed))
@@ -58,11 +58,11 @@ def _run_dqn_evaluation(*, drivers: int = 10, seed: int = 42) -> dict:
 
 def _run_iql_evaluation(*, drivers: int = 10, seed: int = 42) -> dict:
     """Evaluate IQL policy using OPE methods."""
-    from src.simulator.v2 import DynamicSimulator
-    from src.simulator.v2.engine import SimulatorConfig
     from src.rl.offline import IQLAgent, OfflineBuffer
     from src.rl.offline.evaluation import ope_doubly_robust, ope_fqe, ope_weighted_importance_sampling
     from src.rl.offline.iql import train_iql
+    from src.simulator.v2 import DynamicSimulator
+    from src.simulator.v2.engine import SimulatorConfig
 
     state_dim = 7
     action_dim = 263

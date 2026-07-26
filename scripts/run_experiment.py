@@ -177,7 +177,7 @@ def main():
         benchmarks_to_run.append(("stats", "Benchmark Statistics", _run_benchmark_statistics))
 
     print(f"{'='*60}")
-    print(f"NYC Taxi Zone Recommendation - Experiment Runner")
+    print("NYC Taxi Zone Recommendation - Experiment Runner")
     print(f"{'='*60}")
     print(f"Date: {metadata['timestamp']}")
     print(f"Config: {args.config}")

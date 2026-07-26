@@ -14,11 +14,11 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src.simulator.v2 import DynamicSimulator
-from src.simulator.v2.engine import SimulatorConfig, ZONE_COUNT
-from src.simulator.validation.comparison import SimulatorValidator
-from src.simulator.validation.temporal import TemporalValidator
-from src.simulator.validation.report import generate_validation_report
+from src.simulator.v2 import DynamicSimulator  # noqa: E402
+from src.simulator.v2.engine import ZONE_COUNT, SimulatorConfig  # noqa: E402
+from src.simulator.validation.comparison import SimulatorValidator  # noqa: E402
+from src.simulator.validation.report import generate_validation_report  # noqa: E402
+from src.simulator.validation.temporal import TemporalValidator  # noqa: E402
 
 
 def main():
@@ -54,7 +54,10 @@ def main():
     sim_weekend = sim_hourly * 0.7
 
     # Revenue data
-    driver_revenues = [d.revenue for d in sim.state.drivers.values()] if sim.state else rng.exponential(150.0, args.drivers)
+    if sim.state:
+        driver_revenues = [d.revenue for d in sim.state.drivers.values()]
+    else:
+        driver_revenues = rng.exponential(150.0, args.drivers)
     sim_rewards = np.array(driver_revenues, dtype=np.float64)
     real_fares = rng.exponential(15.0, 1000) + 10.0
 
@@ -78,4 +81,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

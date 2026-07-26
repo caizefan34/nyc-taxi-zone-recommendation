@@ -8,12 +8,13 @@ Reads existing benchmark JSONs and computes:
 
 Outputs: outputs/benchmark_statistics.md
 """
+# ruff: noqa: E501
 from __future__ import annotations
 
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
-import sys
 
 import numpy as np
 from scipy import stats as scipy_stats
@@ -282,7 +283,7 @@ def main():
                 n_runs = 100
                 h_runs = rng.normal(hist_fare, rollout["historical"].get("std_daily_fare", 0), n_runs)
                 f_runs = rng.normal(fcast_fare, rollout["forecast"].get("std_daily_fare", 0), n_runs)
-                comparisons[f"Historical|Forecast|Daily Fare"] = _paired_bootstrap(h_runs, f_runs)
+                comparisons["Historical|Forecast|Daily Fare"] = _paired_bootstrap(h_runs, f_runs)
 
     report = _generate_report(comparisons, model_stats)
     args.output.parent.mkdir(parents=True, exist_ok=True)
