@@ -12,6 +12,8 @@ scientifically bounded evaluation.
    methodology
    multi_agent_simulator
    rl_baselines
+   forecasting
+   graph_learning
    ablation_study
 
 .. toctree::

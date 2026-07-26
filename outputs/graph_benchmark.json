@@ -1,0 +1,84 @@
+{
+  "training_end_exclusive": "2023-01-21T00:00:00",
+  "validation_start": "2023-01-21T00:00:00",
+  "validation_end": "2023-01-24T23:30:00",
+  "validation_timestamps": 192,
+  "seed": 20230722,
+  "device": "cuda",
+  "graph": {
+    "zone_count": 263,
+    "training_trip_count": 1865434,
+    "directed_edge_count": 18259,
+    "models": {
+      "graphsage": {
+        "embedding_size": 8,
+        "epochs": 200,
+        "final_reconstruction_loss": 0.6128166317939758
+      },
+      "gat": {
+        "embedding_size": 8,
+        "epochs": 200,
+        "final_reconstruction_loss": 0.6741556525230408
+      }
+    }
+  },
+  "models": {
+    "non_graph_lightgbm": {
+      "mae": 1.5114059352241813,
+      "rmse": 5.070736961604602
+    },
+    "od_messages": {
+      "mae": 1.5023594085132514,
+      "rmse": 5.074537483106027
+    },
+    "graphsage": {
+      "mae": 1.5037357329121144,
+      "rmse": 5.071598416052141
+    },
+    "gat": {
+      "mae": 1.5057963898247595,
+      "rmse": 5.073356926016035
+    }
+  },
+  "paired_slot_mae_reduction": {
+    "od_messages": {
+      "mean_a": 1.5114059352241815,
+      "mean_b": 1.5023594085132517,
+      "mean_difference": 0.00904652671093002,
+      "std_difference": 0.08822680640242116,
+      "ci95_low": -0.0032495935939009673,
+      "ci95_high": 0.021807938933230468,
+      "paired_t_statistic": 1.420796652109558,
+      "paired_t_pvalue": 0.15700635461442705,
+      "wilcoxon_statistic": 8577.0,
+      "wilcoxon_pvalue": 0.37290163181981517,
+      "cohen_dz": 0.10253716619489654
+    },
+    "graphsage": {
+      "mean_a": 1.5114059352241815,
+      "mean_b": 1.5037357329121146,
+      "mean_difference": 0.00767020231206714,
+      "std_difference": 0.08605323171128906,
+      "ci95_low": -0.0042087809942788,
+      "ci95_high": 0.01996022346224643,
+      "paired_t_statistic": 1.2350662346678343,
+      "paired_t_pvalue": 0.21832297551145965,
+      "wilcoxon_statistic": 8937.0,
+      "wilcoxon_pvalue": 0.6714747485873112,
+      "cohen_dz": 0.08913322788156147
+    },
+    "gat": {
+      "mean_a": 1.5114059352241815,
+      "mean_b": 1.50579638982476,
+      "mean_difference": 0.005609545399421832,
+      "std_difference": 0.08592305263547088,
+      "ci95_low": -0.006289315294033638,
+      "ci95_high": 0.01786300503855751,
+      "paired_t_statistic": 0.9046249956116559,
+      "paired_t_pvalue": 0.36680371146554397,
+      "wilcoxon_statistic": 9028.0,
+      "wilcoxon_pvalue": 0.7595313731693274,
+      "cohen_dz": 0.06528568559150669
+    }
+  }
+}

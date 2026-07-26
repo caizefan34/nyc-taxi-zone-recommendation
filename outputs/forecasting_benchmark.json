@@ -1,0 +1,49 @@
+{
+  "runs": 100,
+  "base_seed": 20230722,
+  "static": {
+    "historical": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.9024297721851223,
+      "hit_at_3": 0.8803571428571428,
+      "reference_two_step_utility_at_1": 25.05888674350927,
+      "average_recommend_time_ms": 0.07930238095238094,
+      "peak_tracemalloc_bytes": 0
+    },
+    "forecast": {
+      "query_count": 3360,
+      "ndcg_at_3": 0.8835356040451746,
+      "hit_at_3": 0.8407738095238095,
+      "reference_two_step_utility_at_1": 24.171088030220382,
+      "average_recommend_time_ms": 0.025910029761904763,
+      "peak_tracemalloc_bytes": 0
+    }
+  },
+  "rollout": {
+    "historical": {
+      "mean_daily_fare": 548.7740715429028,
+      "std_daily_fare": 72.98144941371753,
+      "runs": 100
+    },
+    "forecast": {
+      "mean_daily_fare": 530.8898430643762,
+      "std_daily_fare": 78.9071225494655,
+      "runs": 100
+    }
+  },
+  "paired_rollout": {
+    "forecast_vs_historical": {
+      "mean_a": 530.8898430643764,
+      "mean_b": 548.7740715429028,
+      "mean_difference": -17.88422847852644,
+      "std_difference": 103.30850647935321,
+      "ci95_low": -38.15198303116805,
+      "ci95_high": 3.0318333066868033,
+      "paired_t_statistic": -1.7311477135816207,
+      "paired_t_pvalue": 0.08654075725490559,
+      "wilcoxon_statistic": 1589.0,
+      "wilcoxon_pvalue": 0.0012896543207021507,
+      "cohen_dz": -0.17311477135816208
+    }
+  }
+}
