@@ -38,9 +38,6 @@ dev = [
     "ruff>=0.4.0",
     "black>=24.0",
 ]
-benchmark = [
-    "scikit-learn>=1.4",
-]
 forecasting = [
     "lightgbm>=4.3",
     "scikit-learn>=1.4",

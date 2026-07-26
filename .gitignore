@@ -60,3 +60,6 @@ docs/api/generated/
 *.swo
 *~
 .DS_Store?
+
+# Ruff cache
+.ruff_cache/
