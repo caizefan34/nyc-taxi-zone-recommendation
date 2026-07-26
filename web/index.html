@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYC Mobility AI — Interactive Simulation Platform</title>
+<meta name="description" content="Interactive simulation platform for NYC taxi zone recommendation research.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo"><div class="logo-icon">NYC</div><span>Mobility AI</span></div>
+  <button class="mobile-toggle" aria-label="Toggle navigation">Menu</button>
+  <ul class="nav-links">
+    <li><a href="#heroSection" class="active">Home</a></li>
+    <li><a href="#mapSection">Map</a></li>
+    <li><a href="#simSection">Simulate</a></li>
+    <li><a href="#policySection">Benchmark</a></li>
+    <li><a href="#docsSection">Docs</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="heroSection">
+  <div class="hero-badge">Research Release v2.0 · Simulation-Based</div>
+  <h1>NYC Taxi Zone <span>Intelligent Recommendation</span> System</h1>
+  <p>An interactive research platform demonstrating offline reinforcement learning for taxi zone dispatching. Explore forecasts, compare policies, and simulate AI-driven decisions using real NYC TLC data.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-value">297+</div><div class="hero-stat-label">Tests Passing</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">5</div><div class="hero-stat-label">Policies</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">10</div><div class="hero-stat-label">Zones</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">24h</div><div class="hero-stat-label">Forecast</div></div>
+  </div>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+    <button class="btn btn-primary" id="scrollToMapBtn">Explore the Map</button>
+    <button class="btn btn-outline" id="scrollToSimBtn">Run Simulation</button>
+    <button class="btn btn-outline" id="scrollToBenchBtn">View Benchmark</button>
+  </div>
+</section>
+
+<section class="section" id="mapSection">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>NYC Taxi Zone Map</h2>
+      <p>Interactive map of Manhattan taxi zones with demand levels. Click a zone to view details and run simulations.</p>
+    </div>
+    <div class="map-container">
+      <div id="map"></div>
+      <div class="map-sidebar">
+        <h3 id="selectedZone">Select a Zone</h3>
+        <p style="font-size:0.8rem;color:var(--text-muted);">Click a marker on the map to see zone details.</p>
+        <div class="zone-detail" id="zoneDetail"><p style="color:var(--text-muted);">No zone selected yet.</p></div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot low"></div> Low Demand</div>
+          <div class="legend-item"><div class="legend-dot medium"></div> Medium Demand</div>
+          <div class="legend-item"><div class="legend-dot high"></div> High Demand</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="simSection" style="background:var(--primary);">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>AI Decision Simulation</h2>
+      <p>Configure inputs and run the AI pipeline to simulate a taxi dispatching decision. All results are simulation-based.</p>
+    </div>
+    <div class="sim-layout">
+      <div class="sim-controls">
+        <h3>Scenario Configuration</h3>
+        <div class="form-group">
+          <label for="simZone">Zone</label>
+          <select id="simZone" class="sim-input">
+            <option value="237">Upper East Side North</option>
+            <option value="236">Upper East Side South</option>
+            <option value="170">Murray Hill</option>
+            <option value="161" selected>Midtown Center</option>
+            <option value="162">Midtown East</option>
+            <option value="48">Times Square</option>
+            <option value="90">Chelsea</option>
+            <option value="100">East Village</option>
+            <option value="224">Upper West Side South</option>
+            <option value="132">Garment District</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="simHour">Hour (0-23)</label>
+          <select id="simHour" class="sim-input"><option value="0">0:00</option><option value="1">1:00</option><option value="2">2:00</option><option value="3">3:00</option><option value="4">4:00</option><option value="5">5:00</option><option value="6">6:00</option><option value="7">7:00</option><option value="8">8:00</option><option value="9">9:00</option><option value="10" selected>10:00</option><option value="11">11:00</option><option value="12">12:00</option><option value="13">13:00</option><option value="14">14:00</option><option value="15">15:00</option><option value="16">16:00</option><option value="17">17:00</option><option value="18">18:00</option><option value="19">19:00</option><option value="20">20:00</option><option value="21">21:00</option><option value="22">22:00</option><option value="23">23:00</option></select>
+        </div>
+        <div class="form-group">
+          <label for="simDay">Day of Week</label>
+          <select id="simDay" class="sim-input"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option><option value="Sunday">Sunday</option></select>
+        </div>
+        <div class="form-group">
+          <label for="simMonth">Month</label>
+          <select id="simMonth" class="sim-input"><option value="January">January</option><option value="February">February</option><option value="March">March</option><option value="April">April</option><option value="May">May</option><option value="June">June</option><option value="July">July</option><option value="August">August</option><option value="September">September</option><option value="October">October</option><option value="November">November</option><option value="December">December</option></select>
+        </div>
+        <div class="sim-btn-wrap">
+          <button class="btn btn-primary" id="runSimBtn">Run AI Decision</button>
+        </div>
+      </div>
+      <div class="sim-results">
+        <div class="step-progress" id="stepProgress" style="display:none;">
+          <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+        </div>
+        <div id="stepContent" style="display:none;">
+          <div class="step-content" id="step1Content">
+            <div class="loading-indicator" id="step1Loading">
+              <div class="loading-spinner"></div>
+              <div class="loading-text">Running demand prediction...</div>
+            </div>
+            <div class="step-body" id="step1Result" style="display:none;">
+              <h4>Demand Forecast</h4>
+              <p id="step1Info" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;"></p>
+              <div style="overflow-x:auto;">
+                <table class="result-table">
+                  <thead><tr><th>Zone</th><th>Demand</th><th>Supply</th><th>D/S Ratio</th></tr></thead>
+                  <tbody id="forecastTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="step-content" id="step2Content">
+            <div class="loading-indicator" id="step2Loading">
+              <div class="loading-spinner"></div>
+              <div class="loading-text">Evaluating policies...</div>
+            </div>
+            <div class="step-body" id="step2Result" style="display:none;">
+              <h4>Policy Evaluation</h4>
+              <div style="overflow-x:auto;">
+                <table class="result-table">
+                  <thead><tr><th>Risk</th><th>Policy</th><th>Expected Reward</th><th>Utilization</th></tr></thead>
+                  <tbody id="policyTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="step-content" id="step3Content">
+            <div class="loading-indicator" id="step3Loading">
+              <div class="loading-spinner"></div>
+              <div class="loading-text">Generating AI recommendation...</div>
+            </div>
+            <div class="recommendation-card" id="step3Recommendation" style="display:none;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                  <div class="zone-name" id="recZone">Move to Midtown Center</div>
+                  <div style="font-size:0.8rem;color:var(--text-muted);">AI Policy Recommendation (Simulation)</div>
+                </div>
+                <span style="font-size:0.75rem;padding:0.25rem 0.75rem;border-radius:100px;background:rgba(0,180,216,0.15);color:var(--accent-light);">DQN Policy</span>
+              </div>
+              <div class="metrics">
+                <div class="metric"><div class="metric-value" id="recExpectedReward">$0</div><div class="metric-label">Expected Reward</div></div>
+                <div class="metric"><div class="metric-value" id="recUtilization">0%</div><div class="metric-label">Utilization</div></div>
+                <div class="metric"><div class="metric-value" id="recConfidence">-</div><div class="metric-label">Confidence</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:1rem;">
+          <button class="btn btn-success" id="applyDecisionBtn" style="display:none;">Apply Decision &amp; See Impact</button>
+        </div>
+        <div id="beforeAfterPanel" style="display:none;margin-top:1.5rem;">
+          <div class="step-body" style="margin-bottom:1rem;">
+            <h4>Impact Analysis</h4>
+            <div class="before-after">
+              <div class="before-card">
+                <h5>Before</h5>
+                <div class="metric-row"><span>Revenue</span><strong id="beforeRevenue">$0</strong></div>
+                <div class="metric-row"><span>Utilization</span><strong id="beforeUtilization">0%</strong></div>
+                <div class="metric-row"><span>Avg Wait</span><strong id="beforeWait">0 min</strong></div>
+              </div>
+              <div class="after-card">
+                <h5>After (AI Recommendation)</h5>
+                <div class="metric-row"><span>Revenue</span><strong id="afterRevenue">$0</strong> <span class="improvement" id="improvementRevenue">+0%</span></div>
+                <div class="metric-row"><span>Utilization</span><strong id="afterUtilization">0%</strong> <span class="improvement" id="improvementUtilization">+0%</span></div>
+                <div class="metric-row"><span>Avg Wait</span><strong id="afterWait">0 min</strong> <span class="improvement" id="improvementWait">-0%</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-container" id="beforeAfterChart" style="height:300px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="policySection">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Policy Benchmark Comparison</h2>
+      <p>Comparison of all evaluated policies across reward, revenue, and utilization metrics.</p>
+    </div>
+    <div class="chart-container" id="policyChart" style="height:450px;"></div>
+  </div>
+</section>
+
+<section class="section" id="forecastSection" style="background:var(--primary);">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Hourly Demand Forecast</h2>
+      <p>Select a zone on the map to see its 24-hour demand forecast compared with historical averages.</p>
+    </div>
+    <div class="chart-container" id="forecastChart" style="height:400px;">
+      <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);">
+        Click a zone on the map to load the forecast chart.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="benchmarkSection">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Benchmark Dashboard</h2>
+      <p>Key performance metrics from the v2.0 research release. All values from calibrated simulation evaluation.</p>
+    </div>
+    <div class="benchmark-grid">
+      <div class="benchmark-card">
+        <div class="value">1.487</div>
+        <div class="label">Ensemble MAE</div>
+        <span class="status pass">Best</span>
+      </div>
+      <div class="benchmark-card">
+        <div class="value">$1,822</div>
+        <div class="label">DQN Avg Daily Reward</div>
+        <span class="status pass">Best Policy</span>
+      </div>
+      <div class="benchmark-card">
+        <div class="value">8.88 → 3.11</div>
+        <div class="label">Calibration Fare RMSE</div>
+        <span class="status pass">Validated</span>
+      </div>
+      <div class="benchmark-card">
+        <div class="value">274/15</div>
+        <div class="label">Tests Passed / Skipped</div>
+        <span class="status pass">Passing</span>
+      </div>
+    </div>
+    <div class="benchmark-image-wrap">
+      <h4 style="color:var(--text-muted);margin-bottom:1rem;font-weight:400;">System Performance Overview</h4>
+      <img src="../docs/results/release_dashboard.png" alt="Release Dashboard" onerror="this.style.display='none'" />
+      <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-muted);">Note: All metrics are from calibrated simulation evaluation. Not real deployment data.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="docsSection" style="background:var(--primary);">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Research Documentation</h2>
+      <p>Explore the full research documentation, reproduction guide, and model cards.</p>
+    </div>
+    <div class="benchmark-grid">
+      <a href="../README.md" style="text-decoration:none;display:block;">
+        <div class="benchmark-card"><div class="value" style="font-size:1.3rem;">README</div><div class="label">Project overview, results, limitations</div></div>
+      </a>
+      <a href="../docs/research_paper_draft.md" style="text-decoration:none;display:block;">
+        <div class="benchmark-card"><div class="value" style="font-size:1.3rem;">Paper Draft</div><div class="label">Full academic paper format</div></div>
+      </a>
+      <a href="../docs/reproduction.md" style="text-decoration:none;display:block;">
+        <div class="benchmark-card"><div class="value" style="font-size:1.3rem;">Reproduction</div><div class="label">Step-by-step reproduction guide</div></div>
+      </a>
+      <a href="../docs/leaderboard.md" style="text-decoration:none;display:block;">
+        <div class="benchmark-card"><div class="value" style="font-size:1.3rem;">Leaderboard</div><div class="label">Full benchmark results</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> This is a <strong>simulation-based research demonstration</strong>. All results are generated from
+    calibrated simulation environments using NYC TLC public data. Metrics shown are for research evaluation purposes only
+    and do not represent real-world deployment outcomes. No live taxi dispatching decisions are made by this system.
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" target="_blank">GitHub Repository</a>
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/releases/tag/v2.0.0" target="_blank">v2.0.0 Release</a>
+    <a href="../CHANGELOG.md">Changelog</a>
+    <a href="../CONTRIBUTING.md">Contributing</a>
+  </div>
+  <p>&copy; 2026 NYC Taxi Zone Recommendation Research. Open source under MIT License.<br>
+  Powered by NYC TLC Trip Record Data. Not affiliated with NYC TLC or any government agency.</p>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/map.js"></script>
+<script src="js/simulation.js"></script>
+<script src="js/charts.js"></script>
+</body>
+</html>

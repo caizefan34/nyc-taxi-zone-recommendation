@@ -41,3 +41,17 @@ Streamlit UI Display
 - Simulation-based — no real deployment
 - Single strategy (Historical Single-Step)
 - Requires streamlit package installation
+
+
+## Modes
+
+| Mode | Technology | Location | How to Run |
+|------|-----------|----------|-----------|
+| **Interactive Web** | HTML/CSS/JS | `web/index.html` | Open in browser or deploy to GitHub Pages |
+| **Streamlit Demo** | Python/Streamlit | `app/app.py` | `streamlit run app/app.py` |
+
+### Interactive Web (Recommended for Quick Demo)
+No installation required. Just open `web/index.html` in a browser or visit the GitHub Pages URL.
+
+### Streamlit (Full Pipeline)
+Requires Python and installed dependencies. Shows the code-level pipeline with real feature construction.
