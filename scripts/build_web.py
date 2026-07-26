@@ -8,9 +8,11 @@ WEB = Path(__file__).resolve().parent.parent / 'web'
 
 
 def build():
+    leaflet_css = (WEB / 'css' / 'leaflet.css').read_text(encoding='utf-8')
+    leaflet_js = (WEB / 'js' / 'leaflet.min.js').read_text(encoding='utf-8')
     css = (WEB / 'css' / 'style.css').read_text(encoding='utf-8')
-    main_js = (WEB / 'js' / 'main.js').read_text(encoding='utf-8')
     map_js = (WEB / 'js' / 'map.js').read_text(encoding='utf-8')
+    main_js = (WEB / 'js' / 'main.js').read_text(encoding='utf-8')
     sim_js = (WEB / 'js' / 'simulation.js').read_text(encoding='utf-8')
     charts_js = (WEB / 'js' / 'charts.js').read_text(encoding='utf-8')
     zones_data = json.loads(
@@ -18,7 +20,6 @@ def build():
     )
     zones_json_str = json.dumps(zones_data)
 
-    # Replace whole loadZones function body with synchronous version
     main_js_modified = re.sub(
         r'loadZones: function\(\) \{\s+return fetch\("data/zones.json"\).*?'
         r'\]\s*;\s*\n\s*\}\);\s*\n\s*\},\n',
@@ -26,15 +27,10 @@ def build():
         main_js,
         flags=re.DOTALL,
     )
-    # Remove original AppState declaration
     main_js_modified = re.sub(
-        r'^var AppState = \{.*?\};\s*$',
-        '',
-        main_js_modified,
-        flags=re.MULTILINE,
+        r'^var AppState = \{.*?\};\s*$', '', main_js_modified, flags=re.MULTILINE
     )
 
-    # Build inlined JS with AppState pre-populated
     inlined_js = (
         '// === Inlined build ===\n'
         'var AppState = { zones: ' + zones_json_str + '["zones"],'
@@ -44,18 +40,16 @@ def build():
         + sim_js + '\n\n'
         + charts_js
     )
+    assert inlined_js.count('{') == inlined_js.count('}'), 'Brace mismatch'
+    assert inlined_js.count('(') == inlined_js.count(')'), 'Paren mismatch'
 
-    # Verify brace/paren balance
-    if inlined_js.count('{') != inlined_js.count('}'):
-        raise SystemExit('Brace mismatch in inlined JS')
-    if inlined_js.count('(') != inlined_js.count(')'):
-        raise SystemExit('Paren mismatch in inlined JS')
+    full_js = leaflet_js + ';\n' + inlined_js
 
-    # Build HTML
     html = (WEB / 'index.html').read_text(encoding='utf-8')
+    full_css = leaflet_css + '\n' + css
     html = re.sub(
         r'<link rel="stylesheet" href="css/style\.css" />',
-        '<style>' + css + '</style>',
+        '<style>' + full_css + '</style>',
         html,
     )
     for name in ('main', 'map', 'simulation', 'charts'):
@@ -65,22 +59,20 @@ def build():
             html,
         )
     html = html.replace(
-        '</body>', '<script>' + inlined_js + '</script>\n</body>'
+        '</body>', '<script>' + full_js + '</script>\n</body>'
     )
     html = re.sub(
-        r'<div id="mapLoading"[^>]*>Loading NYC zone map...</div>\s*',
-        '',
-        html,
+        r'<div id="mapLoading"[^>]*>Loading NYC zone map...</div>\s*', '', html
     )
     html = re.sub(
         r'<script>document\.addEventListener\("DOMContentLoaded".*?mapLoading.*?</script>\s*',
         '',
         html,
     )
-    # Remove dead image reference (doesn't exist in repo)
     html = html.replace(
-        '<img src="../release_dashboard.png" alt="Release Dashboard"'
-        ' onerror="this.style.display=\'none\'" />',
+        '<img src="../release_dashboard.png"'
+        ' alt="Release Dashboard"'
+        " onerror=\"this.style.display='none'\" />",
         '',
     )
 
