@@ -38,25 +38,24 @@ class TestWebAssets:
             assert "lat" in zone
             assert "lng" in zone
 
-    def test_index_html_has_leaflet(self):
+    def test_index_html_has_svg_map(self):
         content = _read_utf8(WEB_DIR / "index.html")
-        assert "leaflet" in content.lower(), "index.html must include Leaflet.js"
-
-    def test_index_html_has_plotly(self):
-        content = _read_utf8(WEB_DIR / "index.html")
-        assert "plotly" in content.lower(), "index.html must include Plotly.js"
+        assert "MapModule" in content, "index.html must include MapModule"
+        assert "createElementNS" in content, "index.html must use SVG"
 
     def test_index_html_has_disclaimer(self):
         content = _read_utf8(WEB_DIR / "index.html")
         assert "simulation" in content.lower(), "Must have simulation disclaimer"
 
-    def test_all_js_referenced_in_html(self):
+    def test_all_js_merged_in_html(self):
         html_content = _read_utf8(WEB_DIR / "index.html")
-        js_files = ["main.js", "map.js", "simulation.js", "charts.js"]
-        for js in js_files:
-            assert js in html_content, f"{js} must be referenced in index.html"
+        assert "AppState" in html_content, "index.html must contain AppState"
+        assert "MapModule" in html_content, "index.html must contain MapModule"
+        assert "SimulationModule" in html_content, "index.html must contain SimulationModule"
+        assert "ChartsModule" in html_content, "index.html must contain ChartsModule"
 
-    def test_css_referenced_in_html(self):
+    def test_css_inlined_in_html(self):
         html_content = _read_utf8(WEB_DIR / "index.html")
-        assert "style.css" in html_content, "style.css must be referenced in index.html"
+        assert "<style>" in html_content, "CSS must be inlined in index.html"
+        assert "unpkg.com" not in html_content, "No unpkg CDN dependencies"
 

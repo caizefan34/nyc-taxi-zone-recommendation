@@ -826,6 +826,19 @@ img {
     }
 }
 
+/* ===== SVG Map Zone Circles ===== */
+#map svg {
+    display: block;
+}
+#map svg .zone-circle {
+    transition: stroke-width 0.2s ease, opacity 0.2s ease;
+    cursor: pointer;
+}
+#map svg .zone-circle:hover {
+    stroke-width: 3;
+    opacity: 1;
+}
+
 /* Chart containers for SVG */
 #forecastChart,
 #policyChart,
