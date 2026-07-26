@@ -38,13 +38,11 @@ class TestWebAssets:
             assert "lat" in zone
             assert "lng" in zone
 
-    def test_index_html_has_leaflet(self):
+    def test_index_html_has_svg_map(self):
         content = _read_utf8(WEB_DIR / "index.html")
-        assert "leaflet" in content.lower(), "index.html must include Leaflet.js"
-
-    def test_index_html_has_plotly(self):
-        content = _read_utf8(WEB_DIR / "index.html")
-        assert "plotly" in content.lower(), "index.html must include Plotly.js"
+        assert "map.js" in content, "index.html must include map.js"
+        js_content = _read_utf8(WEB_DIR / "js" / "map.js")
+        assert "createElementNS" in js_content, "map.js must use SVG"
 
     def test_index_html_has_disclaimer(self):
         content = _read_utf8(WEB_DIR / "index.html")
