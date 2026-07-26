@@ -1,55 +1,56 @@
 # Reproduction Test Report
 
-> Verification that all pipeline steps execute successfully.
-
 ## Environment
-
-| Item | Value |
-|------|-------|
-| Python | 3.10+ |
-| OS | Windows |
-| CPU | x86_64 |
-| RAM | 16+ GB |
-| Disk | 10+ GB free |
-
-## Dependencies
-
-See `requirements.txt` and `pyproject.toml`. Key packages:
-- polars (data processing)
-- lightgbm (forecasting)
-- torch (RL)
-- matplotlib (visualization)
-- ruff (linting)
-- pytest (testing)
+- **OS:** Windows
+- **Python:** 3.13.13
+- **Dependencies:** numpy, pandas, scipy, matplotlib, pyyaml, torch, gymnasium, lightgbm, xgboost, scikit-learn
 
 ## Steps Executed
 
-| Step | Command | Expected | Result |
-|------|---------|----------|--------|
-| 1. Lint | `ruff check src/ tests/ scripts/` | 0 errors | PASS |
-| 2. Tests | `pytest tests/ -q` | 274 passed | PASS |
-| 3. Demo | `python scripts/run_demo.py` | demo_result.json | PASS |
-| 4. Dashboard | `python scripts/generate_release_dashboard.py` | release_dashboard.png | PASS |
-| 5. Figures | `python scripts/generate_paper_figures.py` | 5 figures | PASS |
+### Step 1: Installation
+```bash
+pip install -e ".[dev,forecasting,rl,benchmark]"
+```
+**Result:** ✅ PASS
 
-## Result
+### Step 2: Environment Verification
+```bash
+pytest tests/ -q --tb=short
+```
+**Result:** ✅ 274 passed, 15 skipped
 
-> **PASS** — All steps completed successfully.
->
-> Lint: 0 errors. Tests: 274 passed, 15 skipped. Demo: output generated. Dashboard: generated.
-
-## Notes
-
-- 15 skipped tests are expected (require optional dependencies or external data)
-- Full pipeline (data + forecasting + RL) requires additional time and resources
-- Demo and figures require only installed packages (no training)
-
-## Commands Used
-
+### Step 3: Lint Check
 ```bash
 ruff check src/ tests/ scripts/
-pytest tests/ -q
-python scripts/run_demo.py
-python scripts/generate_release_dashboard.py
-python scripts/generate_paper_figures.py
 ```
+**Result:** ✅ All checks passed
+
+### Step 4: Demo
+```bash
+python scripts/run_demo.py
+```
+**Result:** ✅ Demo output saved to outputs/demo/demo_result.json
+
+### Step 5: Release Dashboard
+```bash
+python scripts/generate_release_dashboard.py
+```
+**Result:** ✅ Dashboard saved to docs/results/release_dashboard.png
+
+### Step 6: Full Data Pipeline (requires NYC TLC data)
+```bash
+python scripts/run_data_pipeline.py
+```
+**Result:** ⚠️ Requires NYC TLC data download (~10 GB). See [docs/reproduction.md](reproduction.md) for data setup.
+
+## Summary
+
+| Check | Result |
+|-------|:------:|
+| Installation | ✅ PASS |
+| Unit Tests | ✅ 274/289 passed |
+| Lint | ✅ PASS |
+| Demo | ✅ PASS |
+| Dashboard | ✅ PASS |
+| Full Benchmark | ⚠️ Requires data download |
+| **Overall** | **✅ PASS** |
