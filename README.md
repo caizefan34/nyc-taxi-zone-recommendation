@@ -184,3 +184,54 @@ Cite the specific commit used and distinguish static diagnostic metrics from sim
 
 MIT. See [LICENSE](LICENSE).
 
+
+
+---
+
+## Benchmark Framework
+
+The public benchmark framework at `benchmark/` provides standardized evaluation:
+
+- **Forecast Benchmark** — MAE, RMSE, SMAPE for demand prediction (config: `benchmark/configs/forecast.yaml`)
+- **Decision Benchmark** — Revenue, utilization, demand coverage for policies (config: `benchmark/configs/decision.yaml`)
+- **RL Benchmark** — Episode return, stability for RL policies (config: `benchmark/configs/rl.yaml`)
+- **Robustness** — Cross-year drift and sensitivity analysis
+
+See `docs/benchmark_protocol.md` and `docs/leaderboard.md` for full details.
+
+## External Model Interface
+
+Researchers can add new models via `src/interfaces/`:
+
+```python
+from src.interfaces import ForecastModel, Policy, RLPolicy
+```
+
+Implement the interface, then pass to benchmark runners:
+
+```python
+from benchmark.runners import run_forecast_benchmark
+results = run_forecast_benchmark({"my_model": model})
+```
+
+See `docs/adding_new_models.md` for a step-by-step guide.
+
+## Web Demo
+
+A lightweight Streamlit web demo is available at `app/app.py`:
+
+```bash
+streamlit run app/app.py
+```
+
+Input a zone and time to see forecast demand, recommended zones, and expected revenue.
+Uses pre-trained models -- no additional training required.
+See `docs/web_demo.md` for details.
+
+## Cross-City Extension
+
+The framework supports multi-city extension via `configs/city_template.yaml`.
+See `docs/cross_city_extension.md` for the extension guide.
+
+> **Note**: Current experiments are validated only for NYC.
+> Cross-city results are future work.
