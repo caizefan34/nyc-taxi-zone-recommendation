@@ -1,0 +1,42 @@
+﻿# City Configuration Template
+# Use this template to extend the framework to new cities.
+# Current experiments are validated on NYC only.
+
+city_name: "nyc"  # Replace with city name
+display_name: "New York City"
+timezone: "America/New_York"
+
+data:
+  source: "NYC TLC Yellow Taxi Trip Records"
+  years: [2022, 2023, 2024, 2025]
+  zones: 263
+  zone_id_column: "PULocationID"
+  time_column: "pickup_datetime"
+  fare_column: "fare_amount"
+  distance_column: "trip_distance"
+
+features:
+  temporal:
+    - hour
+    - day_of_week
+    - month
+    - half_hour_bucket
+  external:
+    weather: true
+    calendar: true
+    airport: true
+    events: true
+
+splits:
+  train: [2022, 2023]
+  validation: [2024]
+  test: [2025]
+
+simulator:
+  default_drivers: 50
+  demand_supply_ratio: 1.0
+
+notes:
+  - "This configuration is validated for NYC only."
+  - "For new cities, replace data source and zone definitions."
+  - "External features (weather, events) require city-specific data."

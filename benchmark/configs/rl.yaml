@@ -1,0 +1,17 @@
+﻿# RL Benchmark Configuration
+name: rl_benchmark
+version: "2.0.0"
+metrics:
+  - name: episode_return
+    higher_is_better: true
+  - name: return_std
+    higher_is_better: false
+  - name: stability_coefficient
+    higher_is_better: true
+baselines:
+  - name: dqn
+    type: rl
+  - name: double_dqn
+    type: rl
+  - name: iql
+    type: offline_rl

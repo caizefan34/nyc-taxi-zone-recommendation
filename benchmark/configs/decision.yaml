@@ -1,0 +1,17 @@
+﻿# Decision Policy Benchmark Configuration
+name: decision_benchmark
+version: "2.0.0"
+metrics:
+  - name: revenue_per_driver
+    higher_is_better: true
+  - name: utilization
+    higher_is_better: true
+  - name: demand_coverage
+    higher_is_better: true
+baselines:
+  - name: hot_zone
+    type: heuristic
+    description: "Always recommend the historically highest-demand zone"
+  - name: single_step
+    type: heuristic
+    description: "Greedy utility maximization"

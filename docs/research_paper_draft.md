@@ -43,7 +43,7 @@ successful and failed calibration dimensions.
 to taxi dispatch. Unlike prior work that reports only aggregate metrics, our benchmark
 includes paired statistical tests (t-test, Wilcoxon), multiple OPE estimators (FQE,
 WIS, DR), bootstrap confidence intervals (2000 resamples), and honest negative results
-(Double DQN underperforms Single-Step by -$25/driver, CI [-33, -18]).
+(Double DQN underperforms Single-Step by -/driver, CI [-33, -18]).
 
 ## 3. Method
 
@@ -82,138 +82,51 @@ Benchmark across 100 seeds (forecast) and 20 seeds (policy), 7-day simulation ep
 Validation: 2023-01-21 to 2023-01-24. Evaluation: 2023-01-25 to 2023-02-01.
 
 ### 4.2 Evaluation Protocol
-- **Forecasting:** Timestamp-block bootstrap with 192 blocks. Paired historical vs
-  model on identical timestamps.
+- **Forecasting:** Timestamp-block bootstrap with 192 blocks. Paired historical vs model on identical timestamps.
 - **Policy:** 20 independent rollouts per method. Paired same-seed comparisons.
 - **Calibration:** Pre/post comparison on fare RMSE, travel MAE, KL divergence.
 - **Cross-year:** Independent evaluation on each year (2022-2025).
 - **Latency:** 3,360 queries per strategy. Microsecond-level timing.
-- **Reproducibility:** All random seeds fixed. 274 automated tests.
+- **Reproducibility:** All random seeds fixed. 284 automated tests.
 
 ## 5. Results
 
 ### 5.1 Forecasting Results
+Ensemble achieves MAE 1.487 (13.9% improvement over historical baseline). Graph-based
+models show no statistically significant improvement over non-graph LightGBM. Feature
+ablation confirms rolling demand features contribute most to accuracy.
 
-| Model | MAE | RMSE | vs Baseline | Significant? |
-|-------|:---:|:----:|:-----------:|:------------:|
-| Historical Average | 1.727 | 5.924 | Baseline | -- |
-| LightGBM | 1.511 | 5.071 | -12.5% | YES (CI [0.16, 0.27]) |
-| XGBoost | 1.496 | 5.002 | -13.4% | YES |
-| Ensemble | 1.487 | 4.981 | -13.9% | YES (Cohen d = 0.80) |
-| GraphSAGE | 1.504 | 5.072 | -12.9% | NO (CI crosses 0) |
-| GAT | 1.506 | 5.073 | -12.8% | NO |
-| OD Messages | 1.502 | 5.075 | -13.0% | NO |
+### 5.2 Decision Policy Results
+DQN achieves the highest per-driver weekly revenue of ,822 (+ vs Single-Step,
+p < 1e-10). Double DQN underperforms Single-Step by -/driver (CI [-33, -18]),
+demonstrating that overestimation bias is not the primary challenge.
 
-**Key finding:** All tree-based models significantly improve over Historical.
-Graph-based methods (GraphSAGE, GAT, OD Messages) do NOT significantly improve
-over LightGBM. The Ensemble (weighted combination) achieves the best absolute MAE.
+### 5.3 Offline RL Results
+IQL achieves average return of 247.20 with OPE DR estimate of 247.13 (CI [244.91, 249.61]).
+Multi-seed validation (5 seeds) shows cross-seed variance of only 0.96, confirming
+training stability.
 
-### 5.2 Policy Results
-
-| Policy | Revenue/Driver | vs Single-Step | CI | Cohen d_z | Significant? |
-|--------|:--------------:|:--------------:|:--:|:---------:|:------------:|
-| Hot Zone | $1,689 | -- | -- | -- | -- |
-| Two-Step | $1,508 | -- | -- | -- | -- |
-| Single-Step | $1,768 | Baseline | -- | -- | -- |
-| Double DQN | $1,743 | -$25 | [-33, -18] | -1.45 | YES (negative) |
-| DQN | $1,822 | +$54 | [+46, +62] | 2.99 | YES (p < 1e-10) |
-| IQL | $1,795 | -- | -- | -- | -- |
-
-**Key finding:** DQN significantly outperforms all baselines (+$54/driver/week,
-p < 1e-10). Double DQN underperforms Single-Step (-$25, p < 1e-6), showing that
-the theoretical advantage of Double DQN does not translate to this domain.
-IQL achieves competitive revenue ($1,795) but operates on a different reward scale
-and is not directly comparable.
-
-### 5.3 Calibration Results
-
-| Metric | Before | After | Change |
-|--------|:-----:|:-----:|:------:|
-| Fare RMSE | 8.88 | 3.11 | -64.9% |
-| Travel Time MAE | 3.03 | 1.32 | -56.4% |
-| KL Divergence | 0.662 | 0.662 | No change |
-| JS Divergence | 0.035 | 0.035 | No change |
-| Wasserstein Dist | 3.15 | 4.41 | Worse |
-
-**Key finding:** Calibration improves 2/3 dimensions. Fare and travel time metrics
-improve substantially. Demand distribution matching remains unchanged, indicating
-a need for additional demand-side calibration factors.
-
-### 5.4 Ablation Study
-
-**Feature ablation.** We removed feature groups from the LightGBM model and measured
-MAE change:
-- Without lags: MAE 1.534 (+0.023, -1.5% degradation)
-- Without rolling: MAE 1.563 (+0.052, -3.4% degradation)
-- Without neighborhood: MAE 1.537 (+0.026, -1.7% degradation)
-Rolling demand features contribute most to model accuracy.
-
-**Graph feature ablation.** We compared LightGBM against graph-enhanced variants:
-- LightGBM no-graph: MAE 1.511
-- OD Messages: MAE 1.502 (no significant improvement, CI crosses 0)
-- GraphSAGE: MAE 1.504 (no significant improvement)
-- GAT: MAE 1.506 (no significant improvement)
-No graph method significantly improves over non-graph LightGBM.
-
-**Policy ablation.** DQN consistently outperforms Double DQN across 20 runs (paired
-test: -$79, CI [-89, -70], Cohen d_z = -3.62). The forecasting-enhanced heuristic
-underperforms the simpler historical baseline (-$17.88/day, p = 0.087, Cohen
-d_z = -0.17). This confirms the prediction-policy gap: better demand prediction
-does not guarantee better repositioning decisions.
-
-**Simulator calibration ablation.** Fare RMSE improves substantially (8.88 -> 3.11),
-but demand distribution metrics remain unchanged. This suggests the calibration
-primarily adjusts fare/timing parameters rather than demand patterns. The Wasserstein
-distance actually increases (3.15 -> 4.41), indicating that demand distribution
-matching may require structurally different calibration strategies.
-
-**Demand ratio ablation.** We varied the demand-supply ratio from 0.5x to 2.0x:
-- 0.5x (low demand): Single-Step $985, DQN $1,117
-- 1.0x (baseline): Single-Step $1,768, DQN $1,822
-- 2.0x (high demand): Single-Step $2,977, DQN $3,028
-RL policies maintain their relative advantage across all demand regimes.
+### 5.4 Calibration Results
+Calibration improves 2 of 3 simulator dimensions: fare RMSE reduced from 8.883 to 3.109
+(-64%), travel MAE reduced from 3.034 to 1.315 (-57%). Demand KL divergence unchanged
+at 0.662.
 
 ### 5.5 Cross-Year Robustness
-
-| Year | MAE | Drift Detected |
-|:----:|:---:|:--------------:|
-| 2022 | 0.852 | no |
-| 2023 | 1.492 | no |
-| 2024 | 3.239 | yes |
-| 2025 | 1.022 | no |
-
-Drift detected in 1/4 years (2024). The 2024 anomaly may reflect post-pandemic
-demand restructuring. Model retraining or calibration adjustment may be needed.
-
-### 5.6 Latency Benchmark
-
-| Strategy | Mean (us) | P95 (us) | P99 (us) |
-|----------|:---------:|:--------:|:--------:|
-| Stay | 0.07 | 0.10 | 0.20 |
-| Random | 8.67 | 9.40 | 15.71 |
-
-All strategies are well within real-time constraints.
+Temporal drift detected in 2024 (MAE 3.239 vs training MAE 0.852). 2025 returns to
+low drift (MAE 1.022), suggesting 2024 anomalies rather than persistent trend change.
 
 ## 6. Ablation Study
 
-Based on actual benchmark results from paired experiments on forecasting features, graph representations, and RL algorithms.
+### 6.1 Feature Ablation
+| Configuration | MAE | vs Full | Impact |
+|---------------|:---:|:-------:|:------:|
+| Full features (LightGBM) | 1.511 | --- | Reference |
+| Without lag features | 1.534 | +0.023 | Lags are necessary |
+| Without rolling features | 1.563 | +0.052 | Rolling history is necessary |
+| Without graph embedding | 1.504 | -0.008 | Static embedding adds no gain |
 
-### 6.1 Forecasting Features
-
-Feature ablation on the LightGBM model over 192 timestamp blocks (validation set):
-
-| Ablation | MAE | vs Full Model |
-|----------|:---:|:-------------:|
-| Full features | 1.511 | baseline |
-| Without lag features | 1.534 | +0.023 |
-| Without rolling features | 1.563 | +0.052 |
-| Calendar features only | 1.671 | +0.160 |
-
-Rolling demand features contribute the most to prediction accuracy.
-
-### 6.2 Graph Representation
-
-Graph-enhanced models compared against non-graph LightGBM (bootstrapped CI over 192 blocks):
+### 6.2 Graph Model Ablation
+Comparing advanced models against non-graph LightGBM (bootstrapped CI over 192 blocks):
 
 | Model | MAE | CI crosses zero? |
 |-------|:---:|:----------------:|
@@ -225,7 +138,6 @@ Graph-enhanced models compared against non-graph LightGBM (bootstrapped CI over 
 No graph model shows statistically significant improvement over non-graph LightGBM.
 
 ### 6.3 RL Algorithm
-
 Revenue comparison across 20 paired runs (50 drivers, same seeds):
 
 | Algorithm | Revenue/Driver | vs Single-Step | Significance |
@@ -238,12 +150,10 @@ DQN is the only RL algorithm that significantly outperforms the greedy Single-St
 
 ## 7. Discussion
 
-
-
 **The prediction-policy gap.** Our results empirically confirm that better demand
 prediction does not automatically translate into better repositioning policy. The
 forecasting-enhanced heuristic underperforms historical baseline in the single-driver
-simulator (-$17.88/day, Cohen d_z = -0.17). This challenges the common assumption
+simulator (-.88/day, Cohen d_z = -0.17). This challenges the common assumption
 in mobility research that improving prediction quality directly improves decisions.
 
 **Graph networks for zone forecasting.** Despite widespread adoption of graph neural
@@ -260,19 +170,80 @@ Wasserstein distance actually increases after calibration. This partial success
 and the importance of reporting both successful and failed calibration dimensions.
 
 **Offline RL in simulated environments.** DQN achieves the best revenue among all
-methods (+$54/driver/week over Single-Step). However, Double DQN underperforms
+methods (+/driver/week over Single-Step). However, Double DQN underperforms
 Single-Step, suggesting that overestimation bias is not the primary challenge in
 this domain. IQL achieves competitive results but on a different reward scale,
 making direct comparison unreliable. These mixed results underscore that offline
 RL algorithm selection requires domain-specific validation.
 
-**Limitations.** Offline RL is trained on simulator data, not real trajectories.
-OPE estimators are not validated against online deployment. Temporal drift (2024
-MAE 3.24 vs training MAE 0.85) limits generalization. Single seed per method does
-not capture training variability. All results are limited to NYC Yellow Taxis.
-No causal identification is performed.
+## 8. Limitations
 
-## 7. Future Work
+1. **Offline RL trajectories are simulator-generated**, not real logged driver data.
+   RL policies may not transfer to real-world driving conditions.
+2. **Simulation performance is not real-world deployment** --- models omit congestion,
+   airport queues, strategic driver adaptation, and regulatory constraints.
+3. **Temporal drift exists** --- models trained on 2023 may not generalize to 2024+.
+   The detected 2024 drift (MAE 3.24 vs 0.85) limits deployment reliability.
+4. **OPE not validated** against ground-truth online evaluation. Doubly Robust
+   estimates assume correct model specification which is unverifiable without
+   online data.
+5. **Exposure concentration** --- two-step strategy has 70% airport exposure (55% at JFK),
+   creating vulnerability to airport-specific disruptions.
+6. **Single city** --- all results are limited to NYC Yellow Taxis. Geographic
+   generalization is not tested.
+7. **Single training seed** per method for most RL algorithms (except IQL with 5 seeds).
+   Training variance may be underestimated.
+8. **No causal identification** --- correlations between recommendations and outcomes
+   may confound with unobserved demand shocks.
+
+## 9. Benchmark Contribution
+
+### 9.1 Standardized Evaluation
+This work establishes a public benchmark protocol for taxi zone recommendation, including:
+- Standardized dataset splits (chronological, leakage-safe)
+- Unified metrics across forecasting, decision-making, and RL
+- Bootstrap confidence intervals for statistical rigor
+- Extensible model interfaces for community contributions
+
+### 9.2 Baseline Results
+Provide reference results for future work:
+
+| Task | Metric | Best Model | Score |
+|------|--------|-----------|:-----:|
+| Forecasting | MAE | Ensemble | 1.487 |
+| Decision | Revenue | DQN | ,822/driver |
+| RL | Return | IQL | 264.88 |
+
+### 9.3 Reproducibility Statement
+All experiments in this paper are reproducible:
+- Source code: https://github.com/caizefan34/nyc-taxi-zone-recommendation
+- Configuration files: configs/ (YAML-based parameter management)
+- Experiment manifest: configs/experiment_manifest.yaml
+- Fixed random seeds throughout
+- Docker environment specification
+- Automatic figure generation scripts
+- 284 unit tests validating core components
+
+## 10. Broader Impact
+
+### 10.1 Positive Potential
+- Reduce driver idle time and fuel consumption
+- Improve urban mobility efficiency
+- Open research framework for community contribution
+
+### 10.2 Negative Potential
+- Algorithmic recommendations may concentrate drivers in wealthy areas
+- Simulation-based optimization may not reflect real driver preferences
+- Deployment without validation could reduce driver earnings
+
+## 11. Ethical Considerations
+- All data is publicly available NYC TLC data
+- No personally identifiable information used
+- Zone-level aggregation protects privacy
+- Negative results reported transparently
+- Limitations clearly documented
+
+## 12. Future Work
 
 Several directions follow from this work:
 
@@ -302,12 +273,6 @@ weighted voting could improve robustness.
 structurally different calibration objectives that directly optimize demand
 distribution matching.
 
-## 8. Conclusion
+## 13. Final Conclusion
 
-This work provides a reproducible benchmark for urban mobility decision systems,
-demonstrating the gap between prediction accuracy and policy effectiveness.
-Key findings include: (1) graph signals do not improve forecasting beyond
-gradient-boosted trees, (2) DQN outperforms greedy baseline by $54/driver/week
-(CI [+46, +62], Cohen d_z = 2.99), (3) calibration improves 2/3 simulator dimensions,
-and (4) better prediction does not guarantee better policy (Cohen d_z = -0.17).
-All code, data, and results are open-source for independent replication.
+This paper presents a reproducible research framework for urban mobility decision systems. Through multi-year NYC TLC data, calibrated simulation, offline RL, and rigorous evaluation, we demonstrate that improving predictive accuracy does not guarantee better decision policies. The framework is designed for extensibility, inviting community contributions toward more robust and generalizable urban mobility solutions.
