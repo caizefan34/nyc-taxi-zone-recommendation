@@ -24,6 +24,10 @@ outputs/tmp/
 !outputs/forecasting_benchmark.json
 !outputs/graph_benchmark.json
 !outputs/benchmark_report.json
+!outputs/forecast_benchmark.json
+!outputs/simulator_comparison.json
+!outputs/rl_benchmark_v2.json
+!outputs/deployment_benchmark.json
 
 # Temp files
 tmp/
@@ -60,3 +64,5 @@ docs/api/generated/
 *.swo
 *~
 .DS_Store?
+
+
