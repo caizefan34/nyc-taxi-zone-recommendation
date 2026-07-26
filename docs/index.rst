@@ -11,6 +11,8 @@ scientifically bounded evaluation.
    problem_statement
    methodology
    multi_agent_simulator
+   forecasting
+   graph_learning
    ablation_study
 
 .. toctree::

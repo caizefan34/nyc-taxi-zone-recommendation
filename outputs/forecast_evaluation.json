@@ -1,0 +1,159 @@
+{
+  "split": {
+    "train_start": "2023-01-08T00:00:00",
+    "train_end": "2023-01-20T23:30:00",
+    "validation_start": "2023-01-21T00:00:00",
+    "validation_end": "2023-01-24T23:30:00",
+    "train_rows": 164112,
+    "validation_rows": 50496
+  },
+  "demand": {
+    "historical_mae": 1.727305133079848,
+    "lightgbm_mae": 1.5114059352241813,
+    "historical_rmse": 5.923722006850817,
+    "lightgbm_rmse": 5.070736961604602,
+    "paired_timestamp_bootstrap": {
+      "mean_mae_improvement": 0.21589919785566639,
+      "ci95_low": 0.16291431026878278,
+      "ci95_high": 0.2679350002937752,
+      "cohen_dz": 0.5831856231402347,
+      "timestamp_blocks": 192
+    }
+  },
+  "fare": {
+    "observed_cells": 14105,
+    "historical_mae": 7.010326730913408,
+    "lightgbm_mae": 5.952646334500782,
+    "historical_rmse": 12.833913927470169,
+    "lightgbm_rmse": 10.670838314245918
+  },
+  "ensemble": {
+    "selection": "weights selected only on the internal chronological validation split",
+    "demand_lightgbm_weight": 0.75,
+    "fare_lightgbm_weight": 0.8500000000000001,
+    "demand_mae": 1.4867501549557998,
+    "demand_rmse": 4.981030576390121,
+    "fare_mae": 5.9188403429762735,
+    "fare_rmse": 10.610617223356162,
+    "paired_timestamp_bootstrap": {
+      "mean_mae_improvement": 0.24055497812404789,
+      "ci95_low": 0.19599895721053412,
+      "ci95_high": 0.28204201013090147,
+      "cohen_dz": 0.8008347147953432,
+      "timestamp_blocks": 192
+    }
+  },
+  "feature_ablation": {
+    "full": {
+      "features": [
+        "zone_id",
+        "weekday",
+        "hour",
+        "half_hour_bucket",
+        "time_slot",
+        "lag_demand_1",
+        "lag_demand_2",
+        "lag_demand_48",
+        "lag_demand_336",
+        "rolling_demand_mean_3",
+        "rolling_demand_mean_48",
+        "rolling_demand_mean_336",
+        "neighbor_lag_demand_mean",
+        "neighbor_lag_demand_std",
+        "neighbor_lag_demand_max",
+        "neighbor_mean_travel_minutes"
+      ],
+      "mae": 1.5114059352241813,
+      "rmse": 5.070736961604602
+    },
+    "without_lags": {
+      "features": [
+        "zone_id",
+        "weekday",
+        "hour",
+        "half_hour_bucket",
+        "time_slot",
+        "rolling_demand_mean_3",
+        "rolling_demand_mean_48",
+        "rolling_demand_mean_336",
+        "neighbor_lag_demand_mean",
+        "neighbor_lag_demand_std",
+        "neighbor_lag_demand_max",
+        "neighbor_mean_travel_minutes"
+      ],
+      "mae": 1.5343707542855334,
+      "rmse": 5.184730885011641
+    },
+    "without_rolling": {
+      "features": [
+        "zone_id",
+        "weekday",
+        "hour",
+        "half_hour_bucket",
+        "time_slot",
+        "lag_demand_1",
+        "lag_demand_2",
+        "lag_demand_48",
+        "lag_demand_336",
+        "neighbor_lag_demand_mean",
+        "neighbor_lag_demand_std",
+        "neighbor_lag_demand_max",
+        "neighbor_mean_travel_minutes"
+      ],
+      "mae": 1.5631569283861495,
+      "rmse": 5.242354884855908
+    },
+    "without_neighborhood": {
+      "features": [
+        "zone_id",
+        "weekday",
+        "hour",
+        "half_hour_bucket",
+        "time_slot",
+        "lag_demand_1",
+        "lag_demand_2",
+        "lag_demand_48",
+        "lag_demand_336",
+        "rolling_demand_mean_3",
+        "rolling_demand_mean_48",
+        "rolling_demand_mean_336"
+      ],
+      "mae": 1.536602640308462,
+      "rmse": 5.213998064028179
+    }
+  },
+  "xgboost": {
+    "demand": {
+      "mae": 1.4956231554853767,
+      "rmse": 5.001979975006577
+    },
+    "fare": {
+      "mae": 5.963251894021533,
+      "rmse": 10.727723275433389
+    }
+  },
+  "model": {
+    "library": "lightgbm",
+    "random_seed": 20230722,
+    "validation_split_time": "2023-01-21T00:00:00",
+    "feature_count": 16,
+    "features": [
+      "zone_id",
+      "weekday",
+      "hour",
+      "half_hour_bucket",
+      "time_slot",
+      "lag_demand_1",
+      "lag_demand_2",
+      "lag_demand_48",
+      "lag_demand_336",
+      "rolling_demand_mean_3",
+      "rolling_demand_mean_48",
+      "rolling_demand_mean_336",
+      "neighbor_lag_demand_mean",
+      "neighbor_lag_demand_std",
+      "neighbor_lag_demand_max",
+      "neighbor_mean_travel_minutes"
+    ]
+  }
+}
