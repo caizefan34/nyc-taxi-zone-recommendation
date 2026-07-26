@@ -1,13 +1,17 @@
 ﻿"""Benchmark ML baselines (Random Forest, Gradient Boosting) for zone recommendation."""
 from __future__ import annotations
-import json, sys, time
+
+import json
+import sys
+import time
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
 try:
-    from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-    from sklearn.model_selection import train_test_split
+    from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+    
     SKLEARN_AVAIL = True
 except ImportError:
     SKLEARN_AVAIL = False
@@ -117,7 +121,9 @@ def main():
         for z in range(ZONE_COUNT):
             h = s / 2
             mh = 1 if np.random.random() < 0.15 else 0
-            d = max(0, int(100 * (1 + 0.5 * mh) * (0.3 + 0.7 * np.exp(-((h - 14)**2) / 50)) + 50 * np.random.exponential(0.2)))
+            d = max(0, int(100 * (1 + 0.5 * mh)
+                * (0.3 + 0.7 * np.exp(-((h - 14)**2) / 50))
+                + 50 * np.random.exponential(0.2)))
             f = max(5, 15 + 20 * (1 - 0.5 * mh) + 10 * np.sin(np.pi * (h - 7) / 12) + np.random.normal(0, 5))
             true_utils[z] = d * f / 1000
             synth_demand[w, s, z] = d
@@ -133,7 +139,9 @@ def main():
             X_val = np.zeros((ZONE_COUNT, 6))
             for z in range(ZONE_COUNT):
                 mh_z = 1 if np.random.random() < 0.15 else 0
-                d_z = max(0, int(100 * (1 + 0.5 * mh_z) * (0.3 + 0.7 * np.exp(-((s/2 - 14)**2)/50)) + 50 * np.random.exponential(0.2)))
+                d_z = max(0, int(100 * (1 + 0.5 * mh_z)
+                    * (0.3 + 0.7 * np.exp(-((s/2 - 14)**2)/50))
+                    + 50 * np.random.exponential(0.2)))
                 X_val[z] = [w, s, s/2, z+1, mh_z, d_z]
             preds = model.predict(X_val)
             top3 = np.argsort(-preds)[:3]
