@@ -1,4 +1,4 @@
-﻿"""Data version management interface."""
+"""Data version management interface."""
 from __future__ import annotations
 
 import hashlib

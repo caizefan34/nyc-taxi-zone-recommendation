@@ -1,4 +1,4 @@
-﻿"""Tests for historical replay evaluation."""
+"""Tests for historical replay evaluation."""
 import sys
 from pathlib import Path
 

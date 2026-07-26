@@ -1,4 +1,4 @@
-﻿# Final Upgrade Report: Multi-Year Urban Mobility Data Foundation
+# Final Upgrade Report: Multi-Year Urban Mobility Data Foundation
 
 > **Date:** 2026-07-26
 > **From:** January 2023 NYC Taxi recommendation experiment

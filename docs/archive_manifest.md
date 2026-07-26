@@ -1,4 +1,4 @@
-﻿# Archive Manifest
+# Archive Manifest
 
 > Generated: 2026-07-26 | Phase: 15
 

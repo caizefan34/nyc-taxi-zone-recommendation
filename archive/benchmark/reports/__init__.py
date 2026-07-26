@@ -1,4 +1,4 @@
-﻿"""Benchmark report generation.
+"""Benchmark report generation.
 
 Generates standardized JSON reports for benchmark runs,
 including metadata, results, and environment information.

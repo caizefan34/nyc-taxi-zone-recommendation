@@ -1,4 +1,4 @@
-﻿# Offline RL Audit
+# Offline RL Audit
 
 ## Implemented Algorithms
 

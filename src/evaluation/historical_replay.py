@@ -1,4 +1,4 @@
-﻿"""Historical replay evaluation: evaluate policies against historical demand."""
+"""Historical replay evaluation: evaluate policies against historical demand."""
 from typing import Any
 
 

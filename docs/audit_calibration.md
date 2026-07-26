@@ -1,4 +1,4 @@
-﻿# Calibration Audit
+# Calibration Audit
 
 ## Multi-Dimensional Support
 

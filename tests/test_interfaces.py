@@ -1,4 +1,4 @@
-﻿"""Tests for external model interfaces."""
+"""Tests for external model interfaces."""
 from __future__ import annotations
 
 import numpy as np

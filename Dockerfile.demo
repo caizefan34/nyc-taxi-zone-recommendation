@@ -1,0 +1,29 @@
+# Lightweight demo Docker image
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy demo requirements
+COPY requirements-demo.txt .
+RUN pip install --no-cache-dir -r requirements-demo.txt
+
+# Copy application code
+COPY app/ ./app/
+COPY scripts/ ./scripts/
+COPY src/ ./src/
+COPY data/ ./data/
+
+# Copy pre-computed sample data
+COPY outputs/ ./outputs/
+
+EXPOSE 7860
+
+ENV PYTHONUNBUFFERED=1
+ENV DEMO_MODE=sample
+
+CMD ["python", "-m", "gradio", "app/app.py", "--server-name", "0.0.0.0", "--server-port", "7860"]

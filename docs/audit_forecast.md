@@ -1,4 +1,4 @@
-﻿# Forecast System Audit
+# Forecast System Audit
 
 ## Baseline Models
 

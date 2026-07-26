@@ -1,4 +1,4 @@
-﻿"""Sphinx documentation configuration."""
+"""Sphinx documentation configuration."""
 
 import os
 import sys

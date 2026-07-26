@@ -1,4 +1,4 @@
-﻿"""Composite provider that merges multiple ExternalFeatureProviders.
+"""Composite provider that merges multiple ExternalFeatureProviders.
 
 All features are aligned to a common half-hour timestamp grid.
 Missing values are forward-filled then back-filled.

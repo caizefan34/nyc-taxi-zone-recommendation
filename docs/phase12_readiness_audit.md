@@ -1,4 +1,4 @@
-﻿# Phase 12: Deployment Readiness Audit
+# Phase 12: Deployment Readiness Audit
 
 ## Assessment
 

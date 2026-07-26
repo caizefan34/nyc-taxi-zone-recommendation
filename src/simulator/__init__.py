@@ -1,4 +1,4 @@
-﻿"""Simulation environments for taxi repositioning research."""
+"""Simulation environments for taxi repositioning research."""
 from __future__ import annotations
 
 from .calibration import (

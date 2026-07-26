@@ -1,4 +1,4 @@
-﻿# Multi-Seed RL Evaluation Report
+# Multi-Seed RL Evaluation Report
 
 ## Overview
 Evaluated IQL policy across 5 independent seeds (0-4) with 100 episodes each to assess robustness.

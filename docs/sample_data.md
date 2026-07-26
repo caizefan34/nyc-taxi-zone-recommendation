@@ -1,4 +1,4 @@
-﻿# Sample Dataset
+# Sample Dataset
 
 ## Source
 - **Trip data:** Public NYC TLC trip records (via FiveThirtyEight Uber dataset) or synthetic generation as fallback.

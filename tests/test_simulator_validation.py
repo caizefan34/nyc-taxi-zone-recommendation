@@ -1,4 +1,4 @@
-﻿"""Tests for the simulator reality validation module.
+"""Tests for the simulator reality validation module.
 
 Covers:
 - Distribution comparison metrics (KL, JS, Wasserstein)

@@ -1,4 +1,4 @@
-﻿# Live Demo: Zone Recommendation Pipeline
+# Live Demo: Zone Recommendation Pipeline
 
 ## Overview
 The live demo provides end-to-end inference for taxi zone recommendations using real-time feature construction, demand forecasting, simulator state update, and policy inference.

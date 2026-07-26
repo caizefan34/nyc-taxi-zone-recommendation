@@ -1,4 +1,4 @@
-﻿"""Offline Policy Evaluation (OPE) for offline RL.
+"""Offline Policy Evaluation (OPE) for offline RL.
 
 Implements:
 - Fitted Q-Evaluation (FQE)

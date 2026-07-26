@@ -1,4 +1,4 @@
-﻿"""Test external model runner."""
+"""Test external model runner."""
 from __future__ import annotations
 
 import json

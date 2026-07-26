@@ -1,4 +1,4 @@
-﻿# Benchmark Audit
+# Benchmark Audit
 
 ## Metrics Coverage
 

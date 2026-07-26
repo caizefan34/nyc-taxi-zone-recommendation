@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Multi-seed RL evaluation for robustness analysis."""
 import json
 import sys

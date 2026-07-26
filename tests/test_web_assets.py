@@ -1,4 +1,4 @@
-﻿"""Tests for web/ interactive platform assets."""
+"""Tests for web/ interactive platform assets."""
 import json
 from pathlib import Path
 

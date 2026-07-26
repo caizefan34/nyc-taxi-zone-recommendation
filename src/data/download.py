@@ -1,4 +1,4 @@
-﻿"""Automated download of NYC TLC Yellow Taxi trip records.
+"""Automated download of NYC TLC Yellow Taxi trip records.
 
 Downloads parquet files from the NYC TLC data portal for a given
 year/month range. Files are stored in a year/month directory structure.

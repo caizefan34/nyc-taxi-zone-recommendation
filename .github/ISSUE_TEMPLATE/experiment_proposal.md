@@ -1,4 +1,4 @@
-﻿---
+---
 name: Experiment Proposal
 about: Propose a new research experiment
 title: "[Experiment] "

@@ -1,4 +1,4 @@
-﻿"""MLflow experiment tracking setup."""
+"""MLflow experiment tracking setup."""
 from __future__ import annotations
 
 import os

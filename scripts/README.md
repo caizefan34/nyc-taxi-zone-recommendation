@@ -1,4 +1,4 @@
-﻿# Scripts Directory — Classification & Guide
+# Scripts Directory — Classification & Guide
 
 > All scripts are actively used. No deprecated scripts to archive.
 

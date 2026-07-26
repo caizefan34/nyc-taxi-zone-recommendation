@@ -1,4 +1,4 @@
-﻿Unified Data Loader
+Unified Data Loader
 ====================
 
 .. automodule:: src.common.data_loader

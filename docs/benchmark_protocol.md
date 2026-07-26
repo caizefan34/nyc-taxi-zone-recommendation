@@ -1,4 +1,4 @@
-﻿# Benchmark Protocol v2.0
+# Benchmark Protocol v2.0
 
 ## Dataset
 

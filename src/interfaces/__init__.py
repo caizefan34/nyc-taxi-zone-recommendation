@@ -1,4 +1,4 @@
-﻿"""External model interfaces for the benchmark framework.
+"""External model interfaces for the benchmark framework.
 
 These interfaces allow external researchers to add new models
 without modifying the benchmark code. See docs/adding_new_models.md.

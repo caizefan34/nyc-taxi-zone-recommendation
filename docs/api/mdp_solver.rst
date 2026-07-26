@@ -1,4 +1,4 @@
-﻿MDP Solver
+MDP Solver
 ==========
 
 .. automodule:: src.mdp.model_based

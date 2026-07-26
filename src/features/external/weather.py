@@ -1,4 +1,4 @@
-﻿"""Weather feature provider for NYC (Central Park station).
+"""Weather feature provider for NYC (Central Park station).
 
 Downloads NOAA ISD (Integrated Surface Data) or uses cached parquet.
 Supports temperature, precipitation, and snowfall features

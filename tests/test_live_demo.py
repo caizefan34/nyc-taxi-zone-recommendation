@@ -1,4 +1,4 @@
-﻿"""Tests for live demo pipeline."""
+"""Tests for live demo pipeline."""
 import sys
 from pathlib import Path
 

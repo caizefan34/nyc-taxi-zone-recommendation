@@ -1,4 +1,4 @@
-﻿"""Offline Policy Evaluation comparison: FQE, WIS, DR on DQN/Double DQN/IQL.
+"""Offline Policy Evaluation comparison: FQE, WIS, DR on DQN/Double DQN/IQL.
 
 Output: outputs/policy_evaluation_report.md
 """

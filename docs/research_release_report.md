@@ -1,4 +1,4 @@
-﻿# Dynamic Urban Mobility Decision System
+# Dynamic Urban Mobility Decision System
 
 ## Research Release Report
 

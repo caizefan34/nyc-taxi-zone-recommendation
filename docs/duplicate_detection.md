@@ -1,4 +1,4 @@
-﻿# Duplicate Functionality Detection
+# Duplicate Functionality Detection
 
 > Generated: 2026-07-26 | Phase: 15
 

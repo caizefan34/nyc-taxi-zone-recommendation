@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """One-command quickstart: check environment, run demo, generate report.
 
 Usage:

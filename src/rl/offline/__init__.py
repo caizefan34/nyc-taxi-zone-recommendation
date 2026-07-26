@@ -1,4 +1,4 @@
-﻿"""Offline Reinforcement Learning pipeline.
+"""Offline Reinforcement Learning pipeline.
 
 Provides IQL (Implicit Q-Learning) for offline policy learning,
 replay buffers, and Offline Policy Evaluation (OPE).

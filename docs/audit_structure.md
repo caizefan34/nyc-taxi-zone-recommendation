@@ -1,4 +1,4 @@
-﻿# Project Structure Audit
+# Project Structure Audit
 
 ## Completed Modules
 

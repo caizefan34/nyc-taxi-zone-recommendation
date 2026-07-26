@@ -1,4 +1,4 @@
-﻿# OPE Audit
+# OPE Audit
 
 ## Implemented Methods
 

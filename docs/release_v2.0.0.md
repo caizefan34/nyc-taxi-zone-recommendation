@@ -1,4 +1,4 @@
-﻿# v2.0.0 — Research Platform Release
+# v2.0.0 — Research Platform Release
 
 ## Highlights
 

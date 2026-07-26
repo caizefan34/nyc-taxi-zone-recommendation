@@ -1,4 +1,4 @@
-﻿# RL Benchmark Configuration
+# RL Benchmark Configuration
 name: rl_benchmark
 version: "2.0.0"
 metrics:

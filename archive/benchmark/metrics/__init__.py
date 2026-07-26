@@ -1,4 +1,4 @@
-﻿"""Benchmark evaluation metrics.
+"""Benchmark evaluation metrics.
 
 Provides standardized metric functions for evaluating
 forecasting models and decision policies.

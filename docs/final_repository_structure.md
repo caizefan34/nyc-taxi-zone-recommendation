@@ -1,4 +1,4 @@
-﻿# Final Repository Structure
+# Final Repository Structure
 
 > Phase 15 cleanup result | 2026-07-26
 

@@ -1,4 +1,4 @@
-﻿# Research Outreach
+# Research Outreach
 
 > Platforms and communities for sharing this project. No automated posting.
 

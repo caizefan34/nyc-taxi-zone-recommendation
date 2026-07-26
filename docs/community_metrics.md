@@ -1,4 +1,4 @@
-﻿# Community Metrics
+# Community Metrics
 
 > Track adoption and community growth. No tracking code — manual updates.
 

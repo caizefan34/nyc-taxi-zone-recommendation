@@ -1,4 +1,4 @@
-﻿"""Unified experiment runner: reproduce any benchmark with a single command.
+"""Unified experiment runner: reproduce any benchmark with a single command.
 
 Usage:
     python scripts/run_experiment.py --config configs/model.yaml --benchmark rl

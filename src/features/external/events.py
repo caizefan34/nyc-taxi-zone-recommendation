@@ -1,4 +1,4 @@
-﻿"""Event interface for scheduled events affecting taxi demand.
+"""Event interface for scheduled events affecting taxi demand.
 
 Supports defining custom events (concerts, parades, sports, etc.)
 with configurable impact radius and intensity.

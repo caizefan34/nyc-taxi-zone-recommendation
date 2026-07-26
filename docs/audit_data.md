@@ -1,4 +1,4 @@
-﻿# Data System Audit
+# Data System Audit
 
 ## Chronological Split
 

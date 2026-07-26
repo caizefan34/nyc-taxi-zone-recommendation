@@ -1,4 +1,4 @@
-﻿# Phase 17 Ecosystem Audit
+# Phase 17 Ecosystem Audit
 
 > External Adoption & Benchmark Ecosystem | 2026-07-26
 

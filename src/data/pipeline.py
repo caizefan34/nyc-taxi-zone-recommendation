@@ -1,4 +1,4 @@
-﻿"""Multi-year TLC data pipeline with strict temporal split.
+"""Multi-year TLC data pipeline with strict temporal split.
 
 Processes raw TLC parquet files into cleaned, time-partitioned datasets
 using Polars for efficient large-scale columnar processing.

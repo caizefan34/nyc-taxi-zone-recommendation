@@ -1,4 +1,4 @@
-﻿"""Temporal Graph Forecasting for taxi zone demand.
+"""Temporal Graph Forecasting for taxi zone demand.
 
 Implements Temporal Graph Transformer for multi-step demand forecasting
 with quantile output (P10, P50, P90).

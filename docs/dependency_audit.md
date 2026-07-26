@@ -1,4 +1,4 @@
-﻿# Dependency and Reference Audit
+# Dependency and Reference Audit
 
 > Generated: 2026-07-26 | Phase: 15
 

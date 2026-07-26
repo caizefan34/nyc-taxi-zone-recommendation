@@ -1,4 +1,4 @@
-﻿"""Calibration validation: before vs after calibration comparison.
+"""Calibration validation: before vs after calibration comparison.
 
 Compares simulator output against real NYC TLC statistical distributions,
 reporting KL, JS, Wasserstein, Fare RMSE, Travel Time MAE.

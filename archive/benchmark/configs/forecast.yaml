@@ -1,4 +1,4 @@
-﻿# Forecast Benchmark Configuration
+# Forecast Benchmark Configuration
 name: forecast_benchmark
 version: "2.0.0"
 metrics:

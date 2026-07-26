@@ -1,4 +1,4 @@
-﻿"""Model registry for discovering and managing benchmark models."""
+"""Model registry for discovering and managing benchmark models."""
 from __future__ import annotations
 
 from typing import Any
