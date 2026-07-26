@@ -2,53 +2,126 @@
 
 ## Welcome!
 
-Thank you for your interest in contributing to this project.
+We welcome contributions from researchers, engineers, and students. Whether you want to add a new model, create a benchmark, improve documentation, or fix a bug — this guide will help you get started.
 
-## How to Contribute
+## Quick links
 
-### Reporting Issues
+- [Good first issues](https://github.com/caizefan34/nyc-taxi-zone-recommendation/labels/good%20first%20issue)
+- [Roadmap](ROADMAP.md)
+- [Issue tracker](https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues)
 
-- Check existing issues before creating a new one.
-- Provide a clear description, including steps to reproduce.
-- Include Python version, OS, and any error messages.
+---
 
-### Suggesting Enhancements
-
-- Open an issue with the tag "enhancement".
-- Describe the proposed change and its motivation.
-- Include examples of how the feature would work.
-
-### Pull Requests
-
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/my-feature`).
-3. Run tests: `make test` or `pytest tests/`
-4. Run lint: `make lint` or `ruff check src/ tests/`
-5. Commit changes with clear messages.
-6. Push and open a pull request.
-
-## Development Setup
+## How to run tests
 
 ```bash
-pip install -r requirements.txt
-pip install -e ".[dev]"
-PYTHONPATH=. pytest tests/ -v
+# Install dev dependencies
+pip install -e ".[dev,forecasting,graph,rl]"
+
+# Run all tests (113 tests)
+pytest tests/ -v
+
+# Run specific test file
+pytest tests/test_dqn.py -v
+
+# Run with coverage
+pytest tests/ --cov=src/ --cov-report=term-missing
+
+# Lint check
+ruff check src/ tests/ scripts/
 ```
 
-## Code Style
+---
 
-- Follow PEP 8 guidelines.
-- Use type hints for all public functions.
-- Write Google-style docstrings.
-- Run `black src/ tests/` before committing.
-- Run `ruff check src/ tests/` to check for issues.
+## How to add a model
 
-## Data Requirements
+### 1. Forecasting model
 
-The project requires NYC TLC Yellow Taxi data (January 2023).
-Download from: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+Create a new file in `src/forecasting/` that implements the forecaster interface:
 
-Place the data at: `data/raw/yellow_tripdata_2023-01.parquet`
+```python
+# src/forecasting/my_model.py
+class MyForecaster:
+    def fit(self, X, y): ...
+    def predict(self, X): ...
+```
+
+Then register it in `src/forecasting/model.py` and add a test in `tests/`.
+
+### 2. Policy (strategy)
+
+Implement a `recommend(current_datetime, current_location_id) -> list[int]` function in `src/2_recommendation_algorithm/`:
+
+```python
+# src/2_recommendation_algorithm/my_policy.py
+def recommend(dt: datetime, zone_id: int) -> list[int]:
+    return [zone_a, zone_b, zone_c]  # ranked top-3
+```
+
+Add evaluation in `tests/` and register in `scripts/generate_combined_benchmark.py`.
+
+### 3. RL agent
+
+Extend `src/rl/dqn.py` or create a new agent. Implement:
+- `train(env, config)` function
+- `act(state)` method
+- Strategy adapter in `src/rl/strategy.py`
+
+---
+
+## How to add a benchmark
+
+1. Create a benchmark runner in `scripts/`:
+
+```python
+# scripts/run_my_benchmark.py
+def main():
+    # Load data, run strategies, compute metrics
+    results = {...}
+    # Save to outputs/
+```
+
+2. Add a Makefile target in `Makefile`
+3. Add a test in `tests/` that verifies reproducibility
+4. Update `docs/combined_benchmark.md` with results
+
+---
+
+## How to submit an experiment
+
+1. **Fork** the repository
+2. Create a descriptive branch: `git checkout -b experiment/my-approach`
+3. Implement your experiment as a script in `scripts/`
+4. Document your approach in a new `docs/` file
+5. Run `ruff check` and `pytest` before committing
+6. Open a PR with:
+   - Description of your experiment
+   - How to reproduce results
+   - Any new dependencies (add to `pyproject.toml`)
+   - Test coverage for new code
+
+---
+
+## Development setup
+
+```bash
+git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
+cd nyc-taxi-zone-recommendation
+pip install -e ".[dev,forecasting,graph,rl]"
+```
+
+## Code style
+
+- Follow PEP 8 (line length 120 per `pyproject.toml`)
+- Use type hints for all public functions
+- Write Google-style docstrings
+- Run `ruff check src/ tests/ scripts/` before committing
+
+## Data requirements
+
+NYC TLC Yellow Taxi data (January 2023) from [TLC Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page).
+
+Place at: `data/raw/yellow_tripdata_2023-01.parquet`
 
 ## License
 

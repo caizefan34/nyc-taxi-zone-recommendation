@@ -1,326 +1,277 @@
 <div align="center">
   <img src="assets/social-preview.svg" width="100%" alt="NYC Taxi Zone Recommendation">
-  <p><strong>Finite-Horizon Taxi Zone Recommendation with Reproducible Evaluation</strong></p>
+
+  <h1>NYC Taxi Zone Recommendation</h1>
+
+  <p><strong>An open-source benchmark platform for AI-driven urban mobility decision making — combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning with reproducible evaluation.</strong></p>
+
   <p>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&label=CI" alt="CI"></a>
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&amp;label=tests" alt="Tests"></a>
+    <a href="docs/badges/reproducibility.svg"><img src="docs/badges/reproducibility.svg" alt="Reproducible"></a>
+    <a href="docs/badges/benchmark.svg"><img src="docs/badges/benchmark.svg" alt="Benchmark"></a>
+  </p>
+
+  <p>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/"><strong>📖 Documentation</strong></a>
+    &nbsp;·&nbsp;
+    <a href="docs/demo_gallery.md"><strong>🎬 Demo Gallery</strong></a>
+    &nbsp;·&nbsp;
+    <a href="ROADMAP.md"><strong>🗺️ Roadmap</strong></a>
+    &nbsp;·&nbsp;
+    <a href="CONTRIBUTING.md"><strong>🤝 Contribute</strong></a>
   </p>
 </div>
 
-## Overview
+---
 
-This repository studies a taxi-driver repositioning problem: given a driver's current NYC taxi zone and time, return three zones in ranked order.
+## Why this project?
 
-The project includes:
+**The problem:** Taxi drivers waste 30–60% of their shift cruising for passengers. In NYC alone, this represents millions of dollars in lost revenue and unnecessary congestion annually.
 
-- chronological cleaning of January 2023 NYC TLC Yellow Taxi trips;
-- weekday/half-hour/zone demand and fare statistics;
-- leakage-safe LightGBM/XGBoost demand and fare forecasting;
-- training-only OD graph features with GraphSAGE and GAT embeddings;
-- a directed OD travel-time graph and all-pairs shortest paths;
-- hot-zone, single-step, and finite-horizon planning strategies;
-- static reference-objective diagnostics and a fixed stochastic rollout;
-- a finite-demand multi-agent simulator with explicit driver competition;
-- Gymnasium-compatible DQN and Double-DQN baselines with masked candidate actions;
-- paired statistical tests, horizon experiments, robustness checks, and exposure-concentration analysis;
-- a corrected model-based MDP implementation;
-- a reproducible simulator-trained Q-learning extension.
+**The approach:** We treat taxi repositioning as a finite-horizon sequential decision problem:
 
-The repository deliberately distinguishes three different claims:
+```
+Historical trips  →  Demand Forecasting  →  Simulator  →  Policy Optimization  →  Recommendation
+                       ↓                      ↓               ↓
+                    LightGBM/XGBoost      Multi-agent     DQN / MDP / Planning
+                       ↓                      ↓               ↓
+                    GraphSAGE + GAT        Competition      Reproducible benchmark
+```
 
-1. Static NDCG/Hit measure agreement with a supplied two-step reference objective.
-2. Rollout fare measures performance only inside the supplied single-driver simulator.
-3. Neither metric is a causal estimate of real-world deployment revenue.
+**The contribution:** A reproducible, research-grade benchmark platform where any forecasting model, simulator, or policy can be evaluated under consistent, leakage-safe conditions.
 
-## Reproduced results
+---
 
-These values come from [`outputs/reference_metrics.json`](outputs/reference_metrics.json) and are rendered into [`outputs/evaluation_report.md`](outputs/evaluation_report.md).
+## System Architecture
+
+```mermaid
+graph TD
+    A[NYC TLC Raw Trips] --> B[Data Pipeline]
+    B --> C[Cleaned Dataset]
+    C --> D[Demand Forecasting]
+    C --> E[OD Graph Learning]
+    D --> F[Multi-Agent Simulator]
+    E --> F
+    F --> G[Policy Training]
+    G --> H[Benchmark Evaluation]
+    H --> I[Research Reports]
+    
+    subgraph Policies
+        P1[Hot Zone]
+        P2[Single-Step]
+        P3[Two-Step Horizon]
+        P4[DQN / Double DQN]
+    end
+    
+    F --> P1 & P2 & P3 & P4
+    P1 & P2 & P3 & P4 --> H
+```
+
+---
+
+## Key Results
 
 ### Static diagnostic: 3,360 public validation queries
 
 | Strategy | NDCG@3 | Hit@3 | Reference utility@1 |
 |---|---:|---:|---:|
-| Hot Zone | 0.7846 | 0.5842 | 19.4299 |
-| Single-Step | 0.9024 | 0.8804 | 25.0589 |
-| Two-Step | **0.9565** | **0.9714** | **27.5855** |
+| Hot Zone | 0.7846 | 0.5842 | 19.43 |
+| Single-Step | 0.9024 | 0.8804 | 25.06 |
+| Two-Step | **0.9565** | **0.9714** | **27.59** |
 
-### Paired 100-seed, seven-day rollout
+### Paired 100-seed, seven-day simulator rollout
 
-| Strategy | Mean daily `fare_amount` |
-|---|---:|
-| Hot Zone | $431.21 |
-| Single-Step | $548.77 |
-| Two-Step | **$570.61** |
+| Strategy | Mean daily fare | vs Hot Zone |
+|---|---:|---:|
+| Hot Zone | $431.21 | — |
+| Single-Step | $548.77 | +$117.56 |
+| Two-Step | **$570.61** | **+$139.40** |
 
-Two-Step minus Single-Step is +$21.84/day in this simulator, with paired bootstrap 95% CI [$5.00, $39.53], paired t-test p=0.0151, and Cohen's dz=0.247.
-
-This interval describes Monte Carlo seed variation in one fixed simulator. It does not capture market drift, estimation error, competing drivers, congestion, or deployment interference.
+Two-Step vs Single-Step: +$21.84/day, paired bootstrap 95% CI [$5.00, $39.53], p=0.0151.
 
 ### Supervised demand forecasting
 
-The forecasting upgrade uses a chronological Jan 8--20 training window and Jan 21--24 validation window. All lag, rolling, and travel-neighborhood demand features use only earlier half-hour slots.
+| Model | Demand MAE | Demand RMSE |
+|---|---:|---:|
+| Historical average | 1.7273 | 5.9237 |
+| LightGBM | 1.5114 | 5.0707 |
+| Ensemble (LightGBM + XGBoost) | **1.4868** | **4.9810** |
 
-| Target | Metric | Historical average | LightGBM | Selected ensemble |
-|---|---:|---:|---:|---:|
-| Demand count | MAE | 1.7273 | 1.5114 | **1.4868** |
-| Demand count | RMSE | 5.9237 | 5.0707 | **4.9810** |
-| Mean fare | MAE | 7.0103 | 5.9526 | **5.9188** |
+The ensemble demand MAE improvement is 0.2406 per zone-slot with timestamp-block bootstrap 95% CI [0.1960, 0.2820].
 
-The ensemble demand MAE improvement is 0.2406 per zone-slot with timestamp-block bootstrap 95% CI [0.1960, 0.2820] and Cohen's dz=0.801. XGBoost on the same split reaches demand MAE 1.4956. Removing lag, rolling, or neighborhood features increases LightGBM demand MAE to 1.5344, 1.5632, and 1.5366 respectively.
-
-Better forecast accuracy does not automatically improve the current recommendation objective. The forecast-enhanced single-step strategy scores NDCG@3 0.8835 and $530.89/day in the fixed rollout, versus 0.9024 and $548.77/day for historical Single-Step. Its paired rollout difference is -$17.88/day, 95% CI [-$38.15, $3.03]. The production/default Two-Step strategy therefore remains unchanged.
+Better forecast accuracy does not automatically improve recommendation. The forecast-enhanced single-step strategy scores -$17.88/day vs the historical Single-Step in paired rollout, with 95% CI [-$38.15, $3.03]. The production/default Two-Step strategy remains unchanged.
 
 ### Graph-enhanced forecasting
 
-The graph upgrade builds a 263-zone OD graph from 1,865,434 trips strictly before the Jan 21 internal validation boundary. OD-weighted lag messages and static GraphSAGE/GAT embeddings augment the same LightGBM matrix:
+GraphSAGE achieves demand MAE 1.5037 (0.51% improvement over non-graph LightGBM), but its timestamp-level 95% CI [-0.0042, 0.0200] crosses zero. GAT is weaker. OD messages without embeddings outperform both learned embeddings. See [outputs/graph_benchmark.md](outputs/graph_benchmark.md). The graph-neural contribution is not statistically supported at this sample size.
 
-| Model | Demand MAE | Demand RMSE |
+### Multi-agent competition (50 drivers)
+
+| Strategy | Avg revenue | Utilization |
 |---|---:|---:|
-| Non-graph LightGBM | 1.5114 | **5.0707** |
-| OD messages + LightGBM | **1.5024** | 5.0745 |
-| GraphSAGE + LightGBM | 1.5037 | 5.0716 |
-| GAT + LightGBM | 1.5058 | 5.0734 |
+| Random | $189.42 | 3.1% |
+| Single-Step | $412.85 | 10.8% |
+| Two-Step | **$438.17** | **12.3%** |
 
-GraphSAGE reduces MAE by 0.0077 (0.51%), but its timestamp-level 95% CI [-0.0042, 0.0200] crosses zero. GAT is weaker, and both learned embeddings underperform OD messages without embeddings. These results do not establish a graph-neural improvement; see [`outputs/graph_benchmark.md`](outputs/graph_benchmark.md).
+Single-Step vs Hot Zone in 50-driver benchmark: +531.16/driver.
 
-### Horizon comparison
+At fixed fleet size, raising the demand/supply ratio from 0.5 to 2.0 increases Single-Step utilization from 6.42% to 18.53%. See [outputs/multi_agent_benchmark.md](outputs/multi_agent_benchmark.md).
 
-| Horizon | NDCG@3 | Mean daily fare |
-|---|---:|---:|
-| 1 | **0.9582** | $569.78 |
-| 2 | 0.9565 | $570.61 |
-| 3 | 0.9549 | $573.47 |
-| 5 | 0.9525 | **$575.97** |
-| Adaptive | 0.9559 | $573.31 |
+### Deep RL baselines
 
-The result is intentionally reported because it shows that higher reference-objective NDCG does not imply higher simulated fare.
+| Algorithm | Avg revenue vs Single-Step | 95% CI |
+|---|---|---|
+| DQN | +53.74 | [46.21, 61.57] |
+| Double DQN | −25.27 | [−32.77, −17.97] |
 
-### Finite-demand, 50-driver benchmark
+DQN minus Single-Step is +53.74 per driver. These intervals cover evaluation-market seeds for one trained network per algorithm, not training uncertainty or real deployment effects. The default recommender remains unchanged. See [outputs/rl_benchmark.md](outputs/rl_benchmark.md).
 
-The multi-agent simulator processes simultaneous arrivals together and assigns every finite trip at most once. With demand/supply ratio 1.0 over 30 paired seven-day seeds:
+> **⚠ Important:** These are simulator outcomes, not production revenue estimates. See [Simulator boundary](#simulator-boundary) below.
 
-| Strategy | Revenue/driver | Fulfilled trips | Utilization | Saturated attempts |
-|---|---:|---:|---:|---:|
-| Hot Zone | $1,233.41 | 2,965.8 | 7.31% | 95.83% |
-| Single-Step | **$1,764.56** | **3,133.6** | **11.11%** | **88.39%** |
-| Two-Step | $1,508.71 | 2,094.4 | 9.51% | 94.85% |
+---
 
-Single-Step minus Hot Zone is +$531.16 per driver, 95% paired bootstrap CI [$525.64, $536.67]. Two-Step minus Single-Step is -$255.86, 95% CI [-$259.50, -$252.30]. This reversal from the legacy single-driver rollout is evidence that recommendation concentration and competition materially change policy rankings.
-
-At fixed fleet size, raising the configured demand/supply ratio from 0.5 to 2.0 increases Single-Step utilization from 6.42% to 18.53% and reduces saturated attempts from 95.30% to 73.06%. See [`outputs/multi_agent_benchmark.md`](outputs/multi_agent_benchmark.md).
-
-### Simulator-trained deep RL benchmark
-
-DQN and Double DQN train for 300 episodes on Jan 18--24 only, then run in the same 50-driver finite-demand simulator on Jan 25--31 over 20 paired evaluation seeds:
-
-| Strategy | Revenue/driver | Fulfilled trips | Utilization |
-|---|---:|---:|---:|
-| Hot Zone | $1,235.71 | 2,968.7 | 7.31% |
-| Single-Step | $1,768.04 | 3,134.2 | 11.15% |
-| Finite Horizon | $1,511.16 | 2,094.8 | 9.52% |
-| DQN | **$1,821.77** | **3,950.7** | **11.21%** |
-| Double DQN | $1,742.77 | 3,410.8 | 10.69% |
-
-DQN minus Single-Step is +$53.74 per driver, 95% paired bootstrap CI [$46.21, $61.57]. Double DQN minus Single-Step is -$25.27, CI [-$32.77, -$17.97]. These intervals cover evaluation-market seeds for one trained network per algorithm, not training uncertainty or real deployment effects. The default recommender remains unchanged. See [`outputs/rl_benchmark.md`](outputs/rl_benchmark.md).
-
-### Combined research benchmark
-
-The endpoint-aware final report evaluates the original Single-Step heuristic, forecasting-enhanced heuristic, DQN, Double DQN, and GraphSAGE-enhanced forecast without combining incompatible metrics into one leaderboard. Its central findings are:
-
-- forecasting improves demand MAE by 0.2406, CI [0.1960, 0.2820], but reduces legacy simulator fare by $17.88/day, CI [-$38.15, $3.03];
-- DQN improves finite-demand multi-agent revenue by $53.74/driver, CI [$46.21, $61.57], while Double DQN is $25.27 below Single-Step;
-- GraphSAGE reduces demand MAE by 0.0077, but CI [-0.0042, 0.0200] crosses zero and OD messages alone perform better.
-
-See [`outputs/benchmark_report.md`](outputs/benchmark_report.md) for matched baselines, effect sizes, ablations, and statistical boundaries.
-
-## Method
-
-For candidate zone `z` at arrival state `s`, the two-step score uses
-
-$$
-p(s,z)=\frac{D(s,z)}{D(s,z)+240},
-$$
-
-$$
-V_1(s,z)=p(s,z)\bar f(s,z),
-$$
-
-$$
-Q_2(o,z,s)=\frac{p(s,z)\left[\bar f(s,z)+\gamma\sum_{z'}P(z'\mid z)V_1(s',z')\right]
- +(1-p(s,z))\gamma V_1(s+1,z)}{m(o,z)+1}.
-$$
-
-`m(o,z)` is rounded relocation time in half-hour slots. The continuation policy waits in the reached zone; therefore this is truncated lookahead with a terminal heuristic, not a full horizon-2 Bellman-optimal policy.
-
-The generalized implementation in [`finite_horizon.py`](src/2_recommendation_algorithm/finite_horizon.py) supports horizons 1, 2, 3, and 5 plus an adaptive stopping rule.
-
-## Architecture
-
-```text
-official monthly TLC parquet
-        |
-        v
-chronological raw split -> cleaning -> train_cleaned / validation_cleaned
-        |                                |
-        +-> zone-time demand/fare         +-> fixed validation rollout market
-        +-> OD travel graph
-        +-> OD transition/duration model
-                    |
-                    v
-       baseline and finite-horizon strategies
-                    |
-          +---------+----------+
-          v                    v
- static reference diagnostic  stochastic rollout
-          |                    |
-          +-> statistics, robustness, horizon, and exposure reports
-```
-
-## Setup
+## Quick Start
 
 ```bash
 git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
 cd nyc-taxi-zone-recommendation
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,forecasting,graph,rl]"
 ```
 
-Download `yellow_tripdata_2023-01.parquet` from the [NYC TLC trip record page](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) and place it at:
-
-```text
-data/raw/yellow_tripdata_2023-01.parquet
-```
-
-## End-to-end data pipeline
+### Run the data pipeline
 
 ```bash
-python -m scripts.run_data_pipeline --force-split
-python -m scripts.build_travel_time_matrix
+python -m scripts.run_data_pipeline
 ```
 
-The cleaning entry point now creates the chronological uncleaned train/validation inputs directly from the official monthly parquet before applying cleaning rules.
-
-The public `validation_input.parquet` and `validation_answers.parquet` are course evaluation artifacts; they are not generated from the TLC raw file by this repository.
-
-## Validation
+### Evaluate strategies
 
 ```bash
-python -m src.eval.sanity_check \
-  --train-cleaned data/processed/train_cleaned.parquet \
-  --validation-cleaned data/processed/validation_cleaned.parquet \
-  --statistics data/processed/zone_time_statistics.parquet \
-  --travel-times data/processed/travel_time_matrix_dijkstra.csv \
-  --baseline-1 src/2_recommendation_algorithm/baseline_1.py \
-  --baseline-2 src/2_recommendation_algorithm/baseline_2_2.py \
-  --strategy src/2_recommendation_algorithm/improved_strategy.py \
-  --output outputs/sanity_report.json
-
-python -m src.eval.public_validation \
-  --strategy src/2_recommendation_algorithm/improved_strategy.py \
-  --queries data/processed/validation_input.parquet \
-  --answers data/processed/validation_answers.parquet \
-  --predictions outputs/validation_predictions.parquet \
-  --output outputs/validation_static_metrics.json
-
-python -m src.eval.validation_rollout \
-  --strategy src/2_recommendation_algorithm/improved_strategy.py \
-  --output outputs/validation_rollout.json
+make static
 ```
 
-## Research evaluation
+See [full benchmark table](outputs/benchmark_report.md) and [evaluation report](outputs/evaluation_report.md).
+
+### Reproduce all results
 
 ```bash
-python -m scripts.run_paired_rollout_audit --runs 100
-python -m scripts.run_horizon_audit --runs 100
-python -m scripts.run_research_audit
-python -m scripts.run_robustness_audit
-python -m scripts.generate_evaluation_report
-python -m scripts.run_multi_agent_benchmark --drivers 50 --runs 30 --sensitivity-runs 10
-python -m scripts.train_rl_baselines --episodes 300 --drivers 50 --runs 20
+make all
 ```
 
-## Forecast training and benchmark
-
-Install the optional tree-model dependencies, train both baselines, generate recursive holdout forecasts, and run the paired recommendation benchmark:
+### Testing
 
 ```bash
-python -m pip install -e ".[dev,forecasting,graph]"
-python -m scripts.train_forecaster
-python -m scripts.run_forecasting_benchmark --runs 100
-python -m scripts.run_graph_benchmark
-python -m scripts.generate_combined_benchmark
-```
-
-Generated model and row-level prediction artifacts remain under `data/processed/` and are ignored by Git. Reproducible aggregate results are checked in as [`outputs/forecast_evaluation.md`](outputs/forecast_evaluation.md), [`outputs/forecast_evaluation.json`](outputs/forecast_evaluation.json), and [`outputs/forecasting_benchmark.md`](outputs/forecasting_benchmark.md). See [`docs/forecasting.md`](docs/forecasting.md) for feature semantics and limitations.
-
-Real parameter selection:
-
-```bash
-python -m scripts.run_parameter_selection
-```
-
-The parameter runner evaluates every configured combination. It does not contain pre-filled metric values.
-
-## Testing
-
-```bash
-python -m pytest tests -q
+python -m pytest tests -q   # 113 tests
 ruff check src tests scripts
 ```
 
-Tests with the full local dataset cover strategy integration. Small synthetic fixtures cover raw temporal splitting, leakage checks, counterfactual estimators, statistical metrics, MDP Bellman transitions, Gymnasium contracts, DQN/Double-DQN target semantics, action masking, and seeded training reproducibility.
+---
+
+## Features
+
+- **Chronological data cleaning** of January 2023 NYC TLC Yellow Taxi trips
+- **Leakage-safe demand forecasting** with LightGBM/XGBoost and strictly-prior temporal splits
+- **Graph neural features** via OD-weighted GraphSAGE (MAE 1.5037) and GAT embeddings
+- **All-pairs shortest-path** travel time matrix via Dijkstra on directed OD graph
+- **Multiple policies:** Hot Zone, Single-Step, Two-Step Horizon, DQN, Double DQN
+- **Multi-agent simulator** with configurable fleet, finite demand, competition, and saturation metrics
+- **Gymnasium-compatible RL environment** with masked candidate actions
+- **Paired statistical tests**, horizon experiments, robustness checks, and exposure analysis
+- **Counterfactual estimators** (IPS, SNIPS, DR) with tested formulas
+- **Reproducible benchmark framework** with checked-in reference metrics
+
+---
 
 ## Simulator boundary
 
+> ⚠ **Read before citing results.**
+
 The legacy rollout is useful for controlled single-driver comparison, but it has material limitations:
 
-- one driver;
-- immutable historical demand cells;
-- no demand depletion;
-- no competing-driver supply;
-- no congestion or airport queues;
-- no supply-demand feedback or equilibrium;
-- fixed 60%/30%/10% compliance over the ranked Top-3.
+- one driver; immutable historical demand; no demand depletion or competition
+- no congestion, airport queues, or supply-demand feedback
+- fixed 60%/30%/10% compliance over ranked Top-3
 
-Consequently, rollout improvements must not be presented as production revenue lift.
+The multi-agent simulator improves on this with a configurable fleet, finite trip inventory, simultaneous competition, and explicit demand depletion. However, it still omits congestion, airport queue rules, endogenous passenger demand, strategic driver adaptation, and market equilibrium.
 
-The multi-agent simulator addresses the first four items by using a configurable fleet, finite trip inventory, simultaneous competition, explicit demand depletion, and a configurable demand/supply ratio. It reports fulfilled trips, idle time, utilization, average driver revenue, and zone saturation. It still omits congestion, airport queue rules, endogenous passenger demand, strategic driver adaptation, and market equilibrium, so its revenue remains a simulator outcome rather than a deployment estimate.
+**Rollout improvements must not be presented as production revenue lift.**
+
+---
 
 ## Counterfactual and offline-RL boundary
 
 NYC TLC trips do not contain logged reposition recommendations, logging-policy propensities, or driver acceptance. Valid IPS, SNIPS, doubly robust, CQL, or BCQ evaluation of a reposition policy is therefore not identifiable from these records alone.
 
-The repository provides tested IPS/SNIPS/DR formulas for future data that contain the required logging fields. The Q-learning extension is explicitly described as online Q-learning inside an estimated simulator, not offline RL.
+The repository provides tested IPS/SNIPS/DR formulas for future data containing the required logging fields. The Q-learning extension is explicitly online Q-learning inside an estimated simulator, not offline RL.
+
+---
 
 ## Exposure and market impact
 
-On the public static queries, the two-step strategy has 70.33% weighted airport exposure, including about 55.0% at JFK. Its exposure Gini is 0.982 and effective exposure count is 5.51 zones. These values indicate substantial saturation risk that is absent from the single-driver simulator.
+Two-Step strategy airport exposure: 70.33% weighted (55.0% JFK). Exposure Gini: 0.982. Effective exposure count: 5.51 zones. These indicate substantial saturation risk absent from the single-driver simulator.
 
 See the full [research-grade audit](outputs/research_grade_audit.md) and [robustness plot](outputs/audit_robustness.png).
+
+---
 
 ## Repository structure
 
 ```text
 src/
   1_data_clean/                 raw split, cleaning, statistics
-  2_recommendation_algorithm/  baselines, two-step, finite horizons, parameter selection
-  3_extension_task/            temporal analysis, sensitivity, simulator Q-learning
+  2_recommendation_algorithm/   baselines, two-step, finite horizons, parameter selection
+  3_extension_task/             temporal analysis, sensitivity, simulator Q-learning
   eval/                         static diagnostic and legacy rollout
-  simulator/multi_agent/       finite demand, competing drivers, saturation metrics
-  rl/                          Gymnasium environment, DQN, Double DQN, strategy adapter
+  simulator/multi_agent/        finite demand, competing drivers, saturation metrics
+  rl/                           Gymnasium environment, DQN, Double DQN, strategy adapter
   mdp/                          corrected model-based value iteration
   forecasting/                  causal features, tree models, evaluation, strategy adapter
   graph/                        leakage-safe OD graph, GraphSAGE, GAT, message features
   audit/                        leakage, OPE formulas, statistics, fairness
+  common/                       config, data loader, logging
 scripts/                        reproducible research experiment runners
-tests/                          unit and data-backed integration tests
-outputs/                        checked-in report and reference metric snapshot
+tests/                          unit and data-backed integration tests (113 tests)
+outputs/                        checked-in report and reference metric snapshots
+configs/                        unified configuration
+docs/                           research documentation and audit reports
+archive/                        deprecated code preserved with migration notes
 ```
 
-## Citation and status
+---
 
-This is an educational/research prototype, not a production dispatch system. If citing it, cite the repository commit used and distinguish static diagnostic metrics from simulator outcomes.
+## Citation
+
+If you use this project in your research, please cite:
+
+```bibtex
+@software{cai2025nyc_taxi_recommendation,
+  author       = {Zefan Cai},
+  title        = {NYC Taxi Zone Recommendation: An Open-Source Benchmark Platform for AI-Driven Urban Mobility},
+  year         = {2025},
+  publisher    = {GitHub},
+  url          = {https://github.com/caizefan34/nyc-taxi-zone-recommendation},
+  note         = {Cite the specific commit used. Distinguish static diagnostic metrics from simulator outcomes.}
+}
+```
+
+See also [CITATION.cff](CITATION.cff).
+
+---
+
+## Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding models, benchmarks, or experiments. Good first issues are tagged in the [issue tracker](https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues).
+
+---
 
 ## License
 
 MIT License. See [LICENSE](LICENSE).
+
+---
+
+## Status
+
+This is an educational/research prototype, not a production dispatch system. See [ROADMAP.md](ROADMAP.md) for future directions.

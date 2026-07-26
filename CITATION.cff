@@ -1,0 +1,23 @@
+﻿cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "NYC Taxi Zone Recommendation: An Open-Source Benchmark Platform for AI-Driven Urban Mobility"
+authors:
+  - family-names: Cai
+    given-names: Zefan
+    email: caizefan@sjtu.edu.cn
+    affiliation: Shanghai Jiao Tong University
+repository-code: "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
+url: "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
+abstract: "A reproducible, research-grade benchmark platform for AI-driven taxi repositioning. Combines spatiotemporal demand forecasting, multi-agent simulation, offline reinforcement learning, and counterfactual evaluation on NYC TLC trip data."
+keywords:
+  - urban mobility
+  - taxi recommendation
+  - reinforcement learning
+  - simulation
+  - benchmark
+  - demand forecasting
+  - graph neural networks
+  - reproducibility
+license: MIT
+version: "2.1.0"
+date-released: "2025-07-26"
