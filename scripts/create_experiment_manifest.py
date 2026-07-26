@@ -8,18 +8,26 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 
+
 def run(cmd):
     try:
-        return subprocess.run(cmd, capture_output=True, text=True, check=True).stdout.strip()
+        return subprocess.run(
+            cmd, capture_output=True, text=True, check=True
+        ).stdout.strip()
     except Exception:
         return "unknown"
 
+
 def get_packages():
     try:
-        r = subprocess.run([sys.executable, "-m", "pip", "list", "--format=json"], capture_output=True, text=True, check=True)
+        r = subprocess.run(
+            [sys.executable, "-m", "pip", "list", "--format=json"],
+            capture_output=True, text=True, check=True,
+        )
         return {p["name"]: p["version"] for p in json.loads(r.stdout)}
     except Exception:
         return {"error": "pip list failed"}
+
 
 def main():
     manifest = {
@@ -30,8 +38,14 @@ def main():
             "branch": run(["git", "rev-parse", "--abbrev-ref", "HEAD"]),
             "status": run(["git", "status", "--short"]),
         },
-        "python": {"version": platform.python_version(), "implementation": platform.python_implementation()},
-        "platform": {"system": platform.system(), "release": platform.release(), "machine": platform.machine()},
+        "python": {
+            "version": platform.python_version(),
+            "implementation": platform.python_implementation(),
+        },
+        "platform": {
+            "system": platform.system(), "release": platform.release(),
+            "machine": platform.machine(),
+        },
         "packages": get_packages(),
         "configs": {},
     }
@@ -56,6 +70,7 @@ def main():
     print(f"  Python: {manifest['python']['version']}")
     print(f"  Packages: {len(manifest.get('packages', {}))}")
     print(f"  Configs loaded: {len(manifest.get('configs', {}))}")
+
 
 if __name__ == "__main__":
     main()
