@@ -18,6 +18,7 @@ outputs/*.csv
 outputs/tmp/
 !outputs/reference_metrics.json
 !outputs/parameter_selection.json
+!outputs/multi_agent_benchmark.json
 !outputs/forecast_evaluation.json
 !outputs/forecasting_benchmark.json
 !outputs/graph_benchmark.json
