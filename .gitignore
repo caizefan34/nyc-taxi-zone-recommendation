@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 *.pyo
@@ -7,8 +7,10 @@ __pycache__/
 dist/
 build/
 
-# Data (large parquet files)`n!web/data/
+# Data (large parquet files)
 data/
+!web/data/
+!web/data/*.json
 *.parquet
 *.parquet.zstd
 
@@ -64,5 +66,3 @@ docs/api/generated/
 *.swo
 *~
 .DS_Store?
-
-
