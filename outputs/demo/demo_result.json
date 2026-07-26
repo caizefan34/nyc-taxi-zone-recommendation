@@ -1,0 +1,49 @@
+{
+  "scenario": {
+    "zone_id": 237,
+    "zone_name": "Upper East Side North",
+    "hour": 14,
+    "day_of_week": 2,
+    "month": 7,
+    "timestamp": "2026-07-26T11:35:29.313780+00:00"
+  },
+  "recommendations": {
+    "strategy": "Historical Single-Step",
+    "top_3_zones": [
+      {
+        "zone_id": 237,
+        "zone_name": "Upper East Side North",
+        "expected_reward": 45.2
+      },
+      {
+        "zone_id": 236,
+        "zone_name": "Upper East Side South",
+        "expected_reward": 42.8
+      },
+      {
+        "zone_id": 170,
+        "zone_name": "Murray Hill",
+        "expected_reward": 38.5
+      }
+    ]
+  },
+  "demand_prediction": {
+    "zone_237_pickups": 28,
+    "method": "historical_average",
+    "confidence": "illustrative_only"
+  },
+  "simulator_state": {
+    "total_drivers": 50,
+    "active_drivers": 42,
+    "idle_drivers": 8,
+    "utilization": 0.84
+  },
+  "disclaimer": "This demo uses pre-computed averages, not trained models.",
+  "pipeline_steps": [
+    "1. Load zone metadata and pre-computed statistics",
+    "2. Compute historical average demand",
+    "3. Run simulator step with current state",
+    "4. Generate top-3 zone recommendations",
+    "5. Save and display results"
+  ]
+}

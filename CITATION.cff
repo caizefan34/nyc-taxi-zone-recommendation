@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software in research, please cite it as below."
+title: "Dynamic Urban Mobility Decision System"
+version: 2.0.0
+date-released: 2026-07-26
+authors:
+  - family-names: "caizefan34"
+repository-url: "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
+repository-code: "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
+license: "MIT"
+keywords:
+  - "urban mobility"
+  - "reinforcement learning"
+  - "demand forecasting"
+  - "taxi repositioning"
+  - "simulation"
+  - "off-policy evaluation"
