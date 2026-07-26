@@ -36,3 +36,22 @@ def test_markdown_uses_github_compatible_display_math_delimiters():
         ):
             offenders.append(str(path.relative_to(ROOT)))
     assert offenders == []
+
+
+def test_forecasting_snapshot_matches_documented_claims():
+    forecast = json.loads((ROOT / "outputs/forecast_evaluation.json").read_text(encoding="utf-8"))
+    benchmark = json.loads((ROOT / "outputs/forecasting_benchmark.json").read_text(encoding="utf-8"))
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    demand = forecast["demand"]
+    ensemble = forecast["ensemble"]
+    assert demand["lightgbm_mae"] < demand["historical_mae"]
+    assert ensemble["paired_timestamp_bootstrap"]["ci95_low"] > 0.0
+    full_mae = forecast["feature_ablation"]["full"]["mae"]
+    for name in ("without_lags", "without_rolling", "without_neighborhood"):
+        assert forecast["feature_ablation"][name]["mae"] > full_mae
+    comparison = benchmark["paired_rollout"]["forecast_vs_historical"]
+    assert comparison["mean_difference"] < 0.0
+    assert comparison["ci95_low"] < 0.0 < comparison["ci95_high"]
+    assert f"{ensemble['demand_mae']:.4f}" in readme
+    assert f"-${abs(comparison['mean_difference']):.2f}" in readme
