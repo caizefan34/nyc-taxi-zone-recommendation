@@ -1,0 +1,36 @@
+# Benchmark Submission Template
+model:
+  name: ""
+  version: "1.0.0"
+  type: ""                    # forecast | policy | rl_policy
+  description: ""
+authors:
+  - name: ""
+    email: ""
+    affiliation: ""
+method:
+  category: ""
+  paper_reference: ""
+  code_repository: ""
+training:
+  dataset: "NYC TLC Yellow Taxi Jan 2023"
+  split_method: "chronological"
+  train_boundary: "2023-01-20"
+  validation_boundary: "2023-01-25"
+  random_seed: 42
+  hardware: ""
+  training_time_seconds: 0
+metrics:
+  forecast:
+    mae: 0.0
+    rmse: 0.0
+  decision:
+    ndcg_at_3: 0.0
+    hit_at_3: 0.0
+    daily_fare: 0.0
+    utilization: 0.0
+  rl:
+    mean_reward: 0.0
+    std_reward: 0.0
+    episodes: 0
+limitations: ""

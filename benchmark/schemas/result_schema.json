@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BenchmarkResult",
+  "type": "object",
+  "required": ["model", "benchmark_version", "timestamp", "metrics"],
+  "properties": {
+    "model": {
+      "type": "object",
+      "required": ["name", "type"],
+      "properties": {
+        "name": {"type": "string"},
+        "version": {"type": "string"},
+        "type": {"enum": ["forecast", "policy", "rl_policy"]}
+      }
+    },
+    "benchmark_version": {"type": "string"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "forecast": {"type": "object"},
+        "decision": {"type": "object"},
+        "rl": {"type": "object"},
+        "deployment": {"type": "object"}
+      }
+    },
+    "reproducibility": {
+      "type": "object",
+      "properties": {
+        "random_seed": {"type": "integer"},
+        "hardware": {"type": "string"}
+      }
+    }
+  }
+}
