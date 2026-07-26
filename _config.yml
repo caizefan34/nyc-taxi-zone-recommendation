@@ -1,0 +1,13 @@
+﻿title: Dynamic Urban Mobility Decision System
+description: >-
+  An open-source benchmark platform combining forecasting, simulation,
+  and offline reinforcement learning for urban mobility decision optimization
+  with reproducible evaluation on NYC taxi data.
+theme: jekyll-theme-cayman
+show_downloads: false
+github:
+  is_project_page: true
+  repository_url: https://github.com/caizefan34/nyc-taxi-zone-recommendation
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
