@@ -1,9 +1,9 @@
 <div align="center">
   <img src="assets/social-preview.svg" width="100%" alt="NYC Taxi Zone Recommendation">
 
-  <h1>NYC Taxi Zone Recommendation</h1>
+  <h1>Dynamic Urban Mobility Decision System</h1>
 
-  <p><strong>An open-source benchmark platform for AI-driven urban mobility decision making — combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning with reproducible evaluation.</strong></p>
+  <p><strong>An open-source benchmark platform combining forecasting, simulation, and offline reinforcement learning for urban mobility decision optimization — combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning with reproducible evaluation.</strong></p>
 
   <p>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"></a>
