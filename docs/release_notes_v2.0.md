@@ -1,4 +1,4 @@
-# Dynamic Urban Mobility Decision System v2.0
+﻿# Dynamic Urban Mobility Decision System v2.0
 
 > Release date: 2026-07-26
 > Branch: release-v2-final
@@ -162,3 +162,4 @@ Different reward scale from simulator policies above — RL return is scaled by 
 - **Causal policy learning** with proper identification strategies
 - **Dynamic calibration** to address temporal drift in 2024+
 - **Multi-objective optimization** balancing revenue, utilization, and idle time
+

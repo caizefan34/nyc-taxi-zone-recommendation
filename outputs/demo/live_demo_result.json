@@ -1,0 +1,57 @@
+{
+  "input": {
+    "zone": 237,
+    "time": "14:00",
+    "hour": 14,
+    "day_of_week": 2,
+    "month": 7
+  },
+  "features": {
+    "zone_id": 237,
+    "hour": 14,
+    "day_of_week": 2,
+    "month": 7,
+    "half_hour_bucket": 29,
+    "lag_demand_1": 12.0,
+    "lag_demand_2": 8.8,
+    "rolling_mean_3h": 10.0,
+    "hour_sin": -0.4999999999999997,
+    "hour_cos": -0.8660254037844388
+  },
+  "forecast": {
+    "predicted_pickups": 12.0,
+    "confidence": "low",
+    "source": "fallback_heuristic"
+  },
+  "simulator_state": {
+    "zone_id": 237,
+    "forecasted_demand": 12.0,
+    "zone_capacity": 20,
+    "utilization": 0.6,
+    "competition_level": "medium",
+    "n_available_drivers": 16
+  },
+  "recommendation": {
+    "strategy": "single_step",
+    "recommendations": [
+      {
+        "zone": 237,
+        "reason": "current_zone_stable",
+        "expected_utilization": 0.6
+      },
+      {
+        "zone": 237,
+        "reason": "nearby_hub",
+        "expected_utilization": 0.7
+      },
+      {
+        "zone": 161,
+        "reason": "alternate_route",
+        "expected_utilization": 0.5499999999999999
+      }
+    ],
+    "expected_reward": 1080.0,
+    "overall_utilization": 0.6,
+    "fallback_active": false
+  }
+}

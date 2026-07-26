@@ -1,37 +1,32 @@
-# Sample Dataset
+﻿# Sample Dataset
 
 ## Source
-Synthetic data based on the public NYC TLC Yellow Taxi trip record format.
-Does not contain any personally identifiable information.
+- **Trip data:** Public NYC TLC trip records (via FiveThirtyEight Uber dataset) or synthetic generation as fallback.
+- **Zone data:** NYC Taxi Zone lookup table.
+- **Weather data:** Synthetic weather for testing external feature pipelines.
 
-## Files
-
-| File | Size | Description |
-|------|------|-------------|
-| `data/sample/sample_trip_data.csv` | ~500 bytes | 5 sample trip records |
-| `data/sample/sample_zone_data.csv` | ~200 bytes | 5 NYC taxi zones |
-| `data/sample/sample_weather_data.csv` | ~150 bytes | 3 days of weather data |
+## Size
+| File | Records | Size |
+|------|:-------:|:----:|
+| `sample_trip_data.csv` | 500 | ~50 KB |
+| `sample_zone_data.csv` | 6 | ~300 B |
+| `sample_weather_data.csv` | 56 | ~2 KB |
 
 ## Usage
 ```bash
-# Verify sample data is in place
 python scripts/download_sample_data.py
-
-# Run demo with sample data
-python scripts/run_demo.py
 ```
 
 ## Difference from Full Dataset
-
-| Aspect | Sample | Full Dataset |
-|--------|--------|-------------|
-| Records | 5 trips | ~1.1B trips |
-| Zones | 5 zones | 263 zones |
-| Years | 2024 only | 2022-2025 |
-| Size | ~1 KB | ~10 GB |
-| Purpose | Quick demo | Full research reproduction |
+| Dimension | Sample | Full Dataset |
+|-----------|--------|:------------:|
+| Time range | 1 day-1 week | 12+ months |
+| Records | 500 | 10M+ |
+| Zones | 6 (Manhattan focus) | 263 |
+| File format | CSV (GitHub-friendly) | Parquet |
+| Download | Instant | ~1 GB+ |
 
 ## Limitations
-- Sample data is synthetic, not real trip records
-- Too small for any meaningful model training
-- For research reproduction, download the full dataset from NYC TLC
+- Sample data is for testing pipeline mechanics only.
+- Results from sample data do not represent full NYC taxi demand patterns.
+- Synthetic weather data is randomly generated, not historical.
