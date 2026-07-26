@@ -39,13 +39,13 @@ Step 4: Recommendation → [JFK Zone 132, Upper East Side Zone 140, Midtown Zone
 
 ### Static diagnostic (3,360 queries)
 
-![NDCG comparison](assets/ndcg_comparison.png)
+![NDCG comparison](../assets/ndcg_comparison.png)
 
 The Two-Step Horizon strategy achieves 0.9565 NDCG@3 on public validation queries — a 21.9% improvement over the naive Hot Zone baseline.
 
 ### Rollout performance
 
-![Pickup comparison](assets/pickup_comparison.png)
+![Pickup comparison](../assets/pickup_comparison.png)
 
 100-seed paired rollout shows consistent improvement: Two-Step delivers +$139/day vs Hot Zone, with the improvement concentrated in the 7-10 AM and 6-9 PM peak windows.
 

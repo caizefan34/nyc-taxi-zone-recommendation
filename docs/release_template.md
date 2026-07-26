@@ -40,7 +40,7 @@ Use this as a guide for creating GitHub Releases. Copy and fill in per version.
 
 ### Future Roadmap
 
-See [ROADMAP.md](ROADMAP.md) for full details.
+See [../ROADMAP.md](../ROADMAP.md) for full details.
 
 | Milestone | Target |
 |---|---|
