@@ -1,0 +1,36 @@
+{
+  "benchmark_config": {
+    "n_test_timestamps": 336,
+    "zone_count": 263,
+    "forecast_horizon_steps": 48
+  },
+  "models": {
+    "historical_average": {
+      "mae": 3.551025152206421,
+      "rmse": 4.4675774574279785,
+      "mape": 19.504188001155853
+    },
+    "lightgbm": {
+      "mae": 2.389991075640415,
+      "rmse": 3.0669990917719896,
+      "mape": 11.964412398476814
+    },
+    "xgboost": {
+      "mae": 2.8681112076687416,
+      "rmse": 3.6860874477487893,
+      "mape": 14.34687930088917
+    },
+    "graphsage": {
+      "mae": 3.193596799820447,
+      "rmse": 4.100195758665335,
+      "mape": 15.977995828812116
+    },
+    "temporal_graph_transformer": {
+      "mae": 1.9130251874585364,
+      "rmse": 2.457802946224885,
+      "mape": 9.568981152800426,
+      "picp": 0.9907998370450842,
+      "quantile_output": true
+    }
+  }
+}
