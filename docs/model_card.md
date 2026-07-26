@@ -1,4 +1,4 @@
-# Model Card: Dynamic Urban Mobility Decision System
+﻿# Model Card: Dynamic Urban Mobility Decision System
 
 ## Model Overview
 
@@ -152,3 +152,4 @@ A multi-agent supply-demand simulator for NYC taxi repositioning. Simulates 50 d
 2. **Temporal drift detected**: Models trained on 2023 show significant error increase on 2024 data (MAE 3.24 vs 1.49). Regular retraining is necessary.
 3. **No safety guarantees**: The system is a research prototype, not production software.
 4. **Confidence intervals are narrow but fragile**: Bootstrap intervals use matched seeds and do not account for structural simulator error, month-to-month variation, or deployment interference.
+

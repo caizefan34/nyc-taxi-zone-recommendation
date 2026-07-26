@@ -1,4 +1,4 @@
-# Dynamic Urban Mobility Decision System
+﻿# Dynamic Urban Mobility Decision System
 
 > **NYC taxi zone-level mobility optimization**: demand forecasting, calibrated multi-agent simulation, offline RL, and robust evaluation of repositioning policies.
 
@@ -183,3 +183,4 @@ Cite the specific commit used and distinguish static diagnostic metrics from sim
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
