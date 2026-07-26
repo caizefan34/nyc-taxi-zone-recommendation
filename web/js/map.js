@@ -1,4 +1,4 @@
-// ===== Interactive NYC Zone Map (Inline SVG, no Leaflet) =====
+// ===== Interactive NYC Zone Map (Inline SVG, zero external deps) =====
 var MapModule = {
     svg: null,
     circles: [],

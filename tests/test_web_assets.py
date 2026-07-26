@@ -40,21 +40,22 @@ class TestWebAssets:
 
     def test_index_html_has_svg_map(self):
         content = _read_utf8(WEB_DIR / "index.html")
-        assert "map.js" in content, "index.html must include map.js"
-        js_content = _read_utf8(WEB_DIR / "js" / "map.js")
-        assert "createElementNS" in js_content, "map.js must use SVG"
+        assert "MapModule" in content, "index.html must include MapModule"
+        assert "createElementNS" in content, "index.html must use SVG"
 
     def test_index_html_has_disclaimer(self):
         content = _read_utf8(WEB_DIR / "index.html")
         assert "simulation" in content.lower(), "Must have simulation disclaimer"
 
-    def test_all_js_referenced_in_html(self):
+    def test_all_js_merged_in_html(self):
         html_content = _read_utf8(WEB_DIR / "index.html")
-        js_files = ["main.js", "map.js", "simulation.js", "charts.js"]
-        for js in js_files:
-            assert js in html_content, f"{js} must be referenced in index.html"
+        assert "AppState" in html_content, "index.html must contain AppState"
+        assert "MapModule" in html_content, "index.html must contain MapModule"
+        assert "SimulationModule" in html_content, "index.html must contain SimulationModule"
+        assert "ChartsModule" in html_content, "index.html must contain ChartsModule"
 
-    def test_css_referenced_in_html(self):
+    def test_css_inlined_in_html(self):
         html_content = _read_utf8(WEB_DIR / "index.html")
-        assert "style.css" in html_content, "style.css must be referenced in index.html"
+        assert "<style>" in html_content, "CSS must be inlined in index.html"
+        assert "unpkg.com" not in html_content, "No unpkg CDN dependencies"
 

@@ -30,6 +30,9 @@ jobs:
         run: |
           cd docs
           sphinx-build -b html . _build/html
+      - name: Build self-contained web app
+        run: |
+          python scripts/build_web.py
       - name: Copy interactive web app to docs output
         run: |
           mkdir -p docs/_build/html/web

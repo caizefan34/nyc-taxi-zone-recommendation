@@ -5,7 +5,863 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NYC Mobility AI — Interactive Simulation Platform</title>
 <meta name="description" content="Interactive simulation platform for NYC taxi zone recommendation research.">
-<link rel="stylesheet" href="css/style.css" />
+<style>/* ===== CSS Reset & Base ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary: #0d2137;
+    --primary-light: #1a3a5c;
+    --accent: #00b4d8;
+    --accent-light: #48cae4;
+    --accent-dark: #0077b6;
+    --success: #2ec4b6;
+    --warning: #ffb703;
+    --danger: #e63946;
+    --text: #e0e6ed;
+    --text-muted: #8899aa;
+    --bg: #0b1a2c;
+    --bg-card: #112240;
+    --bg-card-hover: #1a2f4f;
+    --border: #1e3a5f;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    --max-width: 1200px;
+    --radius: 12px;
+    --radius-sm: 6px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --transition: 0.3s ease;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+a {
+    color: var(--accent-light);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+a:hover {
+    color: #fff;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(13,33,55,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.navbar .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--success));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.navbar .nav-links {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+}
+
+.navbar .nav-links a {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all var(--transition);
+}
+
+.navbar .nav-links a:hover,
+.navbar .nav-links a.active {
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+}
+
+.mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+/* ===== Hero Section ===== */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 1.5rem 4rem;
+    background: linear-gradient(160deg, #0b1a2c 0%, #0d2137 40%, #0a2a40 70%, #082d44 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,180,216,0.08), transparent 70%);
+    pointer-events: none;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(46,196,182,0.06), transparent 70%);
+    pointer-events: none;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0,180,216,0.12);
+    border: 1px solid rgba(0,180,216,0.25);
+    border-radius: 100px;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.8rem;
+    color: var(--accent-light);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.3px;
+}
+
+.hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 1rem;
+    max-width: 800px;
+}
+
+.hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 640px;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+}
+
+.hero-stat {
+    text-align: center;
+}
+
+.hero-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.hero-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    border: none;
+    font-family: var(--font);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(0,180,216,0.25);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,180,216,0.35);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--accent-light);
+    border: 1.5px solid var(--accent);
+}
+
+.btn-outline:hover {
+    background: rgba(0,180,216,0.1);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success), #1a9e92);
+    color: #fff;
+}
+
+.btn-success:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(46,196,182,0.3);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ===== Section Common ===== */
+.section {
+    padding: 5rem 1.5rem;
+}
+
+.section-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.section-header p {
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 0.95rem;
+}
+
+/* ===== Map Section ===== */
+.map-container {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+#map {
+    height: 520px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    z-index: 1;
+}
+
+.map-sidebar {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+}
+
+.map-sidebar h3 {
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+
+.map-sidebar .zone-detail {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-top: 1rem;
+}
+
+.map-sidebar .zone-detail .label {
+    color: var(--text-muted);
+    display: inline-block;
+    width: 110px;
+}
+
+.map-sidebar .zone-detail .value {
+    color: #fff;
+    font-weight: 500;
+}
+
+.map-sidebar .zone-detail .badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.map-sidebar .zone-detail .badge-low { background: rgba(46,196,182,0.2); color: var(--success); }
+.map-sidebar .zone-detail .badge-medium { background: rgba(255,183,3,0.2); color: var(--warning); }
+.map-sidebar .zone-detail .badge-high { background: rgba(230,57,70,0.2); color: var(--danger); }
+.map-sidebar .zone-detail .badge-very-high { background: rgba(230,57,70,0.35); color: #ff6b6b; }
+
+.legend {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.legend-dot.low { background: #2ec4b6; }
+.legend-dot.medium { background: #ffb703; }
+.legend-dot.high { background: #e63946; }
+
+/* ===== Simulation Section ===== */
+.sim-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 1.5rem;
+}
+
+.sim-controls {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    position: sticky;
+    top: 80px;
+}
+
+.sim-controls h3 {
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 1.25rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+}
+
+.form-group select,
+.form-group input {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.875rem;
+    font-family: var(--font);
+    transition: border-color var(--transition);
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.form-group select option {
+    background: var(--primary);
+}
+
+.sim-btn-wrap {
+    margin-top: 1.5rem;
+}
+
+.sim-btn-wrap .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* ===== Simulation Flow ===== */
+.sim-results {
+    min-height: 400px;
+}
+
+.step-progress {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.step-dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background 0.5s ease;
+}
+
+.step-dot.active {
+    background: var(--accent);
+}
+
+.step-dot.done {
+    background: var(--success);
+}
+
+.step-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.step-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 0;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.step-body {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+}
+
+.step-body h4 {
+    color: #fff;
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+}
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.result-table th {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.result-table td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid rgba(30,58,95,0.5);
+}
+
+.result-table tr:last-child td {
+    border-bottom: none;
+}
+
+.result-table .highlight {
+    color: var(--success);
+    font-weight: 600;
+}
+
+.recommendation-card {
+    background: linear-gradient(135deg, rgba(0,180,216,0.12), rgba(46,196,182,0.08));
+    border: 1px solid rgba(0,180,216,0.3);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.recommendation-card .zone-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.recommendation-card .metrics {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.recommendation-card .metric {
+    text-align: center;
+}
+
+.recommendation-card .metric-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent-light);
+}
+
+.recommendation-card .metric-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ===== Before/After ===== */
+.before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.before-card,
+.after-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+}
+
+.after-card {
+    border-color: var(--success);
+    background: rgba(46,196,182,0.06);
+}
+
+.before-card h5,
+.after-card h5 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.after-card h5 {
+    color: var(--success);
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid rgba(30,58,95,0.3);
+}
+
+.metric-row:last-child {
+    border-bottom: none;
+}
+
+.metric-row .improvement {
+    color: var(--success);
+    font-size: 0.75rem;
+}
+
+/* ===== Policy Comparison ===== */
+.chart-container {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1rem;
+    border: 1px solid var(--border);
+    min-height: 380px;
+}
+
+/* ===== Benchmark Dashboard ===== */
+.benchmark-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.benchmark-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    text-align: center;
+    transition: transform var(--transition), border-color var(--transition);
+}
+
+.benchmark-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+}
+
+.benchmark-card .value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+
+.benchmark-card .label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.benchmark-card .status {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.benchmark-card .status.pass {
+    background: rgba(46,196,182,0.2);
+    color: var(--success);
+}
+
+.benchmark-card .status.skip {
+    background: rgba(255,183,3,0.15);
+    color: var(--warning);
+}
+
+.benchmark-image-wrap {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.benchmark-image-wrap img {
+    border-radius: var(--radius-sm);
+    max-height: 500px;
+}
+
+/* ===== Footer ===== */
+.footer {
+    background: var(--primary);
+    border-top: 1px solid var(--border);
+    padding: 3rem 1.5rem 2rem;
+    text-align: center;
+}
+
+.footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.8;
+}
+
+.footer .disclaimer {
+    background: rgba(230,57,70,0.08);
+    border: 1px solid rgba(230,57,70,0.2);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    display: inline-block;
+    max-width: 700px;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    color: #ff8a8a;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+    .map-container {
+        grid-template-columns: 1fr;
+    }
+    .sim-layout {
+        grid-template-columns: 1fr;
+    }
+    .sim-controls {
+        position: static;
+    }
+    .before-after {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: var(--primary);
+        border-bottom: 1px solid var(--border);
+        padding: 0.5rem;
+    }
+    .navbar .nav-links.open {
+        display: flex;
+    }
+    .mobile-toggle {
+        display: block;
+    }
+    .hero-stats {
+        gap: 1.5rem;
+    }
+    .hero-stat-value {
+        font-size: 1.3rem;
+    }
+    .recommendation-card .metrics {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .section {
+        padding: 3rem 1rem;
+    }
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    .benchmark-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== SVG Map Zone Circles ===== */
+#map svg {
+    display: block;
+}
+#map svg .zone-circle {
+    transition: stroke-width 0.2s ease, opacity 0.2s ease;
+    cursor: pointer;
+}
+#map svg .zone-circle:hover {
+    stroke-width: 3;
+    opacity: 1;
+}
+
+/* Chart containers for SVG */
+#forecastChart,
+#policyChart,
+#beforeAfterChart {
+    width: 100%;
+    min-height: 280px;
+    background: transparent;
+    overflow: hidden;
+}
+#forecastChart svg,
+#policyChart svg,
+#beforeAfterChart svg {
+    max-width: 100%;
+    height: auto;
+}
+</style>
 </head>
 <body>
 
@@ -44,8 +900,7 @@
       <h2>NYC Taxi Zone Map</h2>
       <p>Interactive map of Manhattan taxi zones with demand levels. Click a zone to view details and run simulations.</p>
     </div>
-    <div class="map-container"><div id="mapLoading" style="display:flex;align-items:center;justify-content:center;height:400px;background:#1a1a2e;color:#888;font-size:1.1rem;">Loading NYC zone map...</div>
-      <div id="map"></div>
+    <div class="map-container"><div id="map"></div>
       <div class="map-sidebar">
         <h3 id="selectedZone">Select a Zone</h3>
         <p style="font-size:0.8rem;color:var(--text-muted);">Click a marker on the map to see zone details.</p>
@@ -284,10 +1139,502 @@
   Powered by NYC TLC Trip Record Data. Not affiliated with NYC TLC or any government agency.</p>
 </footer>
 
-<script src="js/main.js"></script>
-<script src="js/map.js"></script>
-<script src="js/simulation.js"></script>
-<script src="js/charts.js"></script>
-<script>document.addEventListener("DOMContentLoaded",function(){var el=document.getElementById("mapLoading");if(el)el.style.display="none";});</script>
+<script>// === Inlined build ===
+var AppState = { zones: {"zones": [{"id": 237, "name": "Upper East Side North", "borough": "Manhattan", "lat": 40.776, "lng": -73.949, "demand_avg": 28, "supply_avg": 35, "pickup_prob": 0.72, "competition": "Medium", "avg_fare": 18.5}, {"id": 236, "name": "Upper East Side South", "borough": "Manhattan", "lat": 40.768, "lng": -73.962, "demand_avg": 25, "supply_avg": 30, "pickup_prob": 0.68, "competition": "Medium", "avg_fare": 16.2}, {"id": 170, "name": "Murray Hill", "borough": "Manhattan", "lat": 40.749, "lng": -73.978, "demand_avg": 22, "supply_avg": 28, "pickup_prob": 0.61, "competition": "Low", "avg_fare": 14.8}, {"id": 161, "name": "Midtown Center", "borough": "Manhattan", "lat": 40.756, "lng": -73.985, "demand_avg": 45, "supply_avg": 50, "pickup_prob": 0.78, "competition": "High", "avg_fare": 12.5}, {"id": 162, "name": "Midtown East", "borough": "Manhattan", "lat": 40.758, "lng": -73.971, "demand_avg": 42, "supply_avg": 48, "pickup_prob": 0.75, "competition": "High", "avg_fare": 13.0}, {"id": 48, "name": "Times Square", "borough": "Manhattan", "lat": 40.758, "lng": -73.985, "demand_avg": 55, "supply_avg": 65, "pickup_prob": 0.82, "competition": "Very High", "avg_fare": 10.5}, {"id": 90, "name": "Chelsea", "borough": "Manhattan", "lat": 40.746, "lng": -74.001, "demand_avg": 30, "supply_avg": 32, "pickup_prob": 0.7, "competition": "Medium", "avg_fare": 15.0}, {"id": 100, "name": "East Village", "borough": "Manhattan", "lat": 40.727, "lng": -73.984, "demand_avg": 20, "supply_avg": 18, "pickup_prob": 0.58, "competition": "Low", "avg_fare": 13.5}, {"id": 224, "name": "Upper West Side South", "borough": "Manhattan", "lat": 40.779, "lng": -73.976, "demand_avg": 24, "supply_avg": 28, "pickup_prob": 0.65, "competition": "Low", "avg_fare": 17.0}, {"id": 132, "name": "Garment District", "borough": "Manhattan", "lat": 40.752, "lng": -73.99, "demand_avg": 35, "supply_avg": 30, "pickup_prob": 0.74, "competition": "High", "avg_fare": 11.8}], "metadata": {"source": "NYC TLC Taxi Zone Lookup Table (sample)", "note": "Static demo data for interactive visualization. Not real-time."}}["zones"], selectedZone: null };
+
+// ===== Interactive Simulation Platform - Main Entry =====
+
+var App = {
+    init: function() {
+        var self = this;
+        this.loadZones().then(function() {
+            MapModule.init();
+            ChartsModule.init();
+            self.setupEventListeners();
+        });
+    },
+    loadZones: function() { return new Promise(function(r){ r(); }); }
+                       });
+    },
+    setupEventListeners: function() {
+        document.querySelectorAll(".nav-links a").forEach(function(link) {
+            link.addEventListener("click", function(e) {
+                e.preventDefault();
+                var target = document.querySelector(link.getAttribute("href"));
+                if (target) target.scrollIntoView({ behavior: "smooth" });
+                document.querySelector(".nav-links").classList.remove("open");
+            });
+        });
+        document.querySelector(".mobile-toggle").addEventListener("click", function() {
+            document.querySelector(".nav-links").classList.toggle("open");
+        });
+        document.getElementById("runSimBtn").addEventListener("click", function() { SimulationModule.run(); });
+        document.getElementById("applyDecisionBtn").addEventListener("click", function() { SimulationModule.applyDecision(); });
+        document.getElementById("scrollToMapBtn").addEventListener("click", function() {
+            document.getElementById("mapSection").scrollIntoView({ behavior: "smooth" });
+        });
+        document.getElementById("scrollToSimBtn").addEventListener("click", function() {
+            document.getElementById("simSection").scrollIntoView({ behavior: "smooth" });
+        });
+        document.getElementById("scrollToBenchBtn").addEventListener("click", function() {
+            document.getElementById("benchmarkSection").scrollIntoView({ behavior: "smooth" });
+        });
+    }
+};
+document.addEventListener("DOMContentLoaded", function() { App.init(); });
+
+// ===== Interactive NYC Zone Map (Inline SVG, zero external deps) =====
+var MapModule = {
+    svg: null,
+    circles: [],
+
+    init: function() {
+        var container = document.getElementById("map");
+        if (!container) return;
+        container.innerHTML = "";
+        var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("viewBox", "0 0 600 500");
+        svg.setAttribute("style", "width:100%;height:400px;border-radius:8px;background:linear-gradient(160deg,#0d2137,#1a3a5c);");
+        container.appendChild(svg);
+        this.svg = svg;
+        this.plotZones();
+    },
+
+    _mapX: function(lng) {
+        return 50 + (lng + 74.01) / 0.07 * 510;
+    },
+
+    _mapY: function(lat) {
+        return 40 + (40.79 - lat) / 0.07 * 430;
+    },
+
+    getDemandColor: function(level) {
+        if (level >= 45) return "#e63946";
+        if (level >= 30) return "#ffb703";
+        return "#2ec4b6";
+    },
+
+    getDemandLevel: function(demand) {
+        if (demand >= 45) return "high";
+        if (demand >= 30) return "medium";
+        return "low";
+    },
+
+    getCompetitionBadge: function(comp) {
+        var m = { "Low": "badge-low", "Medium": "badge-medium", "High": "badge-high", "Very High": "badge-very-high" };
+        return m[comp] || "badge-medium";
+    },
+
+    plotZones: function() {
+        var self = this;
+
+        var connections = [[237,236],[236,170],[236,162],[162,161],[161,48],[161,90],[161,132],[90,100],[224,237]];
+        connections.forEach(function(pair) {
+            var a = null, b = null;
+            for (var i = 0; i < AppState.zones.length; i++) {
+                if (AppState.zones[i].id === pair[0]) a = AppState.zones[i];
+                if (AppState.zones[i].id === pair[1]) b = AppState.zones[i];
+            }
+            if (!a || !b) return;
+            var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", self._mapX(a.lng));
+            line.setAttribute("y1", self._mapY(a.lat));
+            line.setAttribute("x2", self._mapX(b.lng));
+            line.setAttribute("y2", self._mapY(b.lat));
+            line.setAttribute("stroke", "rgba(255,255,255,0.08)");
+            line.setAttribute("stroke-width", "1");
+            line.setAttribute("stroke-dasharray", "4,3");
+            self.svg.appendChild(line);
+        });
+
+        AppState.zones.forEach(function(zone) {
+            var cx = self._mapX(zone.lng);
+            var cy = self._mapY(zone.lat);
+            var color = self.getDemandColor(zone.demand_avg);
+            var radius = zone.demand_avg >= 45 ? 16 : zone.demand_avg >= 30 ? 13 : 10;
+
+            var glow = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            glow.setAttribute("cx", cx);
+            glow.setAttribute("cy", cy);
+            glow.setAttribute("r", radius + 4);
+            glow.setAttribute("fill", color);
+            glow.setAttribute("opacity", "0.15");
+            self.svg.appendChild(glow);
+
+            var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", cx);
+            circle.setAttribute("cy", cy);
+            circle.setAttribute("r", radius);
+            circle.setAttribute("fill", color);
+            circle.setAttribute("stroke", "#fff");
+            circle.setAttribute("stroke-width", "2");
+            circle.setAttribute("opacity", "0.85");
+            circle.setAttribute("class", "zone-circle");
+            circle.setAttribute("data-zone-id", zone.id);
+            circle.style.cursor = "pointer";
+
+            var parts = zone.name.split(" ");
+            var abbr = parts[parts.length - 1].substring(0, 6);
+
+            var label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            label.setAttribute("x", cx);
+            label.setAttribute("y", cy + 3);
+            label.setAttribute("text-anchor", "middle");
+            label.setAttribute("fill", "#fff");
+            label.setAttribute("font-size", radius >= 13 ? "9" : "8");
+            label.setAttribute("font-weight", "bold");
+            label.setAttribute("pointer-events", "none");
+            label.textContent = abbr;
+
+            circle.addEventListener("mouseenter", function() {
+                circle.setAttribute("stroke-width", "3");
+                circle.setAttribute("opacity", "1");
+            });
+
+            circle.addEventListener("mouseleave", function() {
+                circle.setAttribute("stroke-width", "2");
+                circle.setAttribute("opacity", "0.85");
+            });
+
+            circle.addEventListener("click", function() {
+                self.selectZone(zone);
+            });
+
+            self.svg.appendChild(circle);
+            self.svg.appendChild(label);
+            self.circles.push({ circle: circle, label: label, zone: zone, glow: glow });
+        });
+    },
+
+    selectZone: function(zone) {
+        AppState.selectedZone = zone;
+        document.getElementById("selectedZone").textContent = zone.name;
+        var detail = document.getElementById("zoneDetail");
+        detail.innerHTML =
+            "<div><span class='label'>Zone ID</span><span class='value'>" + zone.id + "</span></div>" +
+            "<div><span class='label'>Borough</span><span class='value'>" + zone.borough + "</span></div>" +
+            "<div><span class='label'>Avg Demand</span><span class='value'>" + zone.demand_avg + "</span></div>" +
+            "<div><span class='label'>Avg Supply</span><span class='value'>" + zone.supply_avg + "</span></div>" +
+            "<div><span class='label'>Avg Fare</span><span class='value'>$" + zone.avg_fare + "</span></div>" +
+            "<div><span class='label'>Pickup Prob</span><span class='value'>" + (zone.pickup_prob * 100).toFixed(0) + "%</span></div>" +
+            "<div><span class='label'>Competition</span><span class='badge " + this.getCompetitionBadge(zone.competition) + "'>" + zone.competition + "</span></div>";
+        var sel = document.getElementById("simZone");
+        if (sel) {
+            for (var i = 0; i < sel.options.length; i++) {
+                if (parseInt(sel.options[i].value) === zone.id) { sel.value = zone.id; break; }
+            }
+        }
+        ChartsModule.plotForecast(zone);
+
+        this.circles.forEach(function(c) {
+            if (c.zone.id === zone.id) {
+                c.circle.setAttribute("stroke-width", "4");
+                c.circle.setAttribute("stroke", "#00b4d8");
+            } else {
+                c.circle.setAttribute("stroke-width", "2");
+                c.circle.setAttribute("stroke", "#fff");
+            }
+        });
+    }
+};
+
+
+// ===== Decision Simulation Engine =====
+var SimulationModule = {
+    step: 0,
+    isRunning: false,
+
+    run: function() {
+        if (this.isRunning) return;
+        this.isRunning = true;
+        this.step = 0;
+
+        var btn = document.getElementById("runSimBtn");
+        btn.disabled = true;
+        btn.innerHTML = "Running...";
+
+        document.getElementById("applyDecisionBtn").style.display = "none";
+        document.getElementById("beforeAfterPanel").style.display = "none";
+        document.getElementById("stepProgress").style.display = "flex";
+        document.getElementById("stepContent").style.display = "block";
+
+        this.runStep1();
+    },
+
+    runStep1: function() {
+        this.step = 1;
+        this.updateProgress();
+        document.getElementById("step1Content").classList.add("active");
+        document.getElementById("step2Content").classList.remove("active");
+        document.getElementById("step3Content").classList.remove("active");
+
+        document.getElementById("step1Loading").style.display = "flex";
+        document.getElementById("step1Result").style.display = "none";
+
+        var self = this;
+        setTimeout(function() {
+            document.getElementById("step1Loading").style.display = "none";
+            document.getElementById("step1Result").style.display = "block";
+
+            var zone = AppState.selectedZone || AppState.zones[0];
+            var hour = parseInt(document.getElementById("simHour")?.value || "10");
+            var day = document.getElementById("simDay")?.value || "Monday";
+            var month = document.getElementById("simMonth")?.value || "June";
+
+            var dayFactor = { "Monday": 0.9, "Tuesday": 0.85, "Wednesday": 0.82, "Thursday": 0.88, "Friday": 1.1, "Saturday": 1.25, "Sunday": 1.05 };
+            var monthFactor = { "January": 0.8, "February": 0.78, "March": 0.85, "April": 0.9, "May": 0.95, "June": 1.05, "July": 1.1, "August": 1.08, "September": 0.95, "October": 0.92, "November": 0.88, "December": 0.85 };
+            var hourFactor = Math.sin(hour * Math.PI / 12) * 0.3 + 0.7;
+
+            var baseDemand = zone.demand_avg * dayFactor[day] * monthFactor[month] * hourFactor;
+            var peakHour = (hour >= 8 && hour <= 10) || (hour >= 17 && hour <= 19);
+            if (peakHour) baseDemand *= 1.15;
+
+            var tbody = document.getElementById("forecastTableBody");
+            var html = "";
+            var sorted = AppState.zones.slice().sort(function(a, b) { return b.demand_avg - a.demand_avg; });
+            for (var i = 0; i < sorted.length; i++) {
+                var z = sorted[i];
+                var d = (z.demand_avg * dayFactor[day] * monthFactor[month] * hourFactor).toFixed(1);
+                var s = (z.supply_avg * (peakHour ? 1.1 : 1.0)).toFixed(1);
+                var ratio = (parseFloat(d) / parseFloat(s)).toFixed(2);
+                var cls = parseFloat(ratio) > 1.0 ? "highlight" : "";
+                html += "<tr><td>" + z.name + "</td><td>" + d + "</td><td>" + s + "</td><td class=\"" + cls + "\">" + ratio + "</td></tr>";
+            }
+            tbody.innerHTML = html;
+
+            document.getElementById("step1Info").textContent = "Predicted demand for " + zone.name + " at hour " + hour + " on " + day + " (" + month + "): " + baseDemand.toFixed(1) + " estimated requests";
+
+            self.step = 2;
+            self.updateProgress();
+            setTimeout(function() { self.runStep2(); }, 600);
+        }, 1200);
+    },
+
+    runStep2: function() {
+        document.getElementById("step2Content").classList.add("active");
+        document.getElementById("step2Loading").style.display = "flex";
+        document.getElementById("step2Result").style.display = "none";
+
+        var self = this;
+        setTimeout(function() {
+            document.getElementById("step2Loading").style.display = "none";
+            document.getElementById("step2Result").style.display = "block";
+
+            var zone = AppState.selectedZone || AppState.zones[0];
+            var policies = [
+                { name: "Stay in Zone", reward: (zone.demand_avg * 15 * 0.6).toFixed(0), util: (zone.pickup_prob * 100).toFixed(0) + "%", risk: "Low" },
+                { name: "Move to Midtown", reward: (zone.demand_avg * 17 * 0.72).toFixed(0), util: "78%", risk: "Medium" },
+                { name: "Move to Times Square", reward: (zone.demand_avg * 14 * 0.82).toFixed(0), util: "82%", risk: "High" },
+                { name: "Move to Chelsea", reward: (zone.demand_avg * 16 * 0.68).toFixed(0), util: "70%", risk: "Medium" },
+                { name: "Move to Upper West Side", reward: (zone.demand_avg * 16 * 0.65).toFixed(0), util: "65%", risk: "Low" }
+            ];
+
+            var tbody = document.getElementById("policyTableBody");
+            var html = "";
+            var riskClass = { "Low": "badge-low", "Medium": "badge-medium", "High": "badge-high" };
+            for (var i = 0; i < policies.length; i++) {
+                var p = policies[i];
+                var cls = (i === 0) ? "highlight" : "";
+                html += "<tr><td><span class=\"badge " + riskClass[p.risk] + "\">" + p.risk + "</span></td><td>" + p.name + "</td><td class=\"" + cls + "\">$" + p.reward + "</td><td>" + p.util + "</td></tr>";
+            }
+            tbody.innerHTML = html;
+
+            self.step = 3;
+            self.updateProgress();
+            setTimeout(function() { self.runStep3(); }, 600);
+        }, 1000);
+    },
+
+    runStep3: function() {
+        document.getElementById("step3Content").classList.add("active");
+        document.getElementById("step3Loading").style.display = "flex";
+        document.getElementById("step3Recommendation").style.display = "none";
+
+        var self = this;
+        setTimeout(function() {
+            document.getElementById("step3Loading").style.display = "none";
+            document.getElementById("step3Recommendation").style.display = "block";
+
+            var zone = AppState.selectedZone || AppState.zones[0];
+            var reward = (zone.demand_avg * 17 * 0.72).toFixed(0);
+
+            document.getElementById("recZone").textContent = "Move to Midtown Center";
+            document.getElementById("recExpectedReward").textContent = "$" + reward;
+            document.getElementById("recUtilization").textContent = "78%";
+            document.getElementById("recConfidence").textContent = "Medium-High";
+
+            document.getElementById("applyDecisionBtn").style.display = "block";
+
+            self.isRunning = false;
+            var btn = document.getElementById("runSimBtn");
+            btn.disabled = false;
+            btn.innerHTML = "Run AI Decision";
+        }, 1000);
+    },
+
+    applyDecision: function() {
+        document.getElementById("beforeAfterPanel").style.display = "block";
+        var zone = AppState.selectedZone || AppState.zones[0];
+
+        var beforeRevenue = (zone.demand_avg * zone.avg_fare * 0.45).toFixed(0);
+        var beforeUtil = (zone.pickup_prob * 100).toFixed(0);
+        var beforeWait = (Math.random() * 3 + 2).toFixed(1);
+
+        var afterRevenue = (parseFloat(beforeRevenue) * 1.18).toFixed(0);
+        var afterUtil = Math.min(100, parseFloat(beforeUtil) + 12).toFixed(0);
+        var afterWait = (Math.random() * 1.5 + 1).toFixed(1);
+
+        document.getElementById("beforeRevenue").textContent = "$" + beforeRevenue;
+        document.getElementById("beforeUtilization").textContent = beforeUtil + "%";
+        document.getElementById("beforeWait").textContent = beforeWait + " min";
+
+        document.getElementById("afterRevenue").textContent = "$" + afterRevenue;
+        document.getElementById("afterUtilization").textContent = afterUtil + "%";
+        document.getElementById("afterWait").textContent = afterWait + " min";
+
+        var revImp = ((parseFloat(afterRevenue) - parseFloat(beforeRevenue)) / parseFloat(beforeRevenue) * 100).toFixed(0);
+        var utilImp = (parseFloat(afterUtil) - parseFloat(beforeUtil)).toFixed(0);
+        var waitImp = ((parseFloat(beforeWait) - parseFloat(afterWait)) / parseFloat(beforeWait) * 100).toFixed(0);
+
+        document.getElementById("improvementRevenue").textContent = "+" + revImp + "%";
+        document.getElementById("improvementUtilization").textContent = "+" + utilImp + "%";
+        document.getElementById("improvementWait").textContent = "-" + waitImp + "%";
+
+        ChartsModule.plotBeforeAfter(zone, parseFloat(beforeRevenue), parseFloat(afterRevenue));
+    },
+
+    updateProgress: function() {
+        var dots = document.querySelectorAll(".step-dot");
+        for (var i = 0; i < dots.length; i++) {
+            dots[i].className = "step-dot";
+            if (i + 1 < this.step) dots[i].classList.add("done");
+            else if (i + 1 === this.step) dots[i].classList.add("active");
+        }
+    }
+};
+
+// ===== Lightweight Charts (no dependencies) =====
+var ChartsModule = {
+    plotForecast: function(zone) {
+        var div = document.getElementById("forecastChart");
+        if (!div) return;
+        var w = div.clientWidth || 500, h = 280;
+        var hourlyData = [];
+        for (var hh = 0; hh < 24; hh++) {
+            var hf = Math.sin(hh * Math.PI / 12) * 0.3 + 0.7;
+            if ((hh >= 8 && hh <= 10) || (hh >= 17 && hh <= 19)) hf *= 1.15;
+            hourlyData.push({
+                hour: hh + ":00",
+                historical: parseFloat((zone.demand_avg * (Math.sin(hh * Math.PI / 12) * 0.25 + 0.75)).toFixed(1)),
+                forecast: parseFloat((zone.demand_avg * hf).toFixed(1))
+            });
+        }
+        var maxVal = Math.max.apply(null, hourlyData.map(function(d){ return Math.max(d.historical, d.forecast); })) * 1.15;
+        var pad = {t: 30, r: 20, b: 40, l: 50};
+        var cw = w - pad.l - pad.r, ch = h - pad.t - pad.b;
+        var svg = '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">';
+        svg += '<text x="' + (w/2) + '" y="18" text-anchor="middle" fill="#ccc" font-size="13" font-weight="bold">' + zone.name + ' — Hourly Demand</text>';
+        // Y axis grid
+        for (var g = 0; g <= 4; g++) {
+            var yv = maxVal * g / 4;
+            var yy = pad.t + ch - (g / 4 * ch);
+            svg += '<line x1="' + pad.l + '" y1="' + yy + '" x2="' + (w - pad.r) + '" y2="' + yy + '" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>';
+            svg += '<text x="' + (pad.l - 5) + '" y="' + (yy + 4) + '" text-anchor="end" fill="#667" font-size="10">' + yv.toFixed(0) + '</text>';
+        }
+        // Plot lines
+        var histPts = [], forePts = [];
+        for (var i = 0; i < hourlyData.length; i++) {
+            var x = pad.l + (i / (hourlyData.length - 1)) * cw;
+            var yh = pad.t + ch - (hourlyData[i].historical / maxVal) * ch;
+            var yf = pad.t + ch - (hourlyData[i].forecast / maxVal) * ch;
+            histPts.push(x + ',' + yh);
+            forePts.push(x + ',' + yf);
+        }
+        svg += '<polyline points="' + histPts.join(' ') + '" fill="none" stroke="#667" stroke-width="2" stroke-dasharray="5,3" opacity="0.7"/>';
+        svg += '<polyline points="' + forePts.join(' ') + '" fill="none" stroke="#00b4d8" stroke-width="2.5"/>';
+        // X labels (every 3 hours)
+        for (var i2 = 0; i2 < hourlyData.length; i2 += 3) {
+            var xl = pad.l + (i2 / (hourlyData.length - 1)) * cw;
+            svg += '<text x="' + xl + '" y="' + (h - 8) + '" text-anchor="middle" fill="#667" font-size="9">' + hourlyData[i2].hour + '</text>';
+        }
+        // Legend
+        svg += '<line x1="' + (w/2 - 80) + '" y1="' + (h - 22) + '" x2="' + (w/2 - 50) + '" y2="' + (h - 22) + '" stroke="#667" stroke-width="2" stroke-dasharray="5,3"/>';
+        svg += '<text x="' + (w/2 - 45) + '" y="' + (h - 18) + '" fill="#667" font-size="10">Historical</text>';
+        svg += '<line x1="' + (w/2 + 10) + '" y1="' + (h - 22) + '" x2="' + (w/2 + 40) + '" y2="' + (h - 22) + '" stroke="#00b4d8" stroke-width="2"/>';
+        svg += '<text x="' + (w/2 + 45) + '" y="' + (h - 18) + '" fill="#00b4d8" font-size="10">Forecast</text>';
+        svg += '</svg>';
+        div.innerHTML = svg;
+    },
+
+    plotPolicyComparison: function() {
+        var div = document.getElementById("policyChart");
+        if (!div) return;
+        var w = div.clientWidth || 500, h = 280;
+        var items = [
+            {label:"Stay", r:920, v:850, u:45},
+            {label:"Random", r:1050, v:980, u:52},
+            {label:"Hot Zone", r:1689, v:1450, u:68},
+            {label:"Single-Step", r:1768, v:1520, u:72},
+            {label:"AI(DQN)", r:1822, v:1600, u:78}
+        ];
+        var maxR = 2000, pad = {t: 30, r: 20, b: 50, l: 60};
+        var cw = w - pad.l - pad.r, barW = Math.min(50, (cw / items.length) * 0.25);
+        var svg = '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">';
+        svg += '<text x="' + (w/2) + '" y="18" text-anchor="middle" fill="#ccc" font-size="13" font-weight="bold">Policy Performance</text>';
+        for (var g = 0; g <= 4; g++) {
+            var yy = pad.t + (h - pad.t - pad.b) * (1 - g/4);
+            svg += '<line x1="' + pad.l + '" y1="' + yy + '" x2="' + (w - pad.r) + '" y2="' + yy + '" stroke="rgba(255,255,255,0.06)"/>';
+            svg += '<text x="' + (pad.l - 5) + '" y="' + (yy + 4) + '" text-anchor="end" fill="#667" font-size="9">$' + (maxR * g / 4) + '</text>';
+        }
+        for (var i = 0; i < items.length; i++) {
+            var xc = pad.l + (i + 0.5) * (cw / items.length);
+            var hR = (items[i].r / maxR) * (h - pad.t - pad.b);
+            var hV = (items[i].v / maxR) * (h - pad.t - pad.b);
+            svg += '<rect x="' + (xc - barW - 2) + '" y="' + (h - pad.b - hR) + '" width="' + barW + '" height="' + hR + '" fill="#00b4d8" rx="3"/>';
+            svg += '<rect x="' + (xc + 2) + '" y="' + (h - pad.b - hV) + '" width="' + barW + '" height="' + hV + '" fill="#2ec4b6" rx="3"/>';
+            svg += '<text x="' + xc + '" y="' + (h - 5) + '" text-anchor="middle" fill="#889" font-size="9" transform="rotate(-30,' + xc + ',' + (h - 5) + ')">' + items[i].label + '</text>';
+        }
+        svg += '<rect x="' + (w/2 - 70) + '" y="8" width="10" height="10" fill="#00b4d8" rx="2"/>';
+        svg += '<text x="' + (w/2 - 55) + '" y="17" fill="#889" font-size="9">Reward</text>';
+        svg += '<rect x="' + (w/2 - 10) + '" y="8" width="10" height="10" fill="#2ec4b6" rx="2"/>';
+        svg += '<text x="' + (w/2 + 5) + '" y="17" fill="#889" font-size="9">Revenue</text>';
+        svg += '</svg>';
+        div.innerHTML = svg;
+    },
+
+    plotBeforeAfter: function(zone, beforeRev, afterRev) {
+        var div = document.getElementById("beforeAfterChart");
+        if (!div) return;
+        var w = div.clientWidth || 500, h = 200;
+        var labels = ["Revenue", "Utilization", "Wait Time"];
+        var before = [beforeRev, (zone.pickup_prob * 100).toFixed(0), 4.5];
+        var after = [afterRev, Math.min(100, (zone.pickup_prob * 100 + 12)).toFixed(0), 2.0];
+        var maxVals = [Math.max(before[0], after[0]) * 1.3, 100, 6];
+        var pad = {t: 25, r: 10, b: 30, l: 10}, barW = 30;
+        var svg = '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">';
+        svg += '<text x="' + (w/2) + '" y="16" text-anchor="middle" fill="#ccc" font-size="12" font-weight="bold">Decision Impact: Before vs After</text>';
+        for (var i = 0; i < 3; i++) {
+            var cx = pad.l + (i + 0.5) * ((w - pad.l - pad.r) / 3);
+            var ch = h - pad.t - pad.b;
+            var bh = (before[i] / maxVals[i]) * ch;
+            var ah = (after[i] / maxVals[i]) * ch;
+            svg += '<rect x="' + (cx - barW - 3) + '" y="' + (h - pad.b - bh) + '" width="' + barW + '" height="' + bh + '" fill="#4a5568" rx="3"/>';
+            svg += '<rect x="' + (cx + 3) + '" y="' + (h - pad.b - ah) + '" width="' + barW + '" height="' + ah + '" fill="#2ec4b6" rx="3"/>';
+            svg += '<text x="' + cx + '" y="' + (h - 5) + '" text-anchor="middle" fill="#889" font-size="10">' + labels[i] + '</text>';
+            svg += '<text x="' + (cx - barW/2 - 3) + '" y="' + (h - pad.b - bh - 5) + '" text-anchor="middle" fill="#889" font-size="9">' + before[i] + '</text>';
+            svg += '<text x="' + (cx + barW/2 + 3) + '" y="' + (h - pad.b - ah - 5) + '" text-anchor="middle" fill="#2ec4b6" font-size="9">' + after[i] + '</text>';
+        }
+        svg += '<rect x="' + (w/2 - 60) + '" y="6" width="8" height="8" fill="#4a5568" rx="2"/>';
+        svg += '<text x="' + (w/2 - 48) + '" y="14" fill="#889" font-size="9">Before</text>';
+        svg += '<rect x="' + (w/2 - 10) + '" y="6" width="8" height="8" fill="#2ec4b6" rx="2"/>';
+        svg += '<text x="' + (w/2 + 2) + '" y="14" fill="#2ec4b6" font-size="9">After</text>';
+        svg += '</svg>';
+        div.innerHTML = svg;
+    },
+
+    init: function() {
+        this.plotPolicyComparison();
+    }
+};</script>
 </body>
 </html>
