@@ -62,9 +62,9 @@ $$U_{\text{effective}}(z_j) = \frac{U(z_j)}{\lfloor \tau(z_i, z_j) / 30 \rfloor 
 
 | Metric | Formula | Description |
 |--------|---------|-------------|
-| **NDCG@3** | $\frac{1}{|Q|}\sum_{q} \frac{DCG_q}{IDCG_q}$ | Normalized discounted cumulative gain |
-| **Hit@3** | $\frac{1}{|Q|}\sum_{q} \mathbb{1}[\text{argmax}_z U_q(z) \in R_q]$ | Fraction of queries where top-1 ideal zone is in recommendations |
-| **Top-1 Utility** | $\frac{1}{|Q|}\sum_{q} U_q(r_1^{(q)})$ | Mean reference utility of the top-ranked recommendation |
+| **NDCG@3** | $\frac{1}{\lvert Q\rvert}\sum_{q} \frac{DCG_q}{IDCG_q}$ | Normalized discounted cumulative gain |
+| **Hit@3** | $\frac{1}{\lvert Q\rvert}\sum_{q} \mathbb{1}[\text{argmax}_z U_q(z) \in R_q]$ | Fraction of queries where top-1 ideal zone is in recommendations |
+| **Top-1 Utility** | $\frac{1}{\lvert Q\rvert}\sum_{q} U_q(r_1^{(q)})$ | Mean reference utility of the top-ranked recommendation |
 | **Avg Daily Fare** | $\frac{1}{N}\sum_{i=1}^{N} F_i$ | Mean total fare earned per simulated day |
 
 ### Constraints
