@@ -15,6 +15,25 @@ def _mae(actual: np.ndarray, predicted: np.ndarray) -> float:
     return float(np.mean(np.abs(actual - predicted)))
 
 
+def _smape(actual, predicted):
+    denom = abs(actual) + abs(predicted)
+    mask = denom > 1e-8
+    if not mask.any():
+        return 0.0
+    return float(np.mean(200.0 * abs(actual[mask] - predicted[mask]) / denom[mask]))
+
+
+def _masked_mape(actual, predicted, threshold=1.0):
+    actual = np.asarray(actual, dtype=np.float64)
+    predicted = np.asarray(predicted, dtype=np.float64)
+    mask = abs(actual) >= threshold
+    if not mask.any():
+        return 0.0
+    return float(np.mean(abs(actual[mask] - predicted[mask]) / abs(actual[mask])) * 100.0)
+
+
+
+
 def historical_predictions(train: pd.DataFrame, validation: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
     """Training-only zone-weekday-slot demand and fare averages."""
     keys = ["zone_id", "weekday", "time_slot"]
@@ -113,7 +132,11 @@ def evaluate_forecasters(
         },
         "demand": {
             "historical_mae": _mae(actual_demand, baseline_demand),
+            "historical_smape": _smape(actual_demand, baseline_demand),
+            "historical_masked_mape": _masked_mape(actual_demand, baseline_demand),
             "lightgbm_mae": _mae(actual_demand, model_demand),
+            "lightgbm_smape": _smape(actual_demand, model_demand),
+            "lightgbm_masked_mape": _masked_mape(actual_demand, model_demand),
             "historical_rmse": _rmse(actual_demand, baseline_demand),
             "lightgbm_rmse": _rmse(actual_demand, model_demand),
             "paired_timestamp_bootstrap": _timestamp_bootstrap(
@@ -126,7 +149,11 @@ def evaluate_forecasters(
         "fare": {
             "observed_cells": int(fare_mask.sum()),
             "historical_mae": _mae(actual_fare, baseline_fare_valid),
+            "historical_smape": _smape(actual_fare, baseline_fare_valid),
+            "historical_masked_mape": _masked_mape(actual_fare, baseline_fare_valid),
             "lightgbm_mae": _mae(actual_fare, model_fare),
+            "lightgbm_smape": _smape(actual_fare, model_fare),
+            "lightgbm_masked_mape": _masked_mape(actual_fare, model_fare),
             "historical_rmse": _rmse(actual_fare, baseline_fare_valid),
             "lightgbm_rmse": _rmse(actual_fare, model_fare),
         },
@@ -135,8 +162,12 @@ def evaluate_forecasters(
             "demand_lightgbm_weight": demand_weight,
             "fare_lightgbm_weight": fare_weight,
             "demand_mae": _mae(actual_demand, blended_demand),
+            "demand_smape": _smape(actual_demand, blended_demand),
+            "demand_masked_mape": _masked_mape(actual_demand, blended_demand),
             "demand_rmse": _rmse(actual_demand, blended_demand),
             "fare_mae": _mae(actual_fare, blended_fare),
+            "fare_smape": _smape(actual_fare, blended_fare),
+            "fare_masked_mape": _masked_mape(actual_fare, blended_fare),
             "fare_rmse": _rmse(actual_fare, blended_fare),
             "paired_timestamp_bootstrap": _timestamp_bootstrap(
                 validation["timestamp"],
