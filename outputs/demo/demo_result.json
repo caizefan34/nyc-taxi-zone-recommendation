@@ -1,0 +1,20 @@
+{
+  "demo_version": "2.0.0",
+  "demand_prediction": {
+    "historical_mae": 1.727305133079848,
+    "lightgbm_mae": 1.5114059352241813,
+    "ensemble_mae": 1.4867501549557998,
+    "improvement_pct": 13.9
+  },
+  "simulator": {
+    "hot_zone_revenue": 1233.41,
+    "two_step_revenue": 1508.71,
+    "single_step_revenue": 1764.56
+  },
+  "recommendation": {
+    "recommended_policy": "DQN",
+    "expected_revenue_per_driver": 1821.77,
+    "dqn_revenue": 1821.77
+  },
+  "disclaimer": "Uses pre-computed results. Full training needs NYC TLC data (~10GB)."
+}
