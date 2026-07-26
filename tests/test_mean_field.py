@@ -7,6 +7,7 @@ Covers:
 - Population update
 - Policy comparison evaluation
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -14,7 +15,6 @@ import pytest
 
 from src.rl.mean_field import MeanFieldApproximation, MeanFieldConfig, compare_policies
 from src.rl.mean_field.evaluation import PolicyComparison
-
 
 # ===========================================================================
 # Mean Field Tests
@@ -105,9 +105,17 @@ class TestPolicyComparison:
     def test_comparison_has_all_fields(self):
         result = compare_policies(n_drivers=5, n_days=1, seed=42)
         for field in [
-            "single_agent_reward", "multi_agent_reward", "mean_field_reward",
-            "single_agent_income", "multi_agent_income", "mean_field_income",
-            "single_agent_utilization", "multi_agent_utilization", "mean_field_utilization",
-            "single_agent_competition", "multi_agent_competition", "mean_field_competition",
+            "single_agent_reward",
+            "multi_agent_reward",
+            "mean_field_reward",
+            "single_agent_income",
+            "multi_agent_income",
+            "mean_field_income",
+            "single_agent_utilization",
+            "multi_agent_utilization",
+            "mean_field_utilization",
+            "single_agent_competition",
+            "multi_agent_competition",
+            "mean_field_competition",
         ]:
             assert hasattr(result, field), f"Missing field: {field}"

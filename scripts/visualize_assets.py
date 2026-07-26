@@ -1,4 +1,5 @@
 """Generate documentation charts from the checked-in metrics snapshot."""
+
 from __future__ import annotations
 
 import json

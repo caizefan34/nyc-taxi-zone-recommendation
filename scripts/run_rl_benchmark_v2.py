@@ -54,7 +54,7 @@ def _run_dqn(*, drivers: int = 50, seed: int = 42) -> dict:
 
 def _run_iql(*, drivers: int = 50, seed: int = 42) -> dict:
     """Run IQL (offline RL) evaluation."""
-    from src.rl.offline import IQLAgent, IQLConfig, OfflineBuffer
+    from src.rl.offline import IQLAgent, OfflineBuffer
     from src.rl.offline.evaluation import OfflineEvaluator
 
     buffer = OfflineBuffer(capacity=5000, state_dim=7, seed=seed)
@@ -175,7 +175,7 @@ def _markdown(
         ("Revenue ($)", ["single_agent_reward", "multi_agent_reward", "mean_field_reward"], "{:.2f}"),
         ("Income ($)", ["single_agent_income", "multi_agent_income", "mean_field_income"], "{:.2f}"),
         ("Utilization", ["single_agent_utilization", "multi_agent_utilization", "mean_field_utilization"], "{:.2%}"),
-        ("Competition ($)", ["single_agent_competition", "multi_agent_competition", "mean_field_competition"], "{:.4f}"),
+        ("Competition ($)", ["single_agent_competition", "multi_agent_competition", "mean_field_competition"], "{:.4f}"),  # noqa: E501
     ]:
         vals = []
         for k in keys:

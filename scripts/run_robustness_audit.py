@@ -1,4 +1,5 @@
 """Stress-test the generalized horizon-two planner under model perturbations."""
+
 from __future__ import annotations
 
 import copy
@@ -25,8 +26,7 @@ def load_planner(repo: Path):
 
 def evaluate(planner, queries, answers, baseline=None):
     predictions = {
-        query.query_id: planner.recommend(query.query_time, query.current_location_id, horizon=2)
-        for query in queries
+        query.query_id: planner.recommend(query.query_time, query.current_location_id, horizon=2) for query in queries
     }
     metrics = evaluate_validation(
         queries,

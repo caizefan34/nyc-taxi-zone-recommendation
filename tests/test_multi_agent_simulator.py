@@ -1,4 +1,5 @@
 """Demand conservation and competition tests for the multi-agent simulator."""
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta

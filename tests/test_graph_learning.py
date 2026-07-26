@@ -1,4 +1,5 @@
 """Leakage, shape, and reproducibility tests for graph embeddings."""
+
 from __future__ import annotations
 
 import numpy as np

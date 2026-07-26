@@ -8,9 +8,9 @@ Provides timestamp-aligned features:
 """
 from __future__ import annotations
 
-from .airport import AirportProvider, JFK_ZONE_ID, LGA_ZONE_ID
+from .airport import JFK_ZONE_ID, LGA_ZONE_ID, AirportProvider
 from .base import ExternalFeatureProvider, FeatureCollection, align_features
-from .calendar import CalendarProvider, US_HOLIDAYS_BY_YEAR
+from .calendar import US_HOLIDAYS_BY_YEAR, CalendarProvider
 from .composite import CompositeFeatureProvider
 from .events import Event, EventProvider
 from .weather import WeatherProvider

@@ -1,4 +1,5 @@
 """Tests for executable parameter selection."""
+
 from __future__ import annotations
 
 import importlib.util

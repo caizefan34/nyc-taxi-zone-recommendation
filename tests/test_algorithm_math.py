@@ -1,4 +1,5 @@
-﻿"""Tests for core algorithm math (stateless logic only)."""
+"""Tests for core algorithm math (stateless logic only)."""
+
 from __future__ import annotations
 
 import math
@@ -50,7 +51,7 @@ class TestDataLoaderHelpers:
 
     def test_datetime_to_state_morning(self):
         """datetime_to_state should return correct slot for morning time.
-        
+
         2023-01-02 08:00 (Monday):
         - next_half_hour = 08:30 -> hour=8, minute=30
         - slot = 8*2 + 30//30 = 16 + 1 = 17
@@ -68,7 +69,7 @@ class TestDataLoaderHelpers:
 
     def test_datetime_to_state_midnight(self):
         """datetime_to_state should handle midnight correctly.
-        
+
         2023-01-02 00:15 (Monday):
         - next_half_hour = 00:30 -> slot = 0*2 + 30//30 = 1
         - state = 0*48 + 1 = 1
@@ -82,7 +83,7 @@ class TestDataLoaderHelpers:
 
     def test_datetime_to_state_sunday(self):
         """datetime_to_state should handle Sunday (weekday=6).
-        
+
         2023-01-01 12:00 (Sunday):
         - next_half_hour = 12:30 -> slot = 12*2 + 30//30 = 24 + 1 = 25
         - weekday = 6
@@ -97,12 +98,12 @@ class TestDataLoaderHelpers:
 
     def test_datetime_to_state_midnight_exact(self):
         """datetime_to_state for 00:00 should give slot 0.
-        
+
         2023-01-02 00:00 (Monday):
         - next_half_hour = 00:30 -> slot = 0*2 + 30//30 = 1
         - Wait, no: 00:00 -> minute=0, floor(0/30)*30 = 0, then +30 = 00:30
         - Actually let me re-read the code logic.
-        
+
         In next_half_hour:
         - slot_start = value.replace(minute=(0//30)*30=0, second=0, microsecond=0) = 00:00
         - return slot_start + 30min = 00:30
@@ -162,6 +163,7 @@ class TestConfigAndDomain:
     def test_zone_count_positive(self):
         """Zone count must be positive."""
         from src.common.config import get_config
+
         zc = get_config("domain.zone_count", 263)
         assert zc > 0
         assert zc == 263
@@ -169,12 +171,14 @@ class TestConfigAndDomain:
     def test_slot_count_valid(self):
         """Slot count must be 48 (half-hour slots in 24h)."""
         from src.common.config import get_config
+
         sc = get_config("domain.slot_count", 48)
         assert sc == 48
 
     def test_week_slot_count_consistency(self):
         """Week slot count should be 7 * slot_count."""
         from src.common.config import get_config
+
         sc = get_config("domain.slot_count", 48)
         wsc = get_config("domain.week_slot_count", 336)
         assert wsc == 7 * sc
@@ -182,6 +186,7 @@ class TestConfigAndDomain:
     def test_algorithm_params_in_range(self):
         """Algorithm parameters should be in valid ranges."""
         from src.common.config import get_config
+
         gamma = get_config("algorithm.gamma", 0.5)
         lam = get_config("algorithm.lambda_param", 1.0)
         k = get_config("algorithm.candidate_pool_size", 100)

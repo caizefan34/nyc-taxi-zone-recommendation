@@ -1,4 +1,4 @@
-﻿"""Tests for the multi-year data pipeline.
+"""Tests for the multi-year data pipeline.
 
 Covers:
 - Data configuration loading
@@ -8,6 +8,7 @@ Covers:
 - Future feature leakage prevention
 - Pipeline orchestration (load → clean → split → write)
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -17,9 +18,8 @@ import polars as pl
 import pytest
 
 from src.data import TLCDataPipeline, compute_splits, load_pipeline_config
-from src.data.download import _url, _output_path
+from src.data.download import _output_path, _url
 from src.data.pipeline import DataConfig, _clean_frame
-
 
 # ===========================================================================
 # Fixtures
@@ -105,9 +105,7 @@ class TestDataConfig:
 
     def test_load_pipeline_config_from_file(self, tmp_path):
         cfg_path = tmp_path / "test_config.yaml"
-        cfg_path.write_text(
-            "years:\n  - 2022\n  - 2023\nraw_root: data/raw\nprocessed_root: data/processed"
-        )
+        cfg_path.write_text("years:\n  - 2022\n  - 2023\nraw_root: data/raw\nprocessed_root: data/processed")
         config = load_pipeline_config(cfg_path)
         assert config.years == (2022, 2023)
 

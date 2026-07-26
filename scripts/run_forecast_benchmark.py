@@ -1,4 +1,4 @@
-﻿"""Phase 2+3 forecast benchmark comparing all models.
+"""Phase 2+3 forecast benchmark comparing all models.
 
 Compares against Historical Average, LightGBM, XGBoost, GraphSAGE,
 and the new Temporal Graph Transformer on MAE, RMSE, MAPE, and
@@ -6,12 +6,12 @@ Prediction Interval Coverage.
 
 Outputs: ``outputs/forecast_benchmark.json`` and ``outputs/forecast_benchmark.md``
 """
+
 from __future__ import annotations
 
 import argparse
 import json
 import sys
-import time
 from pathlib import Path
 
 import numpy as np
@@ -92,9 +92,11 @@ def _compute_temporal_metrics(
     metrics = {}
 
     try:
-        preds = temporal_model.predict(demand_test[:history_steps], external_test[:history_steps] if external_test is not None else None)
+        preds = temporal_model.predict(
+            demand_test[:history_steps], external_test[:history_steps] if external_test is not None else None
+        )
 
-        actual = demand_test[history_steps:history_steps + preds["P50"].shape[1]]
+        actual = demand_test[history_steps : history_steps + preds["P50"].shape[1]]
         p50 = preds["P50"].T  # (forecast_steps, zones)
         p10 = preds["P10"].T
         p90 = preds["P90"].T
@@ -215,11 +217,13 @@ def _markdown(results: dict) -> str:
 
         lines.append(f"| {label} | {mae_str} | {rmse_str} | {mape_str} | {picp_str} |")
 
-    lines.extend([
-        "",
-        "## Key Findings",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Key Findings",
+            "",
+        ]
+    )
 
     # Find best model by MAE
     valid = {k: v for k, v in models.items() if isinstance(v.get("mae"), (int, float)) and np.isfinite(v["mae"])}
@@ -233,24 +237,26 @@ def _markdown(results: dict) -> str:
             if np.isfinite(picp_val):
                 lines.append(f"- **Temporal Graph PICP:** {picp_val:.2%} of actual values fall within P10-P90 interval")
 
-    lines.extend([
-        "",
-        "## Models",
-        "",
-        "- **Historical Average:** Training-period zone-weekday-slot mean demand",
-        "- **LightGBM:** Gradient-boosted tree with lag/rolling/neighbor features",
-        "- **XGBoost:** Alternative tree model with identical feature matrix",
-        "- **GraphSAGE:** LightGBM enhanced with static zone embeddings",
-        "- **Temporal Graph Transformer:** Graph-aware transformer with quantile output (P10/P50/P90)",
-        "",
-        "## Metrics",
-        "",
-        "- **MAE:** Mean Absolute Error of P50 (median) prediction",
-        "- **RMSE:** Root Mean Squared Error of P50 prediction",
-        "- **MAPE:** Mean Absolute Percentage Error of P50 prediction",
-        "- **PICP:** Prediction Interval Coverage Probability (fraction of actuals within P10-P90)",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Models",
+            "",
+            "- **Historical Average:** Training-period zone-weekday-slot mean demand",
+            "- **LightGBM:** Gradient-boosted tree with lag/rolling/neighbor features",
+            "- **XGBoost:** Alternative tree model with identical feature matrix",
+            "- **GraphSAGE:** LightGBM enhanced with static zone embeddings",
+            "- **Temporal Graph Transformer:** Graph-aware transformer with quantile output (P10/P50/P90)",
+            "",
+            "## Metrics",
+            "",
+            "- **MAE:** Mean Absolute Error of P50 (median) prediction",
+            "- **RMSE:** Root Mean Squared Error of P50 prediction",
+            "- **MAPE:** Mean Absolute Percentage Error of P50 prediction",
+            "- **PICP:** Prediction Interval Coverage Probability (fraction of actuals within P10-P90)",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 

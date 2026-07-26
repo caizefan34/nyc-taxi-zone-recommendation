@@ -1,4 +1,5 @@
 """Tests for the corrected Bellman backup."""
+
 from __future__ import annotations
 
 import numpy as np

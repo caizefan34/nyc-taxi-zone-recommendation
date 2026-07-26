@@ -1,4 +1,5 @@
 ﻿from __future__ import annotations
+
 import json
 from pathlib import Path
 
@@ -58,27 +59,27 @@ for name in ["hot_zone", "single_step", "two_step"]:
     rev = s.get("avg_revenue_per_driver", s.get("avg_reward_per_driver", 0))
     util = s.get("avg_utilization", 0)
     comp = s.get("avg_competition_penalty", 0)
-    lines.append(f"| {name.replace('_',' ').title()} | ${rev:.2f} | {util:.2%} | ${comp:.2f} | multi_agent_benchmark.json |")
+    lines.append(f"| {name.replace('_',' ').title()} | ${rev:.2f} | {util:.2%} | ${comp:.2f} | multi_agent_benchmark.json |")  # noqa: E501
 
 for method, label in [("dqn", "DQN (v2 sim)"), ("double_dqn", "Double DQN (v2 sim)"), ("iql", "IQL (Offline)")]:
     d = rl2[method]
-    lines.append(f"| {label} | ${d.get('avg_reward_per_driver', 0):.2f} | {d.get('utilization', 0):.2%} | ${d.get('competition_penalty', 0):.2f} | rl_benchmark_v2.json |")
+    lines.append(f"| {label} | ${d.get('avg_reward_per_driver', 0):.2f} | {d.get('utilization', 0):.2%} | ${d.get('competition_penalty', 0):.2f} | rl_benchmark_v2.json |")  # noqa: E501
 
 mf = rl2.get("mean_field", {})
 for at in ["single_agent", "multi_agent", "mean_field"]:
-    lines.append(f"| MF {at.replace('_',' ').title()} | ${mf.get(at+'_reward', 0):.2f} | {mf.get(at+'_utilization', 0):.2%} | ${mf.get(at+'_competition', 0):.4f} | rl_benchmark_v2.json |")
+    lines.append(f"| MF {at.replace('_',' ').title()} | ${mf.get(at+'_reward', 0):.2f} | {mf.get(at+'_utilization', 0):.2%} | ${mf.get(at+'_competition', 0):.4f} | rl_benchmark_v2.json |")  # noqa: E501
 
 lines += ["", "---", "", "## 3. Robustness (Cross-Year & Ablation)", "",
     "| Test | Setting | Metric | Value | Source",
     "|---|---:|---:|---:|"]
 demand_ci = fe["demand"]["paired_timestamp_bootstrap"]
 ensemble_ci = fe["ensemble"]["paired_timestamp_bootstrap"]
-lines.append(f"| Forecast improvement | LightGBM vs Historical | MAE reduction | {demand_ci['mean_mae_improvement']:.4f} [{demand_ci['ci95_low']:.4f}, {demand_ci['ci95_high']:.4f}] | forecast_evaluation.json |")
-lines.append(f"| Forecast improvement | Ensemble vs Historical | MAE reduction | {ensemble_ci['mean_mae_improvement']:.4f} [{ensemble_ci['ci95_low']:.4f}, {ensemble_ci['ci95_high']:.4f}] | forecast_evaluation.json |")
+lines.append(f"| Forecast improvement | LightGBM vs Historical | MAE reduction | {demand_ci['mean_mae_improvement']:.4f} [{demand_ci['ci95_low']:.4f}, {demand_ci['ci95_high']:.4f}] | forecast_evaluation.json |")  # noqa: E501
+lines.append(f"| Forecast improvement | Ensemble vs Historical | MAE reduction | {ensemble_ci['mean_mae_improvement']:.4f} [{ensemble_ci['ci95_low']:.4f}, {ensemble_ci['ci95_high']:.4f}] | forecast_evaluation.json |")  # noqa: E501
 for name, data in fe.get("feature_ablation", {}).items():
     lines.append(f"| Ablation | {name.replace('_',' ').title()} | MAE | {data['mae']:.4f} | forecast_evaluation.json |")
 for model_name, model_data in gb.get("paired_slot_mae_reduction", {}).items():
-    lines.append(f"| Graph improvement | {model_name} vs non-graph | CI crosses zero | [{model_data['ci95_low']:.4f}, {model_data['ci95_high']:.4f}], p={model_data['paired_t_pvalue']:.4f} | graph_benchmark.json |")
+    lines.append(f"| Graph improvement | {model_name} vs non-graph | CI crosses zero | [{model_data['ci95_low']:.4f}, {model_data['ci95_high']:.4f}], p={model_data['paired_t_pvalue']:.4f} | graph_benchmark.json |")  # noqa: E501
 
 lines += ["", "---", "", "## 4. Statistical Validity Notes", "",
     "- **Forecast CIs**: Paired bootstrap over 192 held-out half-hour timestamps.",

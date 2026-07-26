@@ -1,4 +1,5 @@
-﻿"""Tests for evaluation core functions (mock-based)."""
+"""Tests for evaluation core functions (mock-based)."""
+
 from datetime import datetime
 
 import pytest

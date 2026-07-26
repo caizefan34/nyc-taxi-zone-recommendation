@@ -1,4 +1,5 @@
 """Benchmark existing strategies in the finite-demand multi-driver simulator."""
+
 from __future__ import annotations
 
 import argparse

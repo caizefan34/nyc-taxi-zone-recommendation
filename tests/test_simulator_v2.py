@@ -6,6 +6,7 @@ Required tests:
 - Supply-demand dynamics (supply update, competition effect)
 - Engine end-to-end
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -15,14 +16,11 @@ import pytest
 
 from src.simulator.v2 import (
     DynamicSimulator,
-    EnvironmentState,
     RewardComponents,
-    RewardConfig,
     SupplyDemandDynamics,
 )
-from src.simulator.v2.state import create_initial_state
 from src.simulator.v2.engine import SimulatorConfig
-
+from src.simulator.v2.state import create_initial_state
 
 # ===========================================================================
 # Supply-Demand Dynamics Tests
@@ -106,12 +104,16 @@ class TestRewardComponents:
         assert high_risk > low_risk, "Low probability should have higher risk penalty"
 
     def test_total_breakdown_sum_matches_total(self, reward):
-        b = reward.breakdown(fare=30.0, distance_miles=5.0, travel_minutes=20.0, competing_drivers=4, pickup_probability=0.7)
+        b = reward.breakdown(
+            fare=30.0, distance_miles=5.0, travel_minutes=20.0, competing_drivers=4, pickup_probability=0.7
+        )
         components = b["income"] + b["fuel_cost"] + b["travel_time_cost"] + b["competition_penalty"] + b["risk_penalty"]
         assert abs(components - b["total"]) < 1e-6, f"Components {components} != total {b['total']}"
 
     def test_all_reward_components_are_finite(self, reward):
-        b = reward.breakdown(fare=30.0, distance_miles=5.0, travel_minutes=20.0, competing_drivers=4, pickup_probability=0.7)
+        b = reward.breakdown(
+            fare=30.0, distance_miles=5.0, travel_minutes=20.0, competing_drivers=4, pickup_probability=0.7
+        )
         for k, v in b.items():
             assert np.isfinite(v), f"{k}={v} is not finite"
 
@@ -189,7 +191,9 @@ class TestDynamicSimulator:
         r50 = sim_50.run(datetime(2023, 1, 1, 0, 0), datetime(2023, 1, 1, 3, 0))
 
         # More drivers -> higher competition penalty per driver
-        assert abs(r50.reward_breakdown["total_competition_penalty"]) >= abs(r5.reward_breakdown["total_competition_penalty"])
+        assert abs(r50.reward_breakdown["total_competition_penalty"]) >= abs(
+            r5.reward_breakdown["total_competition_penalty"]
+        )
 
     def test_state_transition_maintains_counts(self):
         sim = DynamicSimulator(SimulatorConfig(driver_count=10, seed=42))

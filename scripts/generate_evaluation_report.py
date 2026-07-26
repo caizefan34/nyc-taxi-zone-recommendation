@@ -1,4 +1,5 @@
 """Build the checked-in metrics snapshot and Markdown report from experiment artifacts."""
+
 from __future__ import annotations
 
 import json
@@ -35,10 +36,7 @@ def build_snapshot() -> dict[str, object]:
         "rollout": {
             "runs": paired["runs"],
             "base_seed": paired["base_seed"],
-            "mean_daily_fare": {
-                name: sum(values) / len(values)
-                for name, values in paired["daily_fares"].items()
-            },
+            "mean_daily_fare": {name: sum(values) / len(values) for name, values in paired["daily_fares"].items()},
             "comparisons": paired["comparisons"],
         },
         "horizon": horizon,

@@ -8,7 +8,7 @@ Evaluates each approach on:
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable
 
@@ -109,8 +109,7 @@ def evaluate_mean_field(
     total_reward = 0.0
     total_trips = 0
 
-    from src.simulator.v2 import DynamicSimulator, SupplyDemandDynamics
-    from src.simulator.v2.engine import SimulatorConfig
+    from src.simulator.v2 import SupplyDemandDynamics
 
     dynamics = SupplyDemandDynamics()
     start = datetime(2023, 1, 25)

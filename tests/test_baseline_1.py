@@ -1,4 +1,5 @@
-﻿"""Tests for Baseline 1 strategy."""
+"""Tests for Baseline 1 strategy."""
+
 import importlib.util
 from pathlib import Path
 
@@ -6,14 +7,12 @@ import pytest
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "processed"
 requires_data = pytest.mark.skipif(
-    not (DATA_DIR / "zone_time_statistics.parquet").exists(),
-    reason="Data files not available - download from NYC TLC"
+    not (DATA_DIR / "zone_time_statistics.parquet").exists(), reason="Data files not available - download from NYC TLC"
 )
 
 try:
     spec = importlib.util.spec_from_file_location(
-        "baseline_1",
-        Path(__file__).resolve().parents[1] / "src" / "2_recommendation_algorithm" / "baseline_1.py"
+        "baseline_1", Path(__file__).resolve().parents[1] / "src" / "2_recommendation_algorithm" / "baseline_1.py"
     )
     baseline_1 = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(baseline_1)

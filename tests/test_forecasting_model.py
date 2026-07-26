@@ -1,4 +1,5 @@
 """Prediction and recursive forecasting tests independent of LightGBM."""
+
 from __future__ import annotations
 
 import numpy as np

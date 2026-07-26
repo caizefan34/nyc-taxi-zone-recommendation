@@ -1,4 +1,5 @@
 """Combine checked-in forecasting, graph, simulator, and RL evidence."""
+
 from __future__ import annotations
 
 import argparse
@@ -16,10 +17,7 @@ SOURCE_NAMES = (
 
 
 def _load_sources(root: Path) -> dict[str, dict[str, object]]:
-    return {
-        name: json.loads((root / "outputs" / f"{name}.json").read_text(encoding="utf-8"))
-        for name in SOURCE_NAMES
-    }
+    return {name: json.loads((root / "outputs" / f"{name}.json").read_text(encoding="utf-8")) for name in SOURCE_NAMES}
 
 
 def build_report(root: Path = ROOT) -> dict[str, object]:
@@ -71,15 +69,11 @@ def build_report(root: Path = ROOT) -> dict[str, object]:
                 "fare_difference_vs_original": forecast_policy_comparison,
             },
             "dqn": {
-                "revenue_per_driver": rl["evaluation"]["strategies"]["dqn"][
-                    "average_driver_revenue"
-                ],
+                "revenue_per_driver": rl["evaluation"]["strategies"]["dqn"]["average_driver_revenue"],
                 "difference_vs_original": dqn_comparison,
             },
             "double_dqn": {
-                "revenue_per_driver": rl["evaluation"]["strategies"]["double_dqn"][
-                    "average_driver_revenue"
-                ],
+                "revenue_per_driver": rl["evaluation"]["strategies"]["double_dqn"]["average_driver_revenue"],
                 "difference_vs_original": double_comparison,
             },
             "graphsage_enhanced": {

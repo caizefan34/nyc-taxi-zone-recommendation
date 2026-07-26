@@ -5,7 +5,6 @@ zone-level supply/demand, time, traffic, and weather conditions.
 """
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Sequence

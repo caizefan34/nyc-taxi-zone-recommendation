@@ -7,16 +7,15 @@ from __future__ import annotations
 
 import heapq
 import math
-from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Callable, Sequence
+from typing import Callable
 
 import numpy as np
 
 from .dynamics import SupplyDemandDynamics
-from .reward import RewardComponents, RewardConfig
-from .state import EnvironmentState, ZoneState, DriverState, create_initial_state
+from .reward import RewardComponents
+from .state import DriverState, EnvironmentState, ZoneState
 
 SLOT_MINUTES = 30
 ZONE_COUNT = 263

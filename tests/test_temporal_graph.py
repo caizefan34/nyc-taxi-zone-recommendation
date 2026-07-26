@@ -1,4 +1,4 @@
-﻿"""Tests for Phase 3 Temporal Graph Forecasting.
+"""Tests for Phase 3 Temporal Graph Forecasting.
 
 Covers:
 - TemporalGraphTransformer forward pass and output shapes
@@ -9,6 +9,7 @@ Covers:
 - Graph bias integration
 - Model prediction with numpy inputs
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -22,7 +23,6 @@ from src.features.temporal_graph import (
     collate_sequences,
 )
 from src.features.temporal_graph.model import quantile_loss
-
 
 # ===========================================================================
 # Model Tests

@@ -1,4 +1,5 @@
 """Generate evidence tables used by the repository research audit."""
+
 from __future__ import annotations
 
 import argparse
@@ -66,7 +67,8 @@ def generate(repo: Path) -> dict[str, object]:
         .reset_index(drop=True)
     )
     actual_stats = (
-        pq.read_table(processed / "zone_time_statistics.parquet").to_pandas()
+        pq.read_table(processed / "zone_time_statistics.parquet")
+        .to_pandas()
         .sort_values(["pickup_location_id", "weekday", "time_slot"])
         .reset_index(drop=True)
     )

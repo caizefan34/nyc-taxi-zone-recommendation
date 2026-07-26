@@ -1,4 +1,4 @@
-﻿"""Tests for Phase 2 external urban features.
+"""Tests for Phase 2 external urban features.
 
 Covers:
 - FeatureCollection validation and alignment
@@ -9,6 +9,7 @@ Covers:
 - CompositeFeatureProvider (merging)
 - align_features utility
 """
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -27,8 +28,6 @@ from src.features.external import (
     WeatherProvider,
     align_features,
 )
-from src.features.external.base import ExternalFeatureProvider
-
 
 # ===========================================================================
 # FeatureCollection Tests
@@ -126,8 +125,13 @@ class TestWeatherProvider:
         provider = WeatherProvider(cache_path=tmp_path / "weather.parquet", auto_download=True)
         features = provider.get_features("2023-01-01", "2023-01-02")
         expected_keys = {
-            "temperature", "precipitation", "snowfall",
-            "snow_depth", "is_extreme_heat", "is_extreme_cold", "is_heavy_precip",
+            "temperature",
+            "precipitation",
+            "snowfall",
+            "snow_depth",
+            "is_extreme_heat",
+            "is_extreme_cold",
+            "is_heavy_precip",
         }
         assert expected_keys.issubset(set(features.data.keys()))
 
@@ -157,8 +161,10 @@ class TestAirportProvider:
         provider = AirportProvider()
         features = provider.get_features("2023-01-01", "2023-01-02")
         expected_keys = {
-            "jfk_pickup_count", "jfk_dropoff_count",
-            "lga_pickup_count", "lga_dropoff_count",
+            "jfk_pickup_count",
+            "jfk_dropoff_count",
+            "lga_pickup_count",
+            "lga_dropoff_count",
             "airport_trip_share",
         }
         assert expected_keys.issubset(set(features.data.keys()))
@@ -223,10 +229,12 @@ class TestEventProvider:
 
 class TestCompositeProvider:
     def test_merges_multiple_providers(self, tmp_path):
-        composite = CompositeFeatureProvider([
-            CalendarProvider(),
-            WeatherProvider(cache_path=tmp_path / "weather.parquet", auto_download=True),
-        ])
+        composite = CompositeFeatureProvider(
+            [
+                CalendarProvider(),
+                WeatherProvider(cache_path=tmp_path / "weather.parquet", auto_download=True),
+            ]
+        )
         features = composite.get_features("2023-01-01", "2023-01-02")
         assert "calendar_weekday" in features.data
         assert "weather_temperature" in features.data

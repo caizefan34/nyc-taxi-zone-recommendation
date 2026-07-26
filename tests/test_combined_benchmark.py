@@ -1,4 +1,5 @@
 """Combined benchmark consistency and endpoint-boundary tests."""
+
 from __future__ import annotations
 
 import json

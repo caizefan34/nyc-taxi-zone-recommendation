@@ -1,4 +1,5 @@
-﻿"""Tests for the logging utility module."""
+"""Tests for the logging utility module."""
+
 from __future__ import annotations
 
 import io

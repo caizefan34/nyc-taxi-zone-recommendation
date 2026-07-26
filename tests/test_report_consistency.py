@@ -1,4 +1,5 @@
 """Guard the checked-in public metrics against stale headline values."""
+
 from __future__ import annotations
 
 import json
@@ -27,13 +28,7 @@ def test_markdown_uses_github_compatible_display_math_delimiters():
     offenders = []
     for path in ROOT.rglob("*.md"):
         text = path.read_text(encoding="utf-8")
-        if (
-            "\\[\n" in text
-            or "\n\\]" in text
-            or "\\operatorname" in text
-            or "^*" in text
-            or "^{*}" in text
-        ):
+        if "\\[\n" in text or "\n\\]" in text or "\\operatorname" in text or "^*" in text or "^{*}" in text:
             offenders.append(str(path.relative_to(ROOT)))
     assert offenders == []
 

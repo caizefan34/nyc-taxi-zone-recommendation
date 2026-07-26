@@ -8,7 +8,6 @@ Kostrikov et al. 2022: https://arxiv.org/abs/2110.06169
 """
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 
 import numpy as np

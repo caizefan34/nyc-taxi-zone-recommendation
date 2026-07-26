@@ -5,8 +5,7 @@ collected from the v2 simulator or real data.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Sequence
+from dataclasses import dataclass
 
 import numpy as np
 
@@ -116,7 +115,7 @@ class OfflineBuffer:
             reward_fn: Extracts reward from step result.
             policy_fn: Maps state to action.
         """
-        from datetime import datetime, timedelta
+        from datetime import datetime
 
         for ep in range(episodes):
             sim = simulator

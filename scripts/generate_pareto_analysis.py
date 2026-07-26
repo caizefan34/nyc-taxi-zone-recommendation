@@ -1,5 +1,6 @@
 ﻿"""Phase 8: Pareto Analysis — Revenue vs Risk vs Competition."""
 from __future__ import annotations
+
 import json
 from pathlib import Path
 
@@ -52,7 +53,7 @@ for method, label in [("dqn", "DQN (v2 sim)"), ("double_dqn", "Double DQN (v2 si
 
 mf = rl2.get("mean_field", {})
 # For MF, parse the metrics
-for at, label in [("single_agent", "MF Single Agent"), ("multi_agent", "MF Multi Agent"), ("mean_field", "MF Mean Field")]:
+for at, label in [("single_agent", "MF Single Agent"), ("multi_agent", "MF Multi Agent"), ("mean_field", "MF Mean Field")]:  # noqa: E501
     rev = mf.get(at + "_reward", 0)
     comp = mf.get(at + "_competition", 0)
     risk = comp  # competition is the risk for MF
@@ -107,8 +108,8 @@ lines += [
     "## Key Findings",
     "",
     f"1. **Highest revenue**: {rows[0][3]} (${rows[0][0]:.2f}) — top-line performer but carries competition risk.",
-    f"2. **Lowest risk**: {min(rows, key=lambda r: r[1])[3]} (${min(rows, key=lambda r: r[1])[1]:.2f} penalty) — safest strategy.",
-    f"3. **Gap**: Revenue spread is ${rows[0][0] - rows[-1][0]:.2f}; risk spread is ${max(r[1] for r in rows) - min(r[1] for r in rows):.2f}.",
+    f"2. **Lowest risk**: {min(rows, key=lambda r: r[1])[3]} (${min(rows, key=lambda r: r[1])[1]:.2f} penalty) — safest strategy.",  # noqa: E501
+    f"3. **Gap**: Revenue spread is ${rows[0][0] - rows[-1][0]:.2f}; risk spread is ${max(r[1] for r in rows) - min(r[1] for r in rows):.2f}.",  # noqa: E501
     "4. **No free lunch**: The method with highest revenue also has the highest competition penalty.",
     "5. **IQL (Offline)**: Lower revenue but no competition penalty — reflects evaluation on synthetic data.",
     "6. **Mean Field**: Trades off between single-agent overestimation and multi-agent realism.",

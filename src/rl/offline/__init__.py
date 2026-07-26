@@ -6,7 +6,7 @@ replay buffers, and Offline Policy Evaluation (OPE).
 from __future__ import annotations
 
 from .buffer import OfflineBuffer, Trajectory
-from .evaluation import OfflineEvaluator, ope_fqe, ope_doubly_robust
+from .evaluation import OfflineEvaluator, ope_doubly_robust, ope_fqe
 from .iql import IQLAgent, IQLConfig, train_iql
 
 __all__ = [

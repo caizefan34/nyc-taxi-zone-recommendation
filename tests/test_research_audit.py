@@ -17,9 +17,7 @@ def test_rolling_splits_are_strictly_temporal():
 
 
 def test_partition_and_overlap_detection():
-    result = validate_temporal_partition(
-        ["2023-01-01"], ["2023-01-24 23:59"], ["2023-01-25"], ["2023-01-25 00:30"]
-    )
+    result = validate_temporal_partition(["2023-01-01"], ["2023-01-24 23:59"], ["2023-01-25"], ["2023-01-25 00:30"])
     assert result["strictly_separated"]
     train = pd.DataFrame({"id": [1, 2], "fare": [10.0, 20.0]})
     validation = pd.DataFrame({"id": [2, 3], "fare": [20.0, 30.0]})

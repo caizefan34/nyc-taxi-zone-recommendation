@@ -1,4 +1,5 @@
 """Train leakage-safe OD graph embeddings and compare demand forecasters."""
+
 from __future__ import annotations
 
 import argparse
@@ -57,10 +58,7 @@ def _markdown(report: dict[str, object]) -> str:
     ):
         values = report["models"][name]
         comparison = report["paired_slot_mae_reduction"][name]
-        lines.append(
-            f"| {label} | {values['mae']:.4f} | {values['rmse']:.4f} | "
-            f"{comparison['mean_difference']:+.4f} |"
-        )
+        lines.append(f"| {label} | {values['mae']:.4f} | {values['rmse']:.4f} | {comparison['mean_difference']:+.4f} |")
     lines.extend(["", "## Paired timestamp-level comparisons", ""])
     for name, label in (
         ("od_messages", "OD messages"),

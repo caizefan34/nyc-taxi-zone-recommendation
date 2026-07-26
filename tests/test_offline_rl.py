@@ -7,16 +7,16 @@ Covers:
 - OPE (FQE, Doubly Robust)
 - IQL training loop
 """
+
 from __future__ import annotations
 
 import numpy as np
 import pytest
 import torch
 
-from src.rl.offline import IQLAgent, IQLConfig, OfflineBuffer
+from src.rl.offline import IQLAgent, OfflineBuffer
 from src.rl.offline.evaluation import OPEMetrics, ope_doubly_robust, ope_fqe
 from src.rl.offline.iql import _expectile_loss
-
 
 # ===========================================================================
 # Buffer Tests
@@ -28,8 +28,11 @@ class TestOfflineBuffer:
         buf = OfflineBuffer(capacity=100, state_dim=4)
         for i in range(50):
             buf.add(
-                np.random.rand(4), i % 10, float(np.random.rand()),
-                np.random.rand(4), bool(i % 5 == 0),
+                np.random.rand(4),
+                i % 10,
+                float(np.random.rand()),
+                np.random.rand(4),
+                bool(i % 5 == 0),
             )
         assert buf.size == 50
         batch = buf.sample(10)
@@ -199,10 +202,14 @@ class TestIQLTraining:
         buf = OfflineBuffer(capacity=500, state_dim=4)
         for i in range(300):
             buf.add(
-                np.random.rand(4), i % 5, float(np.random.rand()),
-                np.random.rand(4), bool(i % 10 == 0),
+                np.random.rand(4),
+                i % 5,
+                float(np.random.rand()),
+                np.random.rand(4),
+                bool(i % 10 == 0),
             )
         from src.rl.offline.iql import train_iql
+
         metrics = train_iql(agent, buf, steps=50, log_interval=25)
         assert "q_loss" in metrics
         assert "v_loss" in metrics

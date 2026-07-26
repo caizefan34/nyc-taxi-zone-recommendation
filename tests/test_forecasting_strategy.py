@@ -1,4 +1,5 @@
 """Integration tests for forecast-backed recommendation."""
+
 from __future__ import annotations
 
 from datetime import datetime

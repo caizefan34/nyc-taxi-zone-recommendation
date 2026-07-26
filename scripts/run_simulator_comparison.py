@@ -8,6 +8,7 @@ Compares:
 
 Output: outputs/simulator_comparison.md
 """
+
 from __future__ import annotations
 
 import json
@@ -23,9 +24,6 @@ ROOT = Path(__file__).resolve().parents[1]
 def _simulate_v1(drivers: int, seed: int) -> dict:
     """Run old simulator (single-driver legacy)."""
     try:
-        import importlib.util
-        import sys
-
         # Load v1 market
         v1_path = ROOT / "data/processed/validation_uncleaned.parquet"
         if not v1_path.exists():
@@ -36,7 +34,7 @@ def _simulate_v1(drivers: int, seed: int) -> dict:
                 "status": "no_data",
             }
 
-        from src.eval.rollout_core import load_trip_market, load_travel_time_matrix, simulate_once
+        from src.eval.rollout_core import load_travel_time_matrix, load_trip_market, simulate_once
 
         market = load_trip_market(v1_path, start=datetime(2023, 1, 25), end=datetime(2023, 2, 1))
         travel = load_travel_time_matrix(ROOT / "data/processed/travel_time_matrix_dijkstra.csv")
@@ -150,56 +148,61 @@ def _markdown(v1: dict, v2: dict, v1_multi: dict | None = None) -> str:
     # Reward breakdown
     rb = v2.get("reward_breakdown", {})
     if rb:
-        lines.extend([
-            "## V2 Reward Breakdown",
-            "",
-            "| Component | Value | Description |",
-            "|---|---:|:---|",
-        ])
+        lines.extend(
+            [
+                "## V2 Reward Breakdown",
+                "",
+                "| Component | Value | Description |",
+                "|---|---:|:---|",
+            ]
+        )
         for key, val in rb.items():
             label = key.replace("_", " ").title()
             val_str = f"${abs(val):.2f}" if abs(val) < 1000 else f"${val:.2f}"
             lines.append(f"| {label} | {val_str} | Per-driver over 7 days |")
         lines.append("")
 
-    lines.extend([
-        "## Key Differences",
-        "",
-        "### Supply-Demand Feedback (v2 only)",
-        "",
-        "- When more drivers enter a zone, each driver's pickup probability drops",
-        "- Traffic congestion reduces effective demand (people travel less)",
-        "- Bad weather suppresses demand further",
-        "- Trip inventory depletes as trips are fulfilled",
-        "",
-        "### Reward Decomposition (v2 only)",
-        "",
-        "- **Income**: Actual fare from completed trip",
-        "- **Fuel Cost**: $0.65/mile (industry average)",
-        "- **Travel Time Cost**: $0.30/minute (opportunity cost)",
-        "- **Competition Penalty**: $0.50 per extra driver in same zone",
-        "- **Risk Penalty**: Higher for low-probability zones",
-        "",
-        "### Competition (v2 only)",
-        "",
-        "- Multiple drivers can compete for the same trip",
-        "- Zone saturation tracked as fraction of failed attempts due to oversupply",
-        "- Driver utilization measures productive vs idle time",
-        "",
-        "## Limitations",
-        "",
-        "- v2 uses synthetic demand when real data unavailable",
-        "- Traffic model is simplified (no dynamic congestion propagation)",
-        "- Weather uses daily normals rather than real-time observations",
-        "- No airport queue dynamics or driver learning",
-        "",
-    ])
+    lines.extend(
+        [
+            "## Key Differences",
+            "",
+            "### Supply-Demand Feedback (v2 only)",
+            "",
+            "- When more drivers enter a zone, each driver's pickup probability drops",
+            "- Traffic congestion reduces effective demand (people travel less)",
+            "- Bad weather suppresses demand further",
+            "- Trip inventory depletes as trips are fulfilled",
+            "",
+            "### Reward Decomposition (v2 only)",
+            "",
+            "- **Income**: Actual fare from completed trip",
+            "- **Fuel Cost**: $0.65/mile (industry average)",
+            "- **Travel Time Cost**: $0.30/minute (opportunity cost)",
+            "- **Competition Penalty**: $0.50 per extra driver in same zone",
+            "- **Risk Penalty**: Higher for low-probability zones",
+            "",
+            "### Competition (v2 only)",
+            "",
+            "- Multiple drivers can compete for the same trip",
+            "- Zone saturation tracked as fraction of failed attempts due to oversupply",
+            "- Driver utilization measures productive vs idle time",
+            "",
+            "## Limitations",
+            "",
+            "- v2 uses synthetic demand when real data unavailable",
+            "- Traffic model is simplified (no dynamic congestion propagation)",
+            "- Weather uses daily normals rather than real-time observations",
+            "- No airport queue dynamics or driver learning",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--drivers", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)

@@ -1,4 +1,5 @@
 """Compare finite planning horizons on static and rollout metrics."""
+
 from __future__ import annotations
 
 import argparse
