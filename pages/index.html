@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dynamic Urban Mobility Decision System — Urban Mobility Decision Intelligence</title>
+<title>Dynamic Urban Mobility Decision System 鈥?Urban Mobility Decision Intelligence</title>
 <meta name="description" content="An open-source benchmark platform for AI-driven urban mobility: forecasting, simulation, and offline reinforcement learning with reproducible evaluation on NYC taxi data.">
 <meta name="keywords" content="urban mobility, reinforcement learning, NYC taxi, simulation, benchmark, AI, machine learning, demand forecasting">
 <meta property="og:title" content="NYC Mobility AI">
@@ -119,13 +119,13 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 <!-- Hero -->
 <section class="hero">
   <div class="hero-content container">
-    <div class="hero-badge">🔬 Research-Grade · Open Source</div>
+    <div class="hero-badge">馃敩 Research-Grade 路 Open Source</div>
     <h1>Dynamic Urban Mobility<br>Decision System</h1>
-    <p>An open-source benchmark platform combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning — with reproducible evaluation on NYC taxi data.</p>
+    <p>An open-source benchmark platform combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning 鈥?with reproducible evaluation on NYC taxi data.</p>
     <div class="hero-buttons">
-      <a href="web/" class="btn btn-primary">🚀 Launch Interactive Demo</a>
-      <a href="docs/" class="btn btn-secondary">📖 Read the Docs</a>
-      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn btn-outline">⭐ GitHub</a>
+      <a href="web/" class="btn btn-primary">馃殌 Launch Interactive Demo</a>
+      <a href="docs/" class="btn btn-secondary">馃摉 Read the Docs</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn btn-outline">猸?GitHub</a>
     </div>
   </div>
 </section>
@@ -147,10 +147,10 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     <h2>What We Build</h2>
     <p class="subtitle">A complete pipeline from raw taxi trips to deployable recommendation policies.</p>
     <div class="cards">
-      <div class="card"><div class="card-icon">📊</div><h3>Demand Forecasting</h3><p>Leakage-safe LightGBM and XGBoost models with GraphSAGE/GAT spatial features. Strictly-prior temporal splits guarantee no future information leakage.</p></div>
-      <div class="card"><div class="card-icon">🏙️</div><h3>Multi-Agent Simulation</h3><p>Finite-demand simulator with configurable fleet size, explicit competition, and demand depletion. Tests policies under realistic market pressure.</p></div>
-      <div class="card"><div class="card-icon">🧠</div><h3>Reinforcement Learning</h3><p>Gymnasium-compatible environment with DQN and Double DQN baselines. Masked action spaces reflect real-world travel constraints.</p></div>
-      <div class="card"><div class="card-icon">📐</div><h3>Reproducible Benchmark</h3><p>All metrics checked into the repository. Paired statistical tests, horizon experiments, and exposure analysis with full audit trails.</p></div>
+      <div class="card"><div class="card-icon">馃搳</div><h3>Demand Forecasting</h3><p>Leakage-safe LightGBM and XGBoost models with GraphSAGE/GAT spatial features. Strictly-prior temporal splits guarantee no future information leakage.</p></div>
+      <div class="card"><div class="card-icon">馃彊锔?/div><h3>Multi-Agent Simulation</h3><p>Finite-demand simulator with configurable fleet size, explicit competition, and demand depletion. Tests policies under realistic market pressure.</p></div>
+      <div class="card"><div class="card-icon">馃</div><h3>Reinforcement Learning</h3><p>Gymnasium-compatible environment with DQN and Double DQN baselines. Masked action spaces reflect real-world travel constraints.</p></div>
+      <div class="card"><div class="card-icon">馃搻</div><h3>Reproducible Benchmark</h3><p>All metrics checked into the repository. Paired statistical tests, horizon experiments, and exposure analysis with full audit trails.</p></div>
     </div>
   </div>
 </section>
@@ -165,15 +165,15 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <table>
         <thead><tr><th>Strategy</th><th>NDCG@3</th><th>Hit@3</th><th>Daily Fare</th><th>vs Hot Zone</th></tr></thead>
         <tbody>
-          <tr><td>Hot Zone (baseline)</td><td>0.7846</td><td>0.5842</td><td>$431.21</td><td>—</td></tr>
+          <tr><td>Hot Zone (baseline)</td><td>0.7846</td><td>0.5842</td><td>$431.21</td><td>鈥?/td></tr>
           <tr><td>Single-Step</td><td>0.9024</td><td>0.8804</td><td>$548.77</td><td>+$117.56</td></tr>
           <tr><td class="best">Two-Step Horizon</td><td class="best">0.9565</td><td class="best">0.9714</td><td class="best">$570.61</td><td class="best">+$139.40</td></tr>
-          <tr><td>DQN (50-driver)</td><td>—</td><td>—</td><td>$466.59</td><td>+$53.74 vs Single-Step</td></tr>
+          <tr><td>DQN (50-driver)</td><td>鈥?/td><td>鈥?/td><td>$466.59</td><td>+$53.74 vs Single-Step</td></tr>
         </tbody>
       </table>
     </div>
     <p style="margin-top:20px;font-size:13px;color:var(--muted)">
-      ⚠ Simulator outcomes only — not production revenue estimates. <a href="docs/methodology.html">See methodology</a>.
+      鈿?Simulator outcomes only 鈥?not production revenue estimates. <a href="docs/methodology.html">See methodology</a>.
     </p>
   </div>
 </section>
@@ -197,10 +197,10 @@ tr:hover td { background: rgba(255,255,255,0.02); }
     <h2>How It Works</h2>
     <p class="subtitle">End-to-end pipeline for urban mobility intelligence.</p>
     <div class="cards">
-      <div class="card"><div class="card-icon">1️⃣</div><h3>Data Pipeline</h3><p>Raw NYC TLC trips → chronological split → cleaning → zone-time statistics</p></div>
-      <div class="card"><div class="card-icon">2️⃣</div><h3>Forecast Training</h3><p>Feature engineering → LightGBM/XGBoost → recursive holdout predictions</p></div>
-      <div class="card"><div class="card-icon">3️⃣</div><h3>Policy Optimization</h3><p>Two-step planning · DQN · Double DQN · finite-horizon MDP · online Q-learning</p></div>
-      <div class="card"><div class="card-icon">4️⃣</div><h3>Benchmark & Audit</h3><p>Paired tests · horizon sensitivity · robustness checks · exposure analysis</p></div>
+      <div class="card"><div class="card-icon">1锔忊儯</div><h3>Data Pipeline</h3><p>Raw NYC TLC trips 鈫?chronological split 鈫?cleaning 鈫?zone-time statistics</p></div>
+      <div class="card"><div class="card-icon">2锔忊儯</div><h3>Forecast Training</h3><p>Feature engineering 鈫?LightGBM/XGBoost 鈫?recursive holdout predictions</p></div>
+      <div class="card"><div class="card-icon">3锔忊儯</div><h3>Policy Optimization</h3><p>Two-step planning 路 DQN 路 Double DQN 路 finite-horizon MDP 路 online Q-learning</p></div>
+      <div class="card"><div class="card-icon">4锔忊儯</div><h3>Benchmark & Audit</h3><p>Paired tests 路 horizon sensitivity 路 robustness checks 路 exposure analysis</p></div>
     </div>
   </div>
 </section>
@@ -214,7 +214,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <a href="web/">Web Demo</a>
       <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CITATION.cff">Cite</a>
     </p>
-    <p style="margin-top:8px">MIT License · Built for reproducible research</p>
+    <p style="margin-top:8px">MIT License 路 Built for reproducible research</p>
   </div>
 </footer>
 </body>
