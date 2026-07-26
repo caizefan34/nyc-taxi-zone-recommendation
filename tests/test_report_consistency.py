@@ -54,6 +54,22 @@ def test_multi_agent_snapshot_conserves_demand_and_documents_competition():
     assert f"{comparison['mean_difference']:.2f}" in readme
 
 
+def test_rl_snapshot_is_temporally_isolated_and_matches_readme():
+    snapshot = json.loads((ROOT / "outputs/rl_benchmark.json").read_text(encoding="utf-8"))
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    report = (ROOT / "outputs/rl_benchmark.md").read_text(encoding="utf-8")
+    assert snapshot["training_window"]["end_exclusive"] == snapshot["evaluation_window"]["start"]
+    for strategy in snapshot["evaluation"]["strategies"].values():
+        run = strategy["first_run"]
+        assert run["initial_trip_inventory"] == run["fulfilled_trips"] + run["remaining_trip_inventory"]
+    dqn = snapshot["evaluation"]["paired_revenue"]["dqn_vs_single_step"]
+    double_dqn = snapshot["evaluation"]["paired_revenue"]["double_dqn_vs_single_step"]
+    assert dqn["ci95_low"] > 0.0
+    assert double_dqn["ci95_high"] < 0.0
+    assert f"{dqn['mean_difference']:.2f}" in readme
+    assert "not training uncertainty or causal deployment lift" in report
+
+
 def test_forecasting_snapshot_matches_documented_claims():
     forecast = json.loads((ROOT / "outputs/forecast_evaluation.json").read_text(encoding="utf-8"))
     benchmark = json.loads((ROOT / "outputs/forecasting_benchmark.json").read_text(encoding="utf-8"))

@@ -22,6 +22,7 @@ The project includes:
 - hot-zone, single-step, and finite-horizon planning strategies;
 - static reference-objective diagnostics and a fixed stochastic rollout;
 - a finite-demand multi-agent simulator with explicit driver competition;
+- Gymnasium-compatible DQN and Double-DQN baselines with masked candidate actions;
 - paired statistical tests, horizon experiments, robustness checks, and exposure-concentration analysis;
 - a corrected model-based MDP implementation;
 - a reproducible simulator-trained Q-learning extension.
@@ -108,6 +109,20 @@ The multi-agent simulator processes simultaneous arrivals together and assigns e
 Single-Step minus Hot Zone is +$531.16 per driver, 95% paired bootstrap CI [$525.64, $536.67]. Two-Step minus Single-Step is -$255.86, 95% CI [-$259.50, -$252.30]. This reversal from the legacy single-driver rollout is evidence that recommendation concentration and competition materially change policy rankings.
 
 At fixed fleet size, raising the configured demand/supply ratio from 0.5 to 2.0 increases Single-Step utilization from 6.42% to 18.53% and reduces saturated attempts from 95.30% to 73.06%. See [`outputs/multi_agent_benchmark.md`](outputs/multi_agent_benchmark.md).
+
+### Simulator-trained deep RL benchmark
+
+DQN and Double DQN train for 300 episodes on Jan 18--24 only, then run in the same 50-driver finite-demand simulator on Jan 25--31 over 20 paired evaluation seeds:
+
+| Strategy | Revenue/driver | Fulfilled trips | Utilization |
+|---|---:|---:|---:|
+| Hot Zone | $1,235.71 | 2,968.7 | 7.31% |
+| Single-Step | $1,768.04 | 3,134.2 | 11.15% |
+| Finite Horizon | $1,511.16 | 2,094.8 | 9.52% |
+| DQN | **$1,821.77** | **3,950.7** | **11.21%** |
+| Double DQN | $1,742.77 | 3,410.8 | 10.69% |
+
+DQN minus Single-Step is +$53.74 per driver, 95% paired bootstrap CI [$46.21, $61.57]. Double DQN minus Single-Step is -$25.27, CI [-$32.77, -$17.97]. These intervals cover evaluation-market seeds for one trained network per algorithm, not training uncertainty or real deployment effects. The default recommender remains unchanged. See [`outputs/rl_benchmark.md`](outputs/rl_benchmark.md).
 
 ## Method
 
@@ -211,6 +226,7 @@ python -m scripts.run_research_audit
 python -m scripts.run_robustness_audit
 python -m scripts.generate_evaluation_report
 python -m scripts.run_multi_agent_benchmark --drivers 50 --runs 30 --sensitivity-runs 10
+python -m scripts.train_rl_baselines --episodes 300 --drivers 50 --runs 20
 ```
 
 ## Forecast training and benchmark
@@ -241,7 +257,7 @@ python -m pytest tests -q
 ruff check src tests scripts
 ```
 
-Tests with the full local dataset cover strategy integration. Small synthetic fixtures cover raw temporal splitting, leakage checks, counterfactual estimators, statistical metrics, MDP Bellman transitions, and Q-learning reproducibility.
+Tests with the full local dataset cover strategy integration. Small synthetic fixtures cover raw temporal splitting, leakage checks, counterfactual estimators, statistical metrics, MDP Bellman transitions, Gymnasium contracts, DQN/Double-DQN target semantics, action masking, and seeded training reproducibility.
 
 ## Simulator boundary
 
@@ -280,6 +296,7 @@ src/
   3_extension_task/            temporal analysis, sensitivity, simulator Q-learning
   eval/                         static diagnostic and legacy rollout
   simulator/multi_agent/       finite demand, competing drivers, saturation metrics
+  rl/                          Gymnasium environment, DQN, Double DQN, strategy adapter
   mdp/                          corrected model-based value iteration
   forecasting/                  causal features, tree models, evaluation, strategy adapter
   graph/                        leakage-safe OD graph, GraphSAGE, GAT, message features

@@ -61,7 +61,7 @@ class MultiAgentResult:
 
 
 @dataclass(frozen=True)
-class _Trip:
+class TripRecord:
     dropoff_zone: int
     fare: float
     duration_slots: int
@@ -77,15 +77,15 @@ class _Driver:
     failed_attempts: int = 0
 
 
-def _scaled_inventory(
+def scale_trip_inventory(
     market: Mapping[int, MarketCell],
     *,
     target_count: int,
     rng: random.Random,
-) -> dict[int, list[_Trip]]:
+) -> dict[int, list[TripRecord]]:
     source = {
         key: [
-            _Trip(int(cell.dropoff_zones[index]), float(cell.fares[index]), int(cell.duration_slots[index]))
+            TripRecord(int(cell.dropoff_zones[index]), float(cell.fares[index]), int(cell.duration_slots[index]))
             for index in range(len(cell))
         ]
         for key, cell in market.items()
@@ -109,7 +109,7 @@ def _scaled_inventory(
     for key in ranked[:residual]:
         counts[key] += 1
 
-    inventory: dict[int, list[_Trip]] = {}
+    inventory: dict[int, list[TripRecord]] = {}
     for key, trips in source.items():
         count = counts[key]
         if count <= len(trips):
@@ -123,7 +123,7 @@ def _scaled_inventory(
     return inventory
 
 
-def _market_key(value: datetime, location_id: int, start: datetime, zone_count: int) -> int:
+def market_key(value: datetime, location_id: int, start: datetime, zone_count: int) -> int:
     day_index = (value.date() - start.date()).days
     time_slot = value.hour * 2 + value.minute // SLOT_MINUTES
     return (day_index * 48 + time_slot) * zone_count + location_id - 1
@@ -160,7 +160,7 @@ def simulate_multi_agent(
     nominal_supply = config.driver_count * horizon_slots
     target_demand = math.floor(config.demand_supply_ratio * nominal_supply + 0.5)
     rng = random.Random(config.seed)
-    inventory = _scaled_inventory(market, target_count=target_demand, rng=rng)
+    inventory = scale_trip_inventory(market, target_count=target_demand, rng=rng)
     initial_inventory = sum(len(trips) for trips in inventory.values())
     drivers = [_Driver(location_id=zone) for zone in start_zones]
 
@@ -224,7 +224,7 @@ def simulate_multi_agent(
             peak_zone_supply = max(peak_zone_supply, supply)
             if supply > 1:
                 competing_attempts += supply
-            key = _market_key(current_time, zone, start, zone_count)
+            key = market_key(current_time, zone, start, zone_count)
             trips = inventory.get(key, [])
             match_count = min(supply, len(trips))
             if supply > len(trips):

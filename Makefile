@@ -1,9 +1,10 @@
-.PHONY: help install test lint format clean train forecast-train forecast-benchmark graph-benchmark multi-agent-benchmark sanity static rollout parameters audit report evaluate docker-build docker-test
+.PHONY: help install test lint format clean train forecast-train forecast-benchmark graph-benchmark multi-agent-benchmark rl-benchmark sanity static rollout parameters audit report evaluate docker-build docker-test
 
 help:
 	@echo "NYC Taxi Zone Recommendation"
 	@echo "  make train       Split raw data, clean, and build travel times"
 	@echo "  make multi-agent-benchmark  Run finite-demand 50-driver benchmark"
+	@echo "  make rl-benchmark  Train and evaluate DQN and Double DQN"
 	@echo "  make forecast-train      Train and evaluate demand/fare models"
 	@echo "  make forecast-benchmark  Run paired 100-seed forecast benchmark"
 	@echo "  make graph-benchmark     Compare OD, GraphSAGE, and GAT features"
@@ -38,6 +39,9 @@ train:
 
 multi-agent-benchmark:
 	python -m scripts.run_multi_agent_benchmark --drivers 50 --runs 30 --sensitivity-runs 10
+
+rl-benchmark:
+	python -m scripts.train_rl_baselines --episodes 300 --drivers 50 --runs 20
 
 forecast-train:
 	python -m scripts.train_forecaster

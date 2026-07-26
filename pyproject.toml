@@ -41,6 +41,10 @@ dev = [
 benchmark = [
     "scikit-learn>=1.4",
 ]
+rl = [
+    "gymnasium>=1.0,<2",
+    "torch>=2.2",
+]
 forecasting = [
     "lightgbm>=4.3",
     "scikit-learn>=1.4",
