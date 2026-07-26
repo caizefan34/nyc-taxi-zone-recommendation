@@ -1,12 +1,32 @@
 <div align="center">
   <img src="assets/social-preview.svg" width="100%" alt="NYC Taxi Zone Recommendation">
-  <p><strong>Finite-Horizon Taxi Zone Recommendation with Reproducible Evaluation</strong></p>
+  <h3>Research-grade taxi repositioning: forecasting, graph learning, multi-agent simulation, and deep RL</h3>
+  <p><em>Built on 263 NYC taxi zones with leakage-safe evaluation and honest negative results.</em></p>
   <p>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/"><img src="https://img.shields.io/badge/docs-live_site-00d2ff" alt="Live documentation"></a>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
     <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&label=CI" alt="CI"></a>
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/stargazers"><img src="https://img.shields.io/github/stars/caizefan34/nyc-taxi-zone-recommendation?style=social" alt="GitHub stars"></a>
+  </p>
+  <p>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/"><strong>Explore the project</strong></a>
+    · <a href="#quick-start"><strong>Quick start</strong></a>
+    · <a href="outputs/benchmark_report.md"><strong>Benchmark report</strong></a>
+    · <a href="outputs/codex_research_audit.md"><strong>Research audit</strong></a>
   </p>
 </div>
+
+> **Why star this repository?** It is a compact, reproducible reference for building and auditing spatial recommendation systems where better prediction does not necessarily produce a better policy.
+
+## At a glance
+
+| Forecasting | Multi-agent RL | Graph learning | Reproducibility |
+|---|---|---|---|
+| Demand MAE **1.7273 → 1.4868** | DQN **+$53.74/driver** | GraphSAGE CI crosses zero | **113 tests** with full data |
+| LightGBM + XGBoost | Finite demand + competition | GraphSAGE + GAT + OD messages | Paired bootstrap + effect sizes |
+
+The results are intentionally not collapsed into one leaderboard: forecasting error, legacy single-driver fare, and finite-demand multi-agent revenue are different endpoints.
 
 ## Overview
 
@@ -177,7 +197,7 @@ chronological raw split -> cleaning -> train_cleaned / validation_cleaned
           +-> statistics, robustness, horizon, and exposure reports
 ```
 
-## Setup
+## Quick start
 
 ```bash
 git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git

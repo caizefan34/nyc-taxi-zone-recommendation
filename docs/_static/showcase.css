@@ -1,0 +1,104 @@
+:root {
+  --showcase-navy: #0f0c29;
+  --showcase-indigo: #302b63;
+  --showcase-cyan: #00d2ff;
+  --showcase-blue: #3a7bd5;
+  --showcase-ink: #172033;
+}
+
+.wy-nav-content {
+  max-width: 1240px;
+}
+
+.document section#nyc-taxi-zone-recommendation > h1:first-child {
+  display: none;
+}
+
+.showcase-hero {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 2rem;
+  padding: clamp(2rem, 5vw, 4.5rem);
+  color: white;
+  background: radial-gradient(circle at 90% 10%, rgba(0, 210, 255, 0.22), transparent 35%), linear-gradient(135deg, var(--showcase-navy), var(--showcase-indigo));
+  border-radius: 24px;
+  box-shadow: 0 28px 80px rgba(15, 12, 41, 0.24);
+  overflow: hidden;
+}
+
+.showcase-copy h1 {
+  margin: 0.4rem 0 1rem;
+  color: white;
+  max-width: 100%;
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+
+.eyebrow {
+  color: var(--showcase-cyan);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+}
+
+.lead {
+  max-width: 40rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.13rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.6rem;
+}
+
+.button {
+  display: inline-block;
+  padding: 0.78rem 1.15rem;
+  border-radius: 999px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.button.primary { background: var(--showcase-cyan); color: #07111f; }
+.button.secondary { border: 1px solid rgba(255,255,255,0.35); color: white; }
+
+.metric-grid,
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 3rem;
+}
+
+.metric-card,
+.feature-grid article {
+  padding: 1.35rem;
+  border: 1px solid #e3e8f2;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  box-shadow: 0 10px 30px rgba(23, 32, 51, 0.07);
+}
+
+.metric-card span,
+.metric-card small { display: block; color: #667085; }
+.metric-card strong { display: block; margin: 0.35rem 0; color: var(--showcase-ink); font-size: 1.8rem; }
+.feature-grid h3 { margin-top: 0; color: var(--showcase-ink); }
+.feature-grid a { color: #1268a8; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .metric-grid, .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .showcase-hero { padding: 1.5rem; border-radius: 16px; }
+  .metric-grid, .feature-grid { grid-template-columns: 1fr; }
+}

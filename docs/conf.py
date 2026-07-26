@@ -21,10 +21,18 @@ extensions = [
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+html_static_path = ["_static"]
+html_extra_path = ["../assets"]
 
 html_theme = "sphinx_rtd_theme"
 html_title = f"{project} v{release}"
 html_favicon = "../assets/favicon.ico" if os.path.exists("../assets/favicon.ico") else None
+html_css_files = ["showcase.css"]
+html_theme_options = {
+    "style_external_links": True,
+    "navigation_depth": 3,
+    "collapse_navigation": False,
+}
 
 # Napoleon settings
 napoleon_google_docstring = True
