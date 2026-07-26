@@ -1,9 +1,9 @@
-<div align="center">
+﻿<div align="center">
   <img src="assets/social-preview.svg" width="100%" alt="NYC Taxi Zone Recommendation">
 
   <h1>Dynamic Urban Mobility Decision System</h1>
 
-  <p><strong>An open-source benchmark platform combining forecasting, simulation, and offline reinforcement learning for urban mobility decision optimization — combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning with reproducible evaluation.</strong></p>
+  <p><strong>An open-source benchmark platform combining forecasting, simulation, and offline reinforcement learning for urban mobility decision optimization 鈥?combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning with reproducible evaluation.</strong></p>
 
   <p>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"></a>
@@ -14,15 +14,15 @@
   </p>
 
   <p>
-    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/"><strong>🚀 Live Demo</strong></a>
-    &nbsp;·&nbsp;
-    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/"><strong>📖 Documentation</strong></a>
-    &nbsp;·&nbsp;
-    <a href="docs/demo_gallery.md"><strong>🎬 Demo Gallery</strong></a>
-    &nbsp;·&nbsp;
-    <a href="ROADMAP.md"><strong>🗺️ Roadmap</strong></a>
-    &nbsp;·&nbsp;
-    <a href="CONTRIBUTING.md"><strong>🤝 Contribute</strong></a>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/"><strong>馃殌 Live Demo</strong></a>
+    &nbsp;路&nbsp;
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/"><strong>馃摉 Documentation</strong></a>
+    &nbsp;路&nbsp;
+    <a href="docs/demo_gallery.md"><strong>馃幀 Demo Gallery</strong></a>
+    &nbsp;路&nbsp;
+    <a href="ROADMAP.md"><strong>馃椇锔?Roadmap</strong></a>
+    &nbsp;路&nbsp;
+    <a href="CONTRIBUTING.md"><strong>馃 Contribute</strong></a>
   </p>
 </div>
 
@@ -30,15 +30,15 @@
 
 ## Why this project?
 
-**The problem:** Taxi drivers waste 30–60% of their shift cruising for passengers. In NYC alone, this represents millions of dollars in lost revenue and unnecessary congestion annually.
+**The problem:** Taxi drivers waste 30鈥?0% of their shift cruising for passengers. In NYC alone, this represents millions of dollars in lost revenue and unnecessary congestion annually.
 
 **The approach:** We treat taxi repositioning as a finite-horizon sequential decision problem:
 
 ```
-Historical trips  →  Demand Forecasting  →  Simulator  →  Policy Optimization  →  Recommendation
-                       ↓                      ↓               ↓
+Historical trips  鈫? Demand Forecasting  鈫? Simulator  鈫? Policy Optimization  鈫? Recommendation
+                       鈫?                     鈫?              鈫?
                     LightGBM/XGBoost      Multi-agent     DQN / MDP / Planning
-                       ↓                      ↓               ↓
+                       鈫?                     鈫?              鈫?
                     GraphSAGE + GAT        Competition      Reproducible benchmark
 ```
 
@@ -87,7 +87,7 @@ graph TD
 
 | Strategy | Mean daily fare | vs Hot Zone |
 |---|---:|---:|
-| Hot Zone | $431.21 | — |
+| Hot Zone | $431.21 | 鈥?|
 | Single-Step | $548.77 | +$117.56 |
 | Two-Step | **$570.61** | **+$139.40** |
 
@@ -126,11 +126,11 @@ At fixed fleet size, raising the demand/supply ratio from 0.5 to 2.0 increases S
 | Algorithm | Avg revenue vs Single-Step | 95% CI |
 |---|---|---|
 | DQN | +53.74 | [46.21, 61.57] |
-| Double DQN | −25.27 | [−32.77, −17.97] |
+| Double DQN | 鈭?5.27 | [鈭?2.77, 鈭?7.97] |
 
 DQN minus Single-Step is +53.74 per driver. These intervals cover evaluation-market seeds for one trained network per algorithm, not training uncertainty or real deployment effects. The default recommender remains unchanged. See [outputs/rl_benchmark.md](outputs/rl_benchmark.md).
 
-> **⚠ Important:** These are simulator outcomes, not production revenue estimates. See [Simulator boundary](#simulator-boundary) below.
+> **鈿?Important:** These are simulator outcomes, not production revenue estimates. See [Simulator boundary](#simulator-boundary) below.
 
 ---
 
@@ -142,7 +142,7 @@ cd nyc-taxi-zone-recommendation
 python -m pip install -e ".[dev,forecasting,graph,rl]"
 ```
 
-### 🚀 Try the interactive demo
+### 馃殌 Try the interactive demo
 
 ```bash
 pip install streamlit
@@ -197,7 +197,7 @@ ruff check src tests scripts
 
 ## Simulator boundary
 
-> ⚠ **Read before citing results.**
+> 鈿?**Read before citing results.**
 
 The legacy rollout is useful for controlled single-driver comparison, but it has material limitations:
 
@@ -286,3 +286,5 @@ MIT License. See [LICENSE](LICENSE).
 ## Status
 
 This is an educational/research prototype, not a production dispatch system. See [ROADMAP.md](ROADMAP.md) for future directions.
+
+
