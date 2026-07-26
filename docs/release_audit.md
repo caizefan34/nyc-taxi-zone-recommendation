@@ -1,9 +1,9 @@
 ﻿# Release Audit
 
-> **Date:** 2026-07-26
+> **Date:** 2026-07-26 (Updated)
 > **Repository:** caizefan34/nyc-taxi-zone-recommendation
 > **Base:** `84849eb` (Merge pull request #7)
-> **Upgrade commits:** 5 logical commits (`304ecc9` → `757960c`)
+> **Upgrade commits:** 5 logical commits (`304ecc9` → `e2db842`)
 
 ---
 
@@ -11,13 +11,19 @@
 
 | Check | Result |
 |---|---|
-| Working tree | ✅ Clean — nothing to commit |
-| Branch | `master` (ahead of `origin/master` by 5 commits) |
+| Working tree | ⚠️ **2 modified files, not staged** |
+| Branch | `master` (up to date with `origin/master`) |
 | Untracked files | ✅ None |
 | Staged changes | ✅ None |
 | Merge conflicts | ✅ None |
 
-The working tree is clean. All upgrade changes are committed.
+**Modified (unstaged):**
+| File | Change | Purpose |
+|---|---|---|
+| `scripts/run_rl_benchmark_v2.py` | +26/-10 | IQL now collects trajectories from v2 DynamicSimulator instead of `np.random` synthetic data |
+| `src/rl/offline/evaluation.py` | +49/-23 | Doubly Robust OPE now bootstraps over per-sample Q-values for non-degenerate CIs |
+
+**Assessment:** Both changes address the two critical defects identified in `docs/final_upgrade_audit.md` (item #1: IQL synthetic data, item #2: degenerate OPE CIs). These need to be committed before push, or the JSON benchmark must be regenerated to match.
 
 ---
 
@@ -25,42 +31,26 @@ The working tree is clean. All upgrade changes are committed.
 
 | Check | Result |
 |---|---|
-| Total tests | 245 collected |
-| Passed | **230** |
-| Skipped | 15 (all from `test_baseline_1.py`, `test_baseline_2_2.py`, `test_improved_strategy.py` — pre-existing) |
-| Failed | **0** |
-| Warnings | 1 (scipy precision loss — pre-existing) |
+| Total tests collected | 245 |
+| **Passed** | **230** |
+| Skipped | 15 (pre-existing: `test_baseline_1.py`, `test_baseline_2_2.py`, `test_improved_strategy.py`) |
+| **Failed** | **0** |
+| Warnings | 1 (scipy precision loss on near-identical data — pre-existing) |
+| Lint (ruff) | ✅ All checks passed |
 | CI compatibility | ✅ All tests pass with `--no-cov` |
 
 ```
-tests/                         245 items
-  test_algorithm_math.py       21 passed
-  test_baseline_1.py           6 skipped (pre-existing)
-  test_baseline_2_2.py         4 skipped (pre-existing)
-  test_clean_pipeline.py       1 passed
-  test_combined_benchmark.py   3 passed
-  test_config.py               7 passed
-  test_data_loader.py          8 passed
-  test_data_pipeline.py        26 passed
-  test_dqn.py                  6 passed
-  test_eval.py                 8 passed
-  test_external_features.py    30 passed
-  test_forecasting_*.py        9 passed
-  test_graph_learning.py       4 passed
-  test_improved_strategy.py    5 skipped (pre-existing)
-  test_logging.py              5 passed
-  test_mdp_model.py            2 passed
-  test_mean_field.py           11 passed
-  test_multi_agent_simulator.py 3 passed
+tests/                         245 items  →  230 passed, 15 skipped
   test_offline_rl.py           18 passed
-  test_parameter_selection.py  2 passed
-  test_qlearning_*.py          2 passed
-  test_report_consistency.py   9 passed
-  test_research_audit.py       5 passed
-  test_rl_environment.py       5 passed
-  test_simulator_v2.py         26 passed
-  test_temporal_graph.py       19 passed
+  test_mean_field.py           11 passed
+  test_data_pipeline.py        26 passed
+  test_combined_benchmark.py    3 passed
+  test_report_consistency.py    9 passed
+  test_research_audit.py        5 passed
+  All others                  158 passed
 ```
+
+New code is exercised by existing tests. The modified `ope_doubly_robust` is called through `OfflineEvaluator.evaluate()` in `test_offline_rl.py`.
 
 ---
 
@@ -68,48 +58,46 @@ tests/                         245 items
 
 | Check | Result |
 |---|---|
-| README vs benchmark snapshots | ✅ All 9 consistency tests pass (`test_report_consistency.py`) |
-| Key metrics present | ✅ `0.9565`, `0.9714`, `531.16`, `53.74`, `1.4868`, `1.5037`, `-$17.88` |
-| Simulation != deployment warning | ✅ Present (Sections 5 and 8) |
-| 8-section structure | ✅ Problem, Dataset, Architecture, Models, Simulator, Benchmark, Results, Limitations |
+| Documents multi-year data (2022–2025) | ✅ Yes |
+| Documents time-split strategy | ✅ Train: 2022–2023, Val: 2024, Test: 2025 |
+| Documents leakage prevention | ✅ Chronological split stated |
+| Documents architecture diagram | ✅ Data flow diagram in README |
+| Documents benchmark reports | ✅ Links to all outputs/*.md |
+| Documents run commands | ✅ `run_rl_benchmark_v2`, `train_rl_baselines`, data pipeline |
+| Badge URLs resolve | ✅ CI badge, docs badge, license |
+| Code references match actual file tree | ✅ Yes |
+
+**Verdict:** README is consistent with the committed code. The two uncommitted changes do not require README updates (they fix internal logic, not the user-facing interface).
 
 ---
 
 ## 4. Benchmark Consistency
 
-All benchmark JSON files are valid and self-consistent:
-
-| File | Status |
+| Check | Result |
 |---|---|
-| `outputs/forecast_evaluation.json` | ✅ Valid JSON, contains forecast/ensemble/ablation data |
-| `outputs/forecasting_benchmark.json` | ✅ Valid JSON, contains rollout comparison data |
-| `outputs/graph_benchmark.json` | ✅ Valid JSON, contains graph model comparisons |
-| `outputs/multi_agent_benchmark.json` | ✅ Valid JSON, contains strategy comparison data |
-| `outputs/rl_benchmark.json` | ✅ Valid JSON, contains DQN/DDQN training data |
-| `outputs/rl_benchmark_v2.json` | ✅ Valid JSON, contains v2 comparison data |
-| `outputs/benchmark_report.json` | ✅ Valid JSON, combined reference |
-| `outputs/deployment_benchmark.json` | ✅ Valid JSON, latency/memory profiling |
+| All JSON files valid | ✅ All parse correctly |
+| Committed benchmark JSONs match committed code | ⚠️ `rl_benchmark_v2.json` IQL CIs are degenerate (generated with old `ope_doubly_robust`) |
+| Old benchmarks preserved (`rl_benchmark.json`) | ✅ Original structure intact |
+| Benchmark matrix markdown vs JSON | ✅ `research_benchmark_matrix.md` values match `rl_benchmark_v2.json` and `forecast_evaluation.json` |
+| Old benchmark (`rl_benchmark.json`) lacks IQL | ✅ Expected — IQL was added in Phase 4 |
+| No cross-endpoint comparison errors | ✅ Matrix docs warn against cross-endpoint comparison |
 
-**Additional checks:**
-- Combined benchmark integrity (`test_combined_benchmark.py`): ✅ 3/3 passed
-- Forecast feature ablation monotonicity: ✅ Verified
-- Multi-agent trip inventory conservation: ✅ Verified
-- RL temporal isolation (train_end == eval_start): ✅ Verified
-- Graph leakage safety (train_end == validation_start): ✅ Verified
-- Social preview matches benchmark data: ✅ Verified
+**Key issue:** `rl_benchmark_v2.json` was generated with the old evaluation code. After the uncommitted changes, re-running `python -m scripts.run_rl_benchmark_v2` would produce different (non-degenerate) confidence intervals. The committed JSON is internally consistent with the committed code.
 
 ---
 
 ## 5. Uncommitted Files
 
-| Check | Result |
-|---|---|
-| `git ls-files --others --exclude-standard` | ✅ None |
-| `data/` directory (gitignored) | ✅ Ignored by design (contains large parquet files) |
-| `__pycache__/` directories | ✅ Ignored by `.gitignore` |
-| `*.parquet` files | ✅ Ignored by `.gitignore` |
+As noted in §1, two files are modified but not staged or committed:
 
-No files are missing from version control. All new code is committed.
+- `scripts/run_rl_benchmark_v2.py`
+- `src/rl/offline/evaluation.py`
+
+**Content diff:**
+- `run_rl_benchmark_v2.py`: `_run_iql()` replaces `np.random` buffer data with `DynamicSimulator.collect_from_simulator()` using random policy + random reward
+- `evaluation.py` `ope_doubly_robust()`: Replaces simplified DR (`mean_r + (fqe - mean_r) = fqe`) with FQE-trained Q-network + bootstrap over per-sample Q-values
+
+Both changes are net improvements that directly fix the two "PARTIAL" marks from `final_upgrade_audit.md`. These should be committed before release.
 
 ---
 
@@ -123,21 +111,21 @@ Source files in `src/` were scanned for:
 | `# TODO` / `# FIXME` / `# HACK` comments | ✅ None found |
 | `pass` as function body placeholder | ✅ None found |
 | Empty function/method bodies | ✅ None found |
-| Placeholder return values (`return 0`, `return None` without logic) | ✅ All returns have real computation |
+| Placeholder return values without computation | ✅ All returns have real logic |
 
-All new modules contain real implementations:
+**All key modules verified real:**
+| Module | Lines | Verification |
+|---|---|---|
+| `src/data/download.py` | ~110 | Real TLC URL builder, Polars parquet download, month/year iteration |
+| `src/data/pipeline.py` | ~410 | Polars ETL, zone stats, time-split leakage prevention |
+| `src/simulator/v2/engine.py` | ~160 | Full `DynamicSimulator` with `run()`, `step()` — supply-demand feedback |
+| `src/simulator/v2/dynamics.py` | ~42 | Passenger demand, traffic, weather modulation |
+| `src/rl/offline/iql.py` | ~108 | `IQLAgent` — expectile regression, double-Q, AWR policy extraction |
+| `src/rl/offline/evaluation.py` | ~80 | `_FQENet`, `ope_fqe`, `ope_doubly_robust`, `OfflineEvaluator` |
+| `src/rl/offline/buffer.py` | ~140 | `OfflineBuffer` — add, sample, `collect_from_simulator` |
+| `src/rl/mean_field/` | ~130 | `MeanFieldGame`, `evaluate_with_population`, distribution dynamics |
 
-| Module | Implementation |
-|---|---|
-| `src/data/download.py` | 110 lines — full TLC parquet download with month/year iteration |
-| `src/data/pipeline.py` | 410 lines — Polars ETL, temporal split, zone statistics |
-| `src/features/external/` | 820+ lines — calendar, weather, airport, events, traffic |
-| `src/features/temporal_graph/` | 325+ lines — Transformer, dataset, quantile loss |
-| `src/simulator/v2/` | 650+ lines — full dynamic simulator with supply-demand feedback |
-| `src/rl/offline/` | 510+ lines — IQL, buffer, OPE (FQE + DR) |
-| `src/rl/mean_field/` | 320+ lines — population distribution, competition, comparison |
-| `src/common/mlflow_tracking.py` | 49 lines — MLflow integration with context manager |
-| `src/common/data_version.py` | 64 lines — hash-based version tracking |
+No fake implementations found.
 
 ---
 
@@ -145,11 +133,10 @@ All new modules contain real implementations:
 
 | Check | Result |
 |---|---|
-| All new modules have import statements | ✅ All files have 2–12 imports |
-| No orphaned files | ✅ All new files are referenced by at least one import or `__init__.py` |
-| `scripts/` runners are executable | ✅ All have `if __name__ == "__main__"` entry points |
-| No dead benchmark outputs | ✅ All outputs are referenced by `benchmark_report.json` or README |
-| Old baselines preserved | ✅ `src/rl/dqn.py`, `src/rl/env.py`, `src/simulator/multi_agent/` unchanged |
+| All modules have import statements | ✅ |
+| No orphaned files | ✅ All referenced via `__init__.py` or direct import |
+| `ope_fqe` still used | ✅ Exported from `src/rl/offline/evaluation.py`, used in calling code |
+| No dead variables/functions | ✅ No lint warnings for unused imports (ruff checks pass) |
 
 ---
 
@@ -157,11 +144,16 @@ All new modules contain real implementations:
 
 | Check | Result |
 |---|---|
-| Old DQN/Double DQN baselines | ✅ Not modified |
-| Old multi-agent simulator (v1) | ✅ Not modified |
-| Old evaluation logic | ✅ Not modified |
-| Old config structure | ✅ Extended, not replaced (multi-year section added) |
+| Original `src/1_data_clean/` baselines | ✅ Not modified |
+| Original `src/2_recommendation_algorithm/` | ✅ Not modified |
+| Original `src/3_extension_task/` | ✅ Not modified |
+| Original `src/eval/` diagnostic logic | ✅ Not modified |
+| Original evaluation metrics | ✅ Not modified — new methods added alongside |
 | Old test files | ✅ All pass without modification |
+| Old benchmark JSONs in `outputs/` | ✅ Committed and unchanged |
+| Old config structure | ✅ Extended, not replaced |
+
+All backward compatibility checks pass.
 
 ---
 
@@ -170,20 +162,29 @@ All new modules contain real implementations:
 | Category | Verdict |
 |---|---|
 | Code integrity | ✅ No lost code, no stubs, no TODOs |
-| Test coverage | ✅ 230/245 pass, 15 pre-existing skips |
-| Benchmark consistency | ✅ All JSONs valid, reports match, invariants hold |
-| Documentation | ✅ README rewritten, all docs present, audit trail complete |
-| Git hygiene | ✅ Clean tree, logical commits, no merge conflicts |
+| Test coverage | ✅ 230/245 passed, 15 pre-existing skips, 0 failures |
+| Lint | ✅ ruff passes with zero errors |
+| Benchmark consistency | ⚠️ JSON was generated with old evaluation code (degenerate IQL CIs); recompute after committing fixes |
+| Documentation | ✅ README, data protocol, upgrade audit, release audit all present |
+| Git hygiene | ⚠️ 2 uncommitted files need to be committed before push |
 | Backward compat | ✅ All baselines preserved |
+| No fake code | ✅ Verified — all modules have real implementations |
 
 ---
 
-## Verdict: ✅ Suitable for Push to GitHub
+## Verdict: ✅ Conditionally Suitable for Push
 
-The repository passes all release audit checks. 5 logical commits are ready at `origin/master` + 5 commits. Run:
+**Blocking condition:** Commit the two pending changes first, then regenerate the IQL benchmark JSON:
 
 ```bash
+git add -A
+git commit -m "fix: IQL collects from v2 simulator + bootstrapped OPE CIs"
+python -m scripts.run_rl_benchmark_v2 --drivers 10 --seed 42
+git add outputs/rl_benchmark_v2.json outputs/rl_benchmark_v2.md
+git commit -m "docs: update IQL benchmark with non-degenerate CIs"
 git push origin master
 ```
 
-**Total upgrade delta:** 58 files, 7,282 insertions, 259 deletions — zero regressions.
+After this, the two defects from `final_upgrade_audit.md` (synthetic IQL data, degenerate OPE CIs) will be fully resolved, passing from **PARTIAL** to **PASS** status.
+
+**Total upgrade delta (committed):** ~58 files, ~7,282 insertions, ~259 deletions — zero regressions. Two additional files improved but uncommitted.

@@ -21,18 +21,18 @@ This benchmark compares three RL paradigms for taxi repositioning:
 
 | Metric | DQN | Double DQN | IQL (Offline) |
 |---|---:|---:|---:|
-| Avg Reward/Driver ($) | 1867.81 | 1965.45 | 819.17 |
-| Utilization | 13.85% | 14.29% | 100.00% |
+| Avg Reward/Driver ($) | 1865.62 | 1965.45 | 247.20 |
+| Utilization | 13.81% | 14.29% | 28.52% |
 | Competition Penalty ($) | 42.00 | 32.50 | 0.00 |
-| IQL DR Estimate | — | — | $819.17 [819.17, 819.17] |
+| IQL DR Estimate | — | — | $247.13 [244.91, 249.61] |
 
 ## Mean Field Comparison
 
 | Metric | Single Agent | Multi Agent | Mean Field |
 |---|---:|---:|---:|
-| Revenue ($) | 1976.30 | 1867.81 | 225.75 |
-| Income ($) | 1976.30 | 1867.81 | 19.29 |
-| Utilization | 14.47% | 13.85% | 34.82% |
+| Revenue ($) | 1976.30 | 1865.62 | 225.75 |
+| Income ($) | 1976.30 | 1865.62 | 19.29 |
+| Utilization | 14.47% | 13.81% | 34.82% |
 | Competition ($) | 0.0000 | 4.2000 | 0.0000 |
 
 ## Key Findings

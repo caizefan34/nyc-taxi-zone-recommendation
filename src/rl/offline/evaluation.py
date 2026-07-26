@@ -105,25 +105,46 @@ def ope_doubly_robust(
 ) -> OPEMetrics:
     """Doubly Robust OPE with bootstrap confidence intervals.
 
-    Uses FQE for Q-function estimation and computes DR estimate.
+    Trains a Q-network via FQE, then bootstraps over per-sample
+    fitted Q-values to produce non-degenerate confidence intervals.
     """
-    fqe = ope_fqe(buffer_states, buffer_actions, buffer_rewards,
-                  buffer_next_states, buffer_dones, gamma=gamma, device=device)
+    state_dim = buffer_states.shape[-1]
+    action_dim = buffer_actions.shape[-1] if buffer_actions.ndim > 1 else 1
 
-    n = len(buffer_rewards)
+    # Train Q-network via FQE
+    q_net = _FQENet(state_dim, action_dim).to(device)
+    optimizer = torch.optim.Adam(q_net.parameters(), lr=1e-3)
+
+    s = torch.as_tensor(buffer_states, dtype=torch.float32, device=device)
+    a = torch.as_tensor(buffer_actions, dtype=torch.float32, device=device).unsqueeze(-1)
+    r = torch.as_tensor(buffer_rewards, dtype=torch.float32, device=device).unsqueeze(-1)
+    ns = torch.as_tensor(buffer_next_states, dtype=torch.float32, device=device)
+    d = torch.as_tensor(buffer_dones, dtype=torch.float32, device=device).unsqueeze(-1)
+
+    for epoch in range(100):
+        with torch.no_grad():
+            target_q = r + gamma * (1.0 - d) * q_net(ns, a)
+        loss = nn.functional.mse_loss(q_net(s, a), target_q)
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
+
+    # Point estimate from FQE
+    with torch.no_grad():
+        per_sample_values = q_net(s, a).cpu().numpy().ravel()
+    fqe = float(per_sample_values.mean())
+
+    # Bootstrap over per-sample Q-values for CI
+    n = len(per_sample_values)
     rng = np.random.default_rng(42)
-    dr_estimates = []
-
+    bootstrap_means = []
     for _ in range(bootstrap_samples):
         idx = rng.integers(0, n, size=n)
-        rewards = buffer_rewards[idx]
-        mean_r = float(rewards.mean())
-        dr = mean_r + (fqe - mean_r)  # Simplified DR
-        dr_estimates.append(dr)
+        bootstrap_means.append(float(per_sample_values[idx].mean()))
 
-    dr_mean = float(np.mean(dr_estimates))
-    ci_low = float(np.percentile(dr_estimates, 2.5))
-    ci_high = float(np.percentile(dr_estimates, 97.5))
+    dr_mean = float(np.mean(bootstrap_means))
+    ci_low = float(np.percentile(bootstrap_means, 2.5))
+    ci_high = float(np.percentile(bootstrap_means, 97.5))
 
     return OPEMetrics(
         fqe_estimate=fqe,

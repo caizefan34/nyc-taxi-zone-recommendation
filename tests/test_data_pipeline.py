@@ -305,3 +305,75 @@ class TestPipeline:
         manifest = tmp_path / "out" / "splits.json"
         assert manifest.exists()
         assert "train" in manifest.read_text()
+
+
+
+class TestDataPipelineIntegration:
+    """End-to-end pipeline integration test for CI."""
+
+    def test_full_pipeline_end_to_end(self, tmp_path):
+        """Run full pipeline: create fake parquet -> load -> clean -> split -> write."""
+        import json
+        from datetime import datetime, timedelta
+        from pathlib import Path
+
+        import polars as pl
+
+        raw_dir = tmp_path / "raw"
+        out_dir = tmp_path / "out"
+        raw_dir.mkdir(parents=True)
+
+        # Create fake TLC parquet files with correct naming: yellow_tripdata_YYYY-MM.parquet
+        for year, month in [(2022, 1), (2022, 2), (2023, 1)]:
+            n = 20
+            rows = []
+            for i in range(n):
+                dt = datetime(year, month, 1, 8, 0) + timedelta(hours=i)
+                rows.append({
+                    "tpep_pickup_datetime": dt,
+                    "tpep_dropoff_datetime": dt + timedelta(minutes=30),
+                    "PULocationID": 100 + (i % 50),
+                    "DOLocationID": 200 + (i % 50),
+                    "fare_amount": float(10 + i),
+                    "trip_distance": float(1 + (i % 5)),
+                })
+            month_dir = raw_dir / str(year) / f"{month:02d}"
+            month_dir.mkdir(parents=True)
+            fname = f"yellow_tripdata_{year}-{month:02d}.parquet"
+            pl.DataFrame(rows).write_parquet(str(month_dir / fname))
+
+        config = DataConfig(
+            raw_root=str(raw_dir),
+            processed_root=str(out_dir),
+            years=(2022, 2023),
+        )
+        pipeline = TLCDataPipeline(config)
+
+        hits = pipeline.list_raw_files()
+        assert len(hits) == 3, f"Expected 3 parquet files, got {len(hits)}"
+
+        partitions = pipeline.load_and_clean()
+        assert isinstance(partitions, dict), "load_and_clean should return dict"
+        assert "train" in partitions
+        train = partitions["train"]
+        assert len(train) > 0, "Train partition is empty"
+
+        outputs = pipeline.write_splits(partitions)
+        assert "train" in outputs
+        assert Path(outputs["train"]).exists()
+
+        # With 2022-2023 only, no validation/test splits
+        assert "validation" not in outputs or outputs.get("validation") is None
+        assert "test" not in outputs or outputs.get("test") is None
+
+        manifest = Path(str(out_dir)) / "splits.json"
+        assert manifest.exists()
+        m = json.loads(manifest.read_text())
+        assert "splits" in m
+        assert "train" in m["splits"]
+        assert m["splits"]["train"]["rows"] >= 1
+
+    def test_pipeline_boundary_order(self):
+        """Verify split boundary logic with default config."""
+        config = DataConfig()
+        assert config.train_end < config.val_end < config.test_end

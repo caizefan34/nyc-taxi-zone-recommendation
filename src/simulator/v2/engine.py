@@ -119,6 +119,7 @@ class DynamicSimulator:
         travel_times: np.ndarray | None = None,
         base_demand: np.ndarray | None = None,
         demand_predictions: np.ndarray | None = None,
+        on_transition: Callable[[int, int, float, int, bool], None] | None = None,
     ) -> SimulatorResult:
         """Run a full simulation from start to end.
 
@@ -129,6 +130,8 @@ class DynamicSimulator:
             travel_times: (zone_count, zone_count) matrix in minutes.
             base_demand: (zone_count,) array of base demand per zone.
             demand_predictions: (n_timesteps, zone_count) forecast array.
+            on_transition: Optional callback(driver_id, action_zone, net_reward, next_zone, done)
+                          called after each attempt with the real net reward and resulting zone.
 
         Returns:
             SimulatorResult with aggregate metrics.
@@ -160,6 +163,7 @@ class DynamicSimulator:
         saturated_zone_slots = 0
         saturated_attempts = 0
         total_attempts = 0
+        _pending_actions: dict[int, int] = {}
 
         while event_heap:
             current_time, event_type, driver_id = heapq.heappop(event_heap)
@@ -182,6 +186,7 @@ class DynamicSimulator:
                     top_zone = strategy(current_time, zone, state)
                 else:
                     top_zone = zone  # stay
+                _pending_actions[driver_id] = top_zone
 
                 # Move to chosen zone
                 travel_min = float(times[zone - 1, top_zone - 1])
@@ -222,6 +227,7 @@ class DynamicSimulator:
                     trip_fare = max(5.0, self.rng.exponential(15.0) + 10.0)
                     trip_distance = max(0.5, self.rng.exponential(3.0) + 1.0)
                     trip_duration = min(120.0, trip_distance / 0.3 + self.rng.exponential(5.0))
+                    next_zone_after = int(self.rng.integers(1, ZONE_COUNT + 1))
                     trip_duration_slots = math.ceil(trip_duration / SLOT_MINUTES)
 
                     # Reward calculation
@@ -249,9 +255,11 @@ class DynamicSimulator:
                     if next_time >= end:
                         driver.idle_minutes += 0
                     else:
-                        driver.location_zone = int(self.rng.integers(1, ZONE_COUNT + 1))
+                        driver.location_zone = next_zone_after
                 else:
                     # Failed pickup
+                    reward = 0.0
+                    next_zone_after = driver.location_zone
                     failed_attempts += 1
                     driver.failed_attempts += 1
                     if state.driver_count_in_zone(zone) > zs.trips_remaining:
@@ -259,6 +267,11 @@ class DynamicSimulator:
                         saturated_attempts += 1
                     next_time = current_time + timedelta(minutes=SLOT_MINUTES)
 
+                # Fire transition callback with real transition data
+                if on_transition is not None:
+                    done = next_time >= end
+                    action_zone = _pending_actions.pop(driver_id, driver.location_zone)
+                    on_transition(driver_id, action_zone, reward, next_zone_after, done)
                 next_time = min(next_time, end)
                 driver.current_time = next_time
                 heapq.heappush(event_heap, (next_time, "decision", driver_id))

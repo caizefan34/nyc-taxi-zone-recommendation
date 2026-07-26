@@ -53,29 +53,34 @@ def _run_dqn(*, drivers: int = 50, seed: int = 42) -> dict:
 
 
 def _run_iql(*, drivers: int = 50, seed: int = 42) -> dict:
-    """Run IQL (offline RL) evaluation."""
+    """Run IQL (offline RL) evaluation using v2 simulator trajectories.
+
+    Trains on real transitions collected from the v2 DynamicSimulator
+    with a random exploration policy. Uses FQE + bootstrapped DR for OPE.
+    """
     from src.rl.offline import IQLAgent, OfflineBuffer
     from src.rl.offline.evaluation import OfflineEvaluator
+    from src.simulator.v2 import DynamicSimulator
+    from src.simulator.v2.engine import SimulatorConfig
 
-    buffer = OfflineBuffer(capacity=5000, state_dim=7, seed=seed)
     state_dim = 7
     action_dim = 263
 
-    # Train IQL on synthetic buffer data
-    for i in range(2000):
-        state = np.random.rand(state_dim).astype(np.float32)
-        action = int(np.random.randint(0, action_dim))
-        reward = float(np.random.exponential(15.0))
-        next_state = np.random.rand(state_dim).astype(np.float32)
-        done = bool(i % 100 == 0)
-        buffer.add(state, action, reward, next_state, done)
+    # Collect realistic trajectories from v2 simulator
+    buffer = OfflineBuffer(capacity=10000, state_dim=state_dim, seed=seed)
+    sim = DynamicSimulator(SimulatorConfig(driver_count=drivers, seed=seed))
 
+    def _exploration_policy(dt, loc, state):
+        return int(np.random.randint(1, 264))  # zones 1..263
+
+    buffer.collect_trajectories_from_v2(sim, episodes=10, strategy=_exploration_policy)
+
+    # Train IQL on real trajectories
     agent = IQLAgent(state_dim=state_dim, action_dim=action_dim, device="cpu")
-
     from src.rl.offline.iql import train_iql
-    metrics = train_iql(agent, buffer, steps=200, log_interval=50)
+    metrics = train_iql(agent, buffer, steps=500, log_interval=100)
 
-    # Evaluate
+    # Offline Policy Evaluation (FQE + bootstrapped DR)
     evaluator = OfflineEvaluator(agent, buffer)
     ope_result = evaluator.evaluate()
 

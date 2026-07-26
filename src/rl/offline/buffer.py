@@ -132,3 +132,78 @@ class OfflineBuffer:
                 state = next_state
                 if done:
                     break
+
+    def collect_trajectories_from_v2(
+        self,
+        simulator,
+        episodes: int = 20,
+        *,
+        strategy = None,
+    ) -> None:
+        """Collect realistic transitions from the v2 DynamicSimulator.
+
+        Uses the simulator's ``run()`` method with ``on_transition`` callback
+        to record real (state, action, reward, next_state, done) transitions.
+
+        State vector (7-dim):
+          [0] zone_id / 263.0          - normalized location
+          [1] (hour*60+min)/1440.0     - normalized time of day
+          [2] driver_count_in_zone / total_taxis - supply density
+          [3] zone.effective_demand / 200.0       - normalized demand
+          [4] zone.pickup_probability             - pickup chance
+          [5] driver_count_in_zone / max(1, zone.trips_remaining) - competition
+          [6] zone.traffic_multiplier / 2.0       - normalized traffic
+
+        Args:
+            simulator: DynamicSimulator instance with ``run()`` method.
+            episodes: Number of simulation runs.
+            strategy: Driver strategy function (time, zone, state) -> zone.
+        """
+        from datetime import datetime
+
+        import numpy as np
+
+        ZONE_COUNT = 263
+
+        def _extract_state(env, driver_id):
+            d = env.drivers[driver_id]
+            z = env.zones[d.location_zone]
+            supply = env.driver_count_in_zone(d.location_zone)
+            return np.array([
+                d.location_zone / ZONE_COUNT,
+                (d.current_time.hour * 60 + d.current_time.minute) / 1440.0,
+                supply / max(1, env.total_taxis),
+                min(z.effective_demand / 200.0, 1.0),
+                z.pickup_probability,
+                supply / max(1, z.trips_remaining),
+                z.traffic_multiplier / 2.0,
+            ], dtype=np.float32)
+
+        for ep in range(episodes):
+            collected = []
+
+            def _transition_cb(driver_id, action_zone, reward, next_zone, done):
+                env = simulator.state
+                if env is None:
+                    return
+                state = _extract_state(env, driver_id)
+                next_state = np.array([
+                    next_zone / ZONE_COUNT,
+                    (env.current_time.hour * 60 + env.current_time.minute) / 1440.0,
+                    env.driver_count_in_zone(next_zone) / max(1, env.total_taxis),
+                    min(env.zones[next_zone].effective_demand / 200.0, 1.0),
+                    env.zones[next_zone].pickup_probability,
+                    env.driver_count_in_zone(next_zone) / max(1, env.zones[next_zone].trips_remaining),
+                    env.zones[next_zone].traffic_multiplier / 2.0,
+                ], dtype=np.float32)
+                collected.append((state, action_zone, reward, next_state, done))
+
+            simulator.run(
+                datetime(2023, 1, 25),
+                datetime(2023, 2, 1),
+                strategy=strategy,
+                on_transition=_transition_cb,
+            )
+
+            for state, action, reward, next_state, done in collected:
+                self.add(state, action, reward, next_state, done)
