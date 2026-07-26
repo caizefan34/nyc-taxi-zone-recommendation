@@ -137,6 +137,45 @@ docs/                    Documentation, figures, research paper
 
 ---
 
+
+## Validated Metrics
+
+These precise values are validated against `outputs/*.json` snapshots to ensure documentation accuracy.
+
+### Static Recommendation (Two-Step)
+
+| Metric | Value |
+|--------|:-----:|
+| NDCG@3 | 0.9565 |
+| Hit@3  | 0.9714 |
+
+### Multi-Agent Benchmark (50 drivers, 20 runs)
+
+| Comparison | Mean Difference |
+|------------|:--------------:|
+| Single-Step vs Hot Zone | +$531.16 |
+
+### Offline RL (DQN vs Single-Step)
+
+| Metric | Value |
+|--------|:-----:|
+| Mean Revenue Difference | +$53.74 |
+
+### Forecasting (Ensemble)
+
+| Metric | Value |
+|--------|:-----:|
+| Demand MAE | 1.4868 |
+| Forecast-vs-Historical Rollout | -$17.88/day |
+
+### Graph Neural Network (GraphSAGE)
+
+| Metric | Value |
+|--------|:-----:|
+| Demand MAE | 1.5037 |
+
+> **Note**: Graph neural contribution is not statistically supported (CI crosses zero vs non-graph LightGBM).
+
 ## Citation
 
 Cite the specific commit used and distinguish static diagnostic metrics from simulator outcomes.
