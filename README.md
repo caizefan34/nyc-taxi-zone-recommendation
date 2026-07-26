@@ -32,7 +32,7 @@ NYC TLC Data (2022-2025)
 
 All data flows are strictly one-directional (raw -> processed -> features -> model -> evaluation).
 
-Pipeline diagram: [docs/architecture.png](docs/architecture.png)
+Pipeline diagram: [docs/architecture.png](docs/results/architecture.png)
 
 Benchmark figures: [docs/results/](docs/results/)
 
