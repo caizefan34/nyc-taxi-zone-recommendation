@@ -1,4 +1,4 @@
-﻿vendor_id,pickup_datetime,dropoff_datetime,PULocationID,DOLocationID,fare_amount,trip_distance,passenger_count,payment_type
+vendor_id,pickup_datetime,dropoff_datetime,PULocationID,DOLocationID,fare_amount,trip_distance,passenger_count,payment_type
 1,2024-01-15 08:30:00,2024-01-15 08:45:00,237,236,12.50,2.3,1,1
 1,2024-01-15 09:00:00,2024-01-15 09:20:00,236,170,18.75,3.1,2,1
 2,2024-01-15 14:15:00,2024-01-15 14:30:00,170,237,9.00,1.8,1,2
