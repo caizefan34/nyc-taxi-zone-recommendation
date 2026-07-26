@@ -46,6 +46,9 @@ forecasting = [
     "scikit-learn>=1.4",
     "xgboost>=2.0",
 ]
+graph = [
+    "torch>=2.2",
+]
 docs = [
     "sphinx>=7.0",
     "sphinx-rtd-theme>=2.0",

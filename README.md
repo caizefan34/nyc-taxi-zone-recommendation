@@ -17,6 +17,7 @@ The project includes:
 - chronological cleaning of January 2023 NYC TLC Yellow Taxi trips;
 - weekday/half-hour/zone demand and fare statistics;
 - leakage-safe LightGBM/XGBoost demand and fare forecasting;
+- training-only OD graph features with GraphSAGE and GAT embeddings;
 - a directed OD travel-time graph and all-pairs shortest paths;
 - hot-zone, single-step, and finite-horizon planning strategies;
 - static reference-objective diagnostics and a fixed stochastic rollout;
@@ -67,6 +68,19 @@ The forecasting upgrade uses a chronological Jan 8--20 training window and Jan 2
 The ensemble demand MAE improvement is 0.2406 per zone-slot with timestamp-block bootstrap 95% CI [0.1960, 0.2820] and Cohen's dz=0.801. XGBoost on the same split reaches demand MAE 1.4956. Removing lag, rolling, or neighborhood features increases LightGBM demand MAE to 1.5344, 1.5632, and 1.5366 respectively.
 
 Better forecast accuracy does not automatically improve the current recommendation objective. The forecast-enhanced single-step strategy scores NDCG@3 0.8835 and $530.89/day in the fixed rollout, versus 0.9024 and $548.77/day for historical Single-Step. Its paired rollout difference is -$17.88/day, 95% CI [-$38.15, $3.03]. The production/default Two-Step strategy therefore remains unchanged.
+
+### Graph-enhanced forecasting
+
+The graph upgrade builds a 263-zone OD graph from 1,865,434 trips strictly before the Jan 21 internal validation boundary. OD-weighted lag messages and static GraphSAGE/GAT embeddings augment the same LightGBM matrix:
+
+| Model | Demand MAE | Demand RMSE |
+|---|---:|---:|
+| Non-graph LightGBM | 1.5114 | **5.0707** |
+| OD messages + LightGBM | **1.5024** | 5.0745 |
+| GraphSAGE + LightGBM | 1.5037 | 5.0716 |
+| GAT + LightGBM | 1.5058 | 5.0734 |
+
+GraphSAGE reduces MAE by 0.0077 (0.51%), but its timestamp-level 95% CI [-0.0042, 0.0200] crosses zero. GAT is weaker, and both learned embeddings underperform OD messages without embeddings. These results do not establish a graph-neural improvement; see [`outputs/graph_benchmark.md`](outputs/graph_benchmark.md).
 
 ### Horizon comparison
 
@@ -188,9 +202,10 @@ python -m scripts.generate_evaluation_report
 Install the optional tree-model dependencies, train both baselines, generate recursive holdout forecasts, and run the paired recommendation benchmark:
 
 ```bash
-python -m pip install -e ".[dev,forecasting]"
+python -m pip install -e ".[dev,forecasting,graph]"
 python -m scripts.train_forecaster
 python -m scripts.run_forecasting_benchmark --runs 100
+python -m scripts.run_graph_benchmark
 ```
 
 Generated model and row-level prediction artifacts remain under `data/processed/` and are ignored by Git. Reproducible aggregate results are checked in as [`outputs/forecast_evaluation.md`](outputs/forecast_evaluation.md), [`outputs/forecast_evaluation.json`](outputs/forecast_evaluation.json), and [`outputs/forecasting_benchmark.md`](outputs/forecasting_benchmark.md). See [`docs/forecasting.md`](docs/forecasting.md) for feature semantics and limitations.
@@ -248,6 +263,7 @@ src/
   eval/                         static diagnostic and rollout
   mdp/                          corrected model-based value iteration
   forecasting/                  causal features, tree models, evaluation, strategy adapter
+  graph/                        leakage-safe OD graph, GraphSAGE, GAT, message features
   audit/                        leakage, OPE formulas, statistics, fairness
 scripts/                        reproducible research experiment runners
 tests/                          unit and data-backed integration tests
