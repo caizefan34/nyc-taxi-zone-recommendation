@@ -1,4 +1,4 @@
-﻿---
+---
 name: Documentation
 about: Request documentation improvements or report gaps
 title: "[Docs] "

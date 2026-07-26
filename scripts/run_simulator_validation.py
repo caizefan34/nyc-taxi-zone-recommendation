@@ -1,4 +1,4 @@
-﻿"""Run simulator reality validation against real/distribution data.
+"""Run simulator reality validation against real/distribution data.
 
 Generates: outputs/simulator_validation_report.md
 """

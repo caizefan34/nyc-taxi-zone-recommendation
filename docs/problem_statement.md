@@ -1,4 +1,4 @@
-﻿# Problem Formulation
+# Problem Formulation
 
 ## Spatial-Temporal Taxi Zone Recommendation
 

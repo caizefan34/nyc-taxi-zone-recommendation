@@ -1,4 +1,4 @@
-﻿"""External urban feature providers for taxi demand forecasting.
+"""External urban feature providers for taxi demand forecasting.
 
 Provides timestamp-aligned features:
 - Weather (temperature, precipitation, snowfall)

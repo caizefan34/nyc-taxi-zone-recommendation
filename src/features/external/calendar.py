@@ -1,4 +1,4 @@
-﻿"""Calendar-based features: weekday, holiday, month, season.
+"""Calendar-based features: weekday, holiday, month, season.
 
 Holiday data is built-in for 2022–2025 US federal holidays.
 No external download required.

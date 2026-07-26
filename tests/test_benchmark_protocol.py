@@ -1,4 +1,4 @@
-﻿"""Tests for benchmark protocol."""
+"""Tests for benchmark protocol."""
 import json
 import os
 import tempfile

@@ -1,4 +1,4 @@
-﻿# Data Protocol — Multi-Year TLC Dataset
+# Data Protocol — Multi-Year TLC Dataset
 
 > **Version:** 1.0
 > **Status:** Phase 1

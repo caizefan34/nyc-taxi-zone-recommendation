@@ -1,4 +1,4 @@
-﻿"""Configuration management with YAML support."""
+"""Configuration management with YAML support."""
 from __future__ import annotations
 
 from pathlib import Path

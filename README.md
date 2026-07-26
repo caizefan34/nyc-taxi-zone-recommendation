@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
   <img src="assets/social-preview.svg" width="100%" alt="NYC Taxi Zone Recommendation">
 
   <h1>Dynamic Urban Mobility Decision System</h1>
@@ -11,6 +11,9 @@
     <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&amp;label=tests" alt="Tests"></a>
     <a href="docs/badges/reproducibility.svg"><img src="docs/badges/reproducibility.svg" alt="Reproducible"></a>
     <a href="docs/badges/benchmark.svg"><img src="docs/badges/benchmark.svg" alt="Benchmark"></a>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/"><img src="https://img.shields.io/badge/demo-available-success" alt="Demo Available"></a>
+    <a href="docs/leaderboard.md"><img src="https://img.shields.io/badge/benchmark-open-blue" alt="Benchmark Open"></a>
+    <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen" alt="Contributions Welcome"></a>
   </p>
 
   <p>
@@ -286,6 +289,7 @@ MIT License. See [LICENSE](LICENSE).
 ## Status
 
 This is an educational/research prototype, not a production dispatch system. See [ROADMAP.md](ROADMAP.md) for future directions.
+
 
 
 

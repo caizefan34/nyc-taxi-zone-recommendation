@@ -1,4 +1,4 @@
-﻿# Dynamic Simulator Deep Audit
+# Dynamic Simulator Deep Audit
 
 ## State Components
 

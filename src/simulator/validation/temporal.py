@@ -1,4 +1,4 @@
-﻿"""Temporal pattern validation: compare simulated vs real hourly/weekly/seasonal patterns.
+"""Temporal pattern validation: compare simulated vs real hourly/weekly/seasonal patterns.
 
 Metrics:
 - RMSE between real and simulated hourly demand curves

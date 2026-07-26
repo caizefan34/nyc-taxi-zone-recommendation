@@ -1,4 +1,4 @@
-﻿# Phase 14: Interactive Platform Audit
+# Phase 14: Interactive Platform Audit
 
 ## Assessment
 

@@ -1,4 +1,4 @@
-﻿"""Dynamic supply-demand taxi simulator v2.
+"""Dynamic supply-demand taxi simulator v2.
 
 Replaces the fixed-demand model with a closed-loop system where:
 - Supply affects pickup probability (more taxis → lower chance per driver)

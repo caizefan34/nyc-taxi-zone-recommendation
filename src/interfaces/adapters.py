@@ -1,4 +1,4 @@
-﻿"""Adapters to wrap existing implementations into standard interfaces."""
+"""Adapters to wrap existing implementations into standard interfaces."""
 from __future__ import annotations
 
 from typing import Any

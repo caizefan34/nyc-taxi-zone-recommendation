@@ -1,4 +1,4 @@
-﻿# How Researchers Contribute
+# How Researchers Contribute
 
 > Add your model to the Open Urban Mobility Benchmark Ecosystem.
 

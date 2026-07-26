@@ -1,4 +1,4 @@
-﻿# Release Audit
+# Release Audit
 
 > **Date:** 2026-07-26 (Updated)
 > **Repository:** caizefan34/nyc-taxi-zone-recommendation

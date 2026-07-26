@@ -1,4 +1,4 @@
-﻿# Release Notes Template
+# Release Notes Template
 
 Use this as a guide for creating GitHub Releases. Copy and fill in per version.
 

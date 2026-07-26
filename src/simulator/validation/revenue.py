@@ -1,4 +1,4 @@
-﻿"""Revenue validation: compare simulated driver rewards against real TLC fare data.
+"""Revenue validation: compare simulated driver rewards against real TLC fare data.
 
 Compares:
 - fare/reward distribution statistics

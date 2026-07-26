@@ -1,4 +1,4 @@
-﻿Configuration System
+Configuration System
 ====================
 
 .. automodule:: src.common.config

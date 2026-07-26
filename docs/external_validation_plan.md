@@ -1,4 +1,4 @@
-﻿# External Validation Plan
+# External Validation Plan
 
 > **Status**: Framework designed. Validation not yet executed.
 > **Current completion**: Level 1–2 complete. Level 3–4 planned.

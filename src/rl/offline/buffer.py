@@ -1,4 +1,4 @@
-﻿"""Offline replay buffer for historical trajectory data.
+"""Offline replay buffer for historical trajectory data.
 
 Stores (state, action, reward, next_state, done) transitions
 collected from the v2 simulator or real data.

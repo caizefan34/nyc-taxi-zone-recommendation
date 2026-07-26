@@ -1,4 +1,4 @@
-﻿# Phase 0 — Repository Upgrade Audit
+# Phase 0 — Repository Upgrade Audit
 
 > **Date:** 2026-07-26
 > **Scope:** Full inventory of `src/`, `scripts/`, `data/`, `models/`, `simulator/`, `evaluation/`, `tests/`, `configs/`

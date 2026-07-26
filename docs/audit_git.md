@@ -1,4 +1,4 @@
-﻿# Git & Version Audit
+# Git & Version Audit
 
 ## Current State
 

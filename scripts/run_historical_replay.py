@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Run historical replay evaluation for all policies."""
 import json
 import sys

@@ -1,4 +1,4 @@
-﻿---
+---
 name: New Experiment
 about: Propose a new experiment or benchmark
 title: "[Experiment] "

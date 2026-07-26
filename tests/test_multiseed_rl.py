@@ -1,4 +1,4 @@
-﻿"""Tests for multi-seed RL evaluation."""
+"""Tests for multi-seed RL evaluation."""
 import sys
 from pathlib import Path
 

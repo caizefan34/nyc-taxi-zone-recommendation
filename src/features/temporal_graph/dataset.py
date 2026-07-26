@@ -1,4 +1,4 @@
-﻿"""Dataset and collator for temporal graph forecasting.
+"""Dataset and collator for temporal graph forecasting.
 
 Prepares sliding-window sequences from historical demand data
 with optional external features.

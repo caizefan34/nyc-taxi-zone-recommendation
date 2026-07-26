@@ -1,4 +1,4 @@
-﻿# Contributing to NYC Taxi Zone Recommendation
+# Contributing to NYC Taxi Zone Recommendation
 
 ## Welcome!
 

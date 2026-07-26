@@ -1,4 +1,4 @@
-﻿# Configuration Guide
+# Configuration Guide
 
 ## `config.yaml`
 

@@ -1,4 +1,4 @@
-﻿# @package _global_
+# @package _global_
 # Hydra-based experiment configuration for NYC Taxi Zone Recommendation.
 
 defaults:

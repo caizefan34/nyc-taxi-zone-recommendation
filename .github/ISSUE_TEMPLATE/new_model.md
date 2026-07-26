@@ -1,4 +1,4 @@
-﻿---
+---
 name: New Model
 about: Propose adding a new model (forecasting, policy, or RL agent)
 title: "[Model] "

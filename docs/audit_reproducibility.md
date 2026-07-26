@@ -1,4 +1,4 @@
-﻿# Reproducibility Audit
+# Reproducibility Audit
 
 ## Configuration Management
 

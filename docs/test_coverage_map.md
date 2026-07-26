@@ -1,4 +1,4 @@
-﻿# Test Coverage Map
+# Test Coverage Map
 
 > Generated: 2026-07-26 | Total: 24 test files, ~54 test functions
 

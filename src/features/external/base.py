@@ -1,4 +1,4 @@
-﻿"""Unified interface for external urban feature providers.
+"""Unified interface for external urban feature providers.
 
 All feature providers must:
 - Implement ``ExternalFeatureProvider``

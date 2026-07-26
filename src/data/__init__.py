@@ -1,4 +1,4 @@
-﻿"""Multi-year NYC TLC data pipeline package.
+"""Multi-year NYC TLC data pipeline package.
 
 Provides automated download, cleaning, and time-based splitting
 for NYC TLC Yellow Taxi trip records (2022–2025).

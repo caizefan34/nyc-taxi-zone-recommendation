@@ -1,4 +1,4 @@
-﻿"""Validation module for comparing simulator output against real NYC TLC data.
+"""Validation module for comparing simulator output against real NYC TLC data.
 
 Provides statistical tests to assess how well the DynamicSimulator v2
 reproduces real-world demand, temporal, and revenue distributions.

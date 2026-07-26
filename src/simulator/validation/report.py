@@ -1,4 +1,4 @@
-﻿"""Simulator validation report generator.
+"""Simulator validation report generator.
 
 Generates a comprehensive markdown report comparing simulator output
 against real NYC TLC data with plots, metrics, and interpretation.

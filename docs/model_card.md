@@ -1,4 +1,4 @@
-﻿# Model Card: Dynamic Urban Mobility Decision System
+# Model Card: Dynamic Urban Mobility Decision System
 
 ## Model Overview
 

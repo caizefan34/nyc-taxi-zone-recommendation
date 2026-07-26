@@ -1,4 +1,4 @@
-﻿"""Tests for the new calibration framework.
+"""Tests for the new calibration framework.
 
 Covers:
 - CalibrationConfig loading

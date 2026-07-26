@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Live demo: end-to-end zone recommendation inference with fallback."""
 import json
 import sys

@@ -1,4 +1,4 @@
-﻿# Demo Gallery
+# Demo Gallery
 
 > Visual walkthrough of the NYC Taxi Zone Recommendation platform.
 

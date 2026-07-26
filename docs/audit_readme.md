@@ -1,4 +1,4 @@
-﻿# README Consistency Audit
+# README Consistency Audit
 
 ## Claim Check
 

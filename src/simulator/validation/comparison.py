@@ -1,4 +1,4 @@
-﻿"""Distribution comparison between simulator and real NYC TLC data.
+"""Distribution comparison between simulator and real NYC TLC data.
 
 Measures:
 - KL divergence (zone demand distribution)

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Generate demo visualizations for the README and demo gallery.
 
 Produces:

@@ -1,4 +1,4 @@
-﻿# GitHub Growth & Community Adoption Audit
+# GitHub Growth & Community Adoption Audit
 
 > Phase 16 v2 | 2026-07-26
 

@@ -1,4 +1,4 @@
-﻿# Offline RL Dataset Protocol
+# Offline RL Dataset Protocol
 
 ## Overview
 

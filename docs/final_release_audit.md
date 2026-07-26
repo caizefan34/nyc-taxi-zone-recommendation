@@ -1,4 +1,4 @@
-﻿# Research Release Audit
+# Research Release Audit
 
 ## Overall Score
 

@@ -1,4 +1,4 @@
-﻿"""Phase 8: Pareto Analysis — Revenue vs Risk vs Competition."""
+"""Phase 8: Pareto Analysis — Revenue vs Risk vs Competition."""
 from __future__ import annotations
 
 import json

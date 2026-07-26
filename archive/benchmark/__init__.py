@@ -1,4 +1,4 @@
-﻿"""NYC Taxi Zone Recommendation — Public Benchmark Framework.
+"""NYC Taxi Zone Recommendation — Public Benchmark Framework.
 
 This package provides a modular, extensible benchmark for evaluating
 zone recommendation policies. External researchers can add new models

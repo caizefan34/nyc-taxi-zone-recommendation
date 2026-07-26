@@ -1,4 +1,4 @@
-﻿"""Simulator calibration: multi-dim alignment of simulator to real-world statistics.
+"""Simulator calibration: multi-dim alignment of simulator to real-world statistics.
 
 Supports calibration of:
 - Demand distribution (zone-level pickup counts)

@@ -1,4 +1,4 @@
-﻿# Historical Replay Evaluation
+# Historical Replay Evaluation
 
 ## Goal
 Evaluate zone recommendation policies against recorded historical demand patterns, reducing reliance on pure simulation.

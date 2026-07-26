@@ -1,4 +1,4 @@
-﻿# Leaderboard
+# Leaderboard
 
 > Open Urban Mobility Benchmark — Public Leaderboard
 

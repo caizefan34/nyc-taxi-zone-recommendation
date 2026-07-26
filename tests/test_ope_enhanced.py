@@ -1,4 +1,4 @@
-﻿"""Tests for enhanced OPE methods (WIS).
+"""Tests for enhanced OPE methods (WIS).
 """
 from __future__ import annotations
 

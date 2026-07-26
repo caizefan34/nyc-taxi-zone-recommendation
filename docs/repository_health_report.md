@@ -1,4 +1,4 @@
-﻿# Repository Health Report
+# Repository Health Report
 
 > Phase 15: Repository Architecture Audit & Cleanup | 2026-07-26
 

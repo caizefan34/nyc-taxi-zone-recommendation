@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Download sample NYC TLC trip data for quick-start testing."""
 import csv
 from pathlib import Path

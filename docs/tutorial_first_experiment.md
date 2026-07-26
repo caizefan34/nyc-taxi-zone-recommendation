@@ -1,4 +1,4 @@
-﻿# Tutorial: Your First Experiment (30 minutes)
+# Tutorial: Your First Experiment (30 minutes)
 
 > Go from zero to running your first benchmark in 30 minutes.
 

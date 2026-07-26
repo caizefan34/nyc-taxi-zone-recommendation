@@ -1,4 +1,4 @@
-﻿# Adding New Models
+# Adding New Models
 
 ## Overview
 The framework provides standard interfaces for adding forecasting models and policies. External researchers can implement these interfaces and register them for benchmarking without modifying existing code.

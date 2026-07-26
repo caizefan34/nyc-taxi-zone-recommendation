@@ -1,4 +1,4 @@
-﻿# Cross-City Extension Framework
+# Cross-City Extension Framework
 
 ## Goal
 Design a framework for extending the benchmark to new cities.

@@ -1,4 +1,4 @@
-﻿"""Statistical benchmark: paired bootstrap comparison across all models.
+"""Statistical benchmark: paired bootstrap comparison across all models.
 
 Reads existing benchmark JSONs and computes:
 - Mean, Std, 95% CI for each model/metric

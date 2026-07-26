@@ -1,4 +1,4 @@
-﻿"""Airport activity features for JFK and LGA.
+"""Airport activity features for JFK and LGA.
 
 Derives airport activity metrics from TLC trip data:
 - JFK and LGA pickup/dropoff counts per half-hour slot

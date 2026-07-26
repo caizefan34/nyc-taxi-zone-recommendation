@@ -1,4 +1,4 @@
-﻿# Deployment Readiness Assessment
+# Deployment Readiness Assessment
 
 ## Metrics Overview
 
