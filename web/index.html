@@ -3,14 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <link rel="dns-prefetch" href="https://unpkg.com">
-<link rel="dns-prefetch" href="https://cdn.plot.ly">
 <link rel="dns-prefetch" href="https://{s}.basemaps.cartocdn.com">
 <link rel="preconnect" href="https://unpkg.com">
-<link rel="preconnect" href="https://cdn.plot.ly">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NYC Mobility AI — Interactive Simulation Platform</title>
 <meta name="description" content="Interactive simulation platform for NYC taxi zone recommendation research.">
-<link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -290,12 +288,11 @@
   Powered by NYC TLC Trip Record Data. Not affiliated with NYC TLC or any government agency.</p>
 </footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-<script src="https://cdn.plot.ly/plotly-2.32.0.min.js" defer></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="js/main.js"></script>
 <script src="js/map.js"></script>
 <script src="js/simulation.js"></script>
 <script src="js/charts.js"></script>
-<script>document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){var el=document.getElementById("mapLoading");if(el)el.style.display="none";},4000);});</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var el=document.getElementById("mapLoading");if(el)el.style.display="none";});</script>
 </body>
 </html>
