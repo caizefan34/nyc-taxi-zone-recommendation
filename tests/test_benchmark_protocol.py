@@ -11,7 +11,7 @@ class TestBenchmarkProtocol:
         """MAE should compute correctly."""
         import numpy as np
 
-        from benchmark.metrics import mae
+        from archive.benchmark.metrics import mae
         y_true = np.array([3, 5, 2, 7])
         y_pred = np.array([4, 4, 3, 6])
         result = mae(y_true, y_pred)
@@ -22,7 +22,7 @@ class TestBenchmarkProtocol:
         """RMSE should compute correctly."""
         import numpy as np
 
-        from benchmark.metrics import rmse
+        from archive.benchmark.metrics import rmse
         y_true = np.array([3, 5, 2, 7])
         y_pred = np.array([4, 4, 3, 6])
         result = rmse(y_true, y_pred)
@@ -31,7 +31,7 @@ class TestBenchmarkProtocol:
 
     def test_report_generation(self):
         """Report should include metadata."""
-        from benchmark.reports import generate_report
+        from archive.benchmark.reports import generate_report
         report = generate_report({"model_a": {"MAE": 1.5}}, "forecast")
         assert report["benchmark"] == "forecast"
         assert report["version"] == "2.0.0"
@@ -40,7 +40,7 @@ class TestBenchmarkProtocol:
 
     def test_report_save(self):
         """Report should save to JSON."""
-        from benchmark.reports import generate_report, save_report
+        from archive.benchmark.reports import generate_report, save_report
         report = generate_report({"test": {"acc": 0.9}}, "test")
         tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
         name = tmp.name

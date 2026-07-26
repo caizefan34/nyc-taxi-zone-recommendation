@@ -10,7 +10,7 @@ import json
 import time
 from typing import Any
 
-from benchmark import __version__
+from archive.benchmark import __version__
 
 
 def generate_report(results: dict[str, dict[str, float]], benchmark_type: str) -> dict[str, Any]:

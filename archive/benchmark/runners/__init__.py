@@ -17,7 +17,7 @@ def run_forecast_benchmark(models: dict) -> dict[str, Any]:
     for name, model in models.items():
         try:
             y_true, y_pred = model.evaluate()
-            from benchmark.metrics import mae, rmse
+            from archive.benchmark.metrics import mae, rmse
             results[name] = {"MAE": mae(y_true, y_pred), "RMSE": rmse(y_true, y_pred)}
         except Exception as e:
             results[name] = {"error": str(e)}
@@ -42,7 +42,7 @@ def run_rl_benchmark(policies: dict) -> dict[str, Any]:
     for name, policy in policies.items():
         try:
             returns = policy.evaluate()
-            from benchmark.metrics import mean_reward
+            from archive.benchmark.metrics import mean_reward
             results[name] = {"episode_return": mean_reward(returns)}
         except Exception as e:
             results[name] = {"error": str(e)}

@@ -67,6 +67,7 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N"]
+exclude = ["archive/"]
 ignore = ["E702", "E701", "W293", "N806", "F841", "F821"]
 
 [tool.black]
