@@ -38,6 +38,16 @@ def test_markdown_uses_github_compatible_display_math_delimiters():
     assert offenders == []
 
 
+def test_evaluation_metric_table_does_not_use_raw_pipes_inside_math():
+    problem_statement = (ROOT / "docs/problem_statement.md").read_text(encoding="utf-8")
+    table = problem_statement.split("### Evaluation Metrics", 1)[1].split("### Constraints", 1)[0]
+    formula_rows = [line for line in table.splitlines() if line.startswith("| **")]
+    assert formula_rows
+    assert all(line.count("|") == 4 for line in formula_rows)
+    assert "\\lvert Q\\rvert" in table
+    assert "|Q|" not in table
+
+
 def test_multi_agent_snapshot_conserves_demand_and_documents_competition():
     snapshot = json.loads((ROOT / "outputs/multi_agent_benchmark.json").read_text(encoding="utf-8"))
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
