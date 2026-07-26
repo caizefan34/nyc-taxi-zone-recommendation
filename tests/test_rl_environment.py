@@ -1,4 +1,5 @@
 """Gymnasium contract tests for the finite-market RL environment."""
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -105,7 +106,5 @@ def test_seeded_training_is_reproducible():
     )
 
     assert first_diagnostics == second_diagnostics
-    for first_parameter, second_parameter in zip(
-        first.online.parameters(), second.online.parameters(), strict=True
-    ):
+    for first_parameter, second_parameter in zip(first.online.parameters(), second.online.parameters(), strict=True):
         assert torch.equal(first_parameter, second_parameter)

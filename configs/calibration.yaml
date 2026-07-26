@@ -1,0 +1,22 @@
+﻿# =============================================================================
+# Simulator Calibration Configuration
+# =============================================================================
+# Each calibration dimension adjusts simulator outputs to better match
+# real-world NYC TLC data. Factors are derived from running the same
+# policy in both the v1 (data-backed) and v2 (synthetic) simulators.
+# =============================================================================
+
+calibration:
+  # Demand calibration: scale and offset for zone-level pickup counts
+  demand_factor: 1.0
+  demand_offset: 0.0
+
+  # Fare calibration: align v2 fare distribution with real TLC fare data
+  fare_factor: 0.80
+  fare_offset: 0.0
+
+  # Travel time calibration
+  travel_time_factor: 1.0
+
+  # Reward calibration: v2 reward → v1-equivalent reward
+  reward_factor: 0.80

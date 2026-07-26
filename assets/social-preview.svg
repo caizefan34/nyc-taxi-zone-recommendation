@@ -25,19 +25,19 @@
   <circle cx="200" cy="500" r="120" fill="rgba(58,123,213,0.03)" stroke="rgba(58,123,213,0.06)" stroke-width="1"/>
   <text x="80" y="140" font-family="'SF Mono','Fira Code','Courier New',monospace" font-size="64" font-weight="bold" fill="url(#accent)">NYC Taxi Zone</text>
   <text x="80" y="220" font-family="'SF Mono','Fira Code','Courier New',monospace" font-size="64" font-weight="bold" fill="#ffffff">Recommendation</text>
-  <text x="80" y="270" font-family="'SF Mono','Fira Code','Courier New',monospace" font-size="22" fill="rgba(255,255,255,0.7)">Two-Step Finite-Horizon Planning for Driver Guidance</text>
+  <text x="80" y="270" font-family="'SF Mono','Fira Code','Courier New',monospace" font-size="22" fill="rgba(255,255,255,0.7)">Forecasting · Graph Learning · Multi-Agent Simulation · Deep RL</text>
   <rect x="80" y="320" width="260" height="130" rx="12" fill="url(#card1)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-  <text x="100" y="360" font-family="'SF Mono',monospace" font-size="14" fill="rgba(255,255,255,0.5)">NDCG@3</text>
-  <text x="100" y="415" font-family="'SF Pro','Helvetica Neue',sans-serif" font-size="48" font-weight="bold" fill="#00d2ff">0.9978</text>
+  <text x="100" y="360" font-family="'SF Mono',monospace" font-size="14" fill="rgba(255,255,255,0.5)">FORECAST MAE</text>
+  <text x="100" y="415" font-family="'SF Pro','Helvetica Neue',sans-serif" font-size="48" font-weight="bold" fill="#00d2ff">1.4868</text>
   <rect x="370" y="320" width="260" height="130" rx="12" fill="url(#card1)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-  <text x="390" y="360" font-family="'SF Mono',monospace" font-size="14" fill="rgba(255,255,255,0.5)">Hit@3</text>
-  <text x="390" y="415" font-family="'SF Pro','Helvetica Neue',sans-serif" font-size="48" font-weight="bold" fill="#00d2ff">0.9988</text>
+  <text x="390" y="360" font-family="'SF Mono',monospace" font-size="14" fill="rgba(255,255,255,0.5)">DQN LIFT / DRIVER</text>
+  <text x="390" y="415" font-family="'SF Pro','Helvetica Neue',sans-serif" font-size="48" font-weight="bold" fill="#00d2ff">+$53.74</text>
   <rect x="660" y="320" width="260" height="130" rx="12" fill="url(#card1)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-  <text x="680" y="360" font-family="'SF Mono',monospace" font-size="14" fill="rgba(255,255,255,0.5)">Avg Daily Fare</text>
-  <text x="680" y="415" font-family="'SF Pro','Helvetica Neue',sans-serif" font-size="48" font-weight="bold" fill="#00d2ff">$569.80</text>
+  <text x="680" y="360" font-family="'SF Mono',monospace" font-size="14" fill="rgba(255,255,255,0.5)">FULL-DATA TESTS</text>
+  <text x="680" y="415" font-family="'SF Pro','Helvetica Neue',sans-serif" font-size="48" font-weight="bold" fill="#00d2ff">113</text>
   <rect x="950" y="320" width="260" height="130" rx="12" fill="url(#card1)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-  <text x="970" y="360" font-family="'SF Mono',monospace" font-size="14" fill="rgba(255,255,255,0.5)">Zone Coverage</text>
-  <text x="970" y="415" font-family="'SF Pro','Helvetica Neue',sans-serif" font-size="48" font-weight="bold" fill="#00d2ff">59.3%</text>
+  <text x="970" y="360" font-family="'SF Mono',monospace" font-size="14" fill="rgba(255,255,255,0.5)">NYC TAXI ZONES</text>
+  <text x="970" y="415" font-family="'SF Pro','Helvetica Neue',sans-serif" font-size="48" font-weight="bold" fill="#00d2ff">263</text>
   <rect x="80" y="490" width="1120" height="1" fill="rgba(255,255,255,0.1)"/>
   <text x="80" y="540" font-family="'SF Mono',monospace" font-size="18" fill="rgba(255,255,255,0.4)">Python 3.10+  |  263 Zones  |  336 Time Slots  |  MIT License</text>
   <text x="80" y="580" font-family="'SF Mono',monospace" font-size="16" fill="rgba(255,255,255,0.25)">github.com/caizefan34/nyc-taxi-zone-recommendation</text>

@@ -1,0 +1,28 @@
+{
+  "config": {
+    "drivers": 10,
+    "seed": 42
+  },
+  "v1_legacy": {
+    "average_driver_revenue": NaN,
+    "fulfilled_trips": 0,
+    "driver_utilization": NaN,
+    "status": "no_data"
+  },
+  "v2_dynamic": {
+    "average_driver_revenue": 1867.8096687082525,
+    "fulfilled_trips": 776,
+    "driver_utilization": 0.13845600987868634,
+    "total_revenue": 18678.096687082525,
+    "demand_fulfillment_rate": 0.14752851711026616,
+    "zone_saturation_rate": 0.0,
+    "average_idle_minutes": 8684.36342042284,
+    "reward_breakdown": {
+      "total_revenue": 18678.096687082525,
+      "total_fuel_cost": -1989.6260577108046,
+      "total_competition_penalty": -42.0,
+      "total_risk_penalty": -1070.5597640244232
+    },
+    "status": "success"
+  }
+}

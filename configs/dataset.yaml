@@ -1,0 +1,28 @@
+﻿# =============================================================================
+# Dataset Configuration
+# =============================================================================
+
+dataset:
+  name: "nyc-tlc-multi-year"
+  description: "NYC TLC Yellow Taxi Trip Records (2022-2025)"
+
+  years: [2022, 2023, 2024, 2025]
+  raw_root: "data/raw"
+  processed_root: "data/processed/multi_year"
+  zone_count: 263
+
+  # Temporal split: strict time isolation
+  splits:
+    train: ["2022-01-01", "2023-12-31"]
+    validation: ["2024-01-01", "2024-12-31"]
+    test: ["2025-01-01", "2025-12-31"]
+
+  # Cleaning thresholds
+  cleaning:
+    max_trip_duration_minutes: 240.0
+    min_trip_duration_minutes: 1.0
+    max_fare: 200.0
+    min_fare: 0.0
+    max_trip_distance: 100.0
+    min_trip_distance: 0.1
+    max_speed_mph: 80.0

@@ -12,10 +12,10 @@ Dependencies:
     pip install numpy pyyaml
 """
 from __future__ import annotations
-import sys
+
 import csv
-import math
-from datetime import datetime, timedelta
+import sys
+from datetime import datetime
 from pathlib import Path
 
 
@@ -140,3 +140,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

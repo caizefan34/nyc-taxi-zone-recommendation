@@ -1,4 +1,5 @@
-﻿"""Tests for the improved two-step planning strategy."""
+"""Tests for the improved two-step planning strategy."""
+
 import importlib.util
 import unittest
 from datetime import datetime
@@ -8,14 +9,13 @@ import pytest
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "processed"
 requires_data = pytest.mark.skipif(
-    not (DATA_DIR / "zone_time_statistics.parquet").exists(),
-    reason="Data files not available"
+    not (DATA_DIR / "zone_time_statistics.parquet").exists(), reason="Data files not available"
 )
 
 try:
     spec = importlib.util.spec_from_file_location(
         "improved_strategy",
-        Path(__file__).resolve().parents[1] / "src" / "2_recommendation_algorithm" / "improved_strategy.py"
+        Path(__file__).resolve().parents[1] / "src" / "2_recommendation_algorithm" / "improved_strategy.py",
     )
     strategy = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(strategy)
@@ -60,6 +60,7 @@ class TestImprovedStrategy(unittest.TestCase):
             strategy.recommend(datetime(2023, 1, 15, 8, 0), 0)
         with self.assertRaises(ValueError):
             strategy.recommend(datetime(2023, 1, 15, 8, 0), 264)
+
 
 if __name__ == "__main__":
     unittest.main()

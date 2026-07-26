@@ -1,4 +1,5 @@
 """Stable module entry point for the real planning parameter grid."""
+
 from __future__ import annotations
 
 import importlib.util

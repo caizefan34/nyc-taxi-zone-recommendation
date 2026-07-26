@@ -1,0 +1,48 @@
+{
+  "config": {
+    "drivers": 10,
+    "seed": 42
+  },
+  "dqn": {
+    "avg_reward_per_driver": 1865.6177185016163,
+    "total_income": 18656.177185016164,
+    "utilization": 0.13809796300743538,
+    "competition_penalty": 42.0,
+    "risk_penalty": 1069.332241070339,
+    "fuel_cost": 1983.2096904250861
+  },
+  "double_dqn": {
+    "avg_reward_per_driver": 1965.450945674182,
+    "total_income": 19654.50945674182,
+    "utilization": 0.14290811906339065,
+    "competition_penalty": 32.5,
+    "risk_penalty": 1080.056624734364,
+    "fuel_cost": 2042.3220854872748
+  },
+  "iql": {
+    "avg_reward_per_driver": 247.19654846191406,
+    "dr_estimate": 247.12653579711915,
+    "ope_ci95_low": 244.91391563415527,
+    "ope_ci95_high": 249.61120529174804,
+    "utilization": 0.2852,
+    "competition_penalty": 0.0,
+    "n_transitions": 10000,
+    "iql_q_loss_final": 294.28131103515625,
+    "iql_v_loss_final": 0.5498191714286804
+  },
+  "mean_field": {
+    "single_agent_reward": 1976.2987146913692,
+    "multi_agent_reward": 1865.6177185016163,
+    "mean_field_reward": 225.74510194633802,
+    "single_agent_income": 1976.2987146913692,
+    "multi_agent_income": 1865.6177185016163,
+    "mean_field_income": 19.294453157806668,
+    "single_agent_utilization": 0.14469941511856266,
+    "multi_agent_utilization": 0.13809796300743538,
+    "mean_field_utilization": 0.3482142857142857,
+    "single_agent_competition": 0.0,
+    "multi_agent_competition": 4.2,
+    "mean_field_competition": 0.0,
+    "n_drivers": 10
+  }
+}

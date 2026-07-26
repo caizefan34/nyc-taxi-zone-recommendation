@@ -1,4 +1,4 @@
-﻿name: Build Sphinx Docs and Deploy to GitHub Pages
+name: Build Sphinx Docs and Deploy to GitHub Pages
 
 on:
   push:
@@ -30,6 +30,13 @@ jobs:
         run: |
           cd docs
           sphinx-build -b html . _build/html
+      - name: Build self-contained web app
+        run: |
+          python scripts/build_web.py
+      - name: Copy interactive web app to docs output
+        run: |
+          mkdir -p docs/_build/html/web
+          cp -r web/index.html web/css web/js web/data web/assets docs/_build/html/web/ 2>/dev/null || true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

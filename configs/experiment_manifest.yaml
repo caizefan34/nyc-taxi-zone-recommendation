@@ -1,0 +1,48 @@
+
+# Experiment Manifest v2.0 - Full Reproducibility Record
+# Generated: 2026-07-26
+
+dataset:
+  source: NYC TLC Yellow Taxi Trip Records
+  years: [2022, 2023, 2024, 2025]
+  zones: 263
+  time_slots: 336  # 48 slots/day x 7 days
+  train_years: [2022, 2023]
+  test_year: 2025
+  holdout_year: 2024
+
+forecasting:
+  models:
+    historical_average: {type: baseline, features: []}
+    lightgbm: {type: tree, features: [lag, rolling, neighbor]}
+    xgboost: {type: tree, features: [lag, rolling, neighbor]}
+    graphsage: {type: gnn, features: [lag, rolling, neighbor, embedding]}
+    temporal_graph_transformer: {type: transformer, features: [lag, rolling, neighbor, graph]}
+  metrics: [MAE, RMSE, MAPE, PICP]
+  forecast_horizon: 48 half-hour slots
+
+simulator:
+  version: 2
+  driver_count: 50
+  demand_supply_ratio: 1.0
+  seeds: 30
+  calibration:
+    fare: {before_rmse: 8.883, after_rmse: 3.109}
+    travel_time: {before_mae: 3.034, after_mae: 1.315}
+    demand: {kl_divergence: 0.662, unchanged: true}
+  strategies: [hot_zone, single_step, two_step]
+
+offline_rl:
+  algorithms: [iql]
+  seed: 20230722
+  evaluation: [fqe, wis, doubly_robust]
+  bootstrap_resamples: 2000
+
+evaluation:
+  metrics: [revenue, utilization, fulfillment_rate, idle_time]
+  statistical_tests: [paired_t, wilcoxon, cohen_dz]
+  confidence_level: 0.95
+
+cross_year:
+  test_years: [2024]
+  drift_detected: true

@@ -1,0 +1,37 @@
+﻿# =============================================================================
+# Multi-Year TLC Data Pipeline Configuration
+# =============================================================================
+# Controls the src.data pipeline for downloading, cleaning, and
+# splitting multi-year NYC TLC Yellow Taxi data.
+# =============================================================================
+
+# Years to include
+years:
+  - 2022
+  - 2023
+  - 2024
+  - 2025
+
+# Data directories (project-relative)
+raw_root: "data/raw"
+processed_root: "data/processed/multi_year"
+
+# Domain constants
+zone_count: 263
+
+# Cleaning thresholds (mirrors src/1_data_clean/clean.py)
+max_trip_duration_minutes: 240.0
+min_trip_duration_minutes: 1.0
+max_fare: 200.0
+min_fare: 0.0
+max_trip_distance: 100.0
+min_trip_distance: 0.1
+max_speed_mph: 80.0
+
+# Temporal split boundaries
+# Train:       [2022-01-01, 2024-01-01)
+# Validation:  [2024-01-01, 2025-01-01)
+# Test:        [2025-01-01, 2026-01-01)
+train_end: "2024-01-01"
+val_end: "2025-01-01"
+test_end: "2026-01-01"

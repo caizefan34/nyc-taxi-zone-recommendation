@@ -1,4 +1,5 @@
 """Run paired-seed rollout comparisons and statistical tests."""
+
 from __future__ import annotations
 
 import argparse

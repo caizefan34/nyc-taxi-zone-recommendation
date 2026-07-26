@@ -1,4 +1,3 @@
-
 import pytest
 
 from src.common.config import get_config, load_config, reload_config

@@ -1,0 +1,27 @@
+{
+  "lightgbm": {
+    "cpu_latency_ms": 0.0025,
+    "gpu_latency_ms": null,
+    "memory_mb": 5
+  },
+  "xgboost": {
+    "cpu_latency_ms": 0.0042,
+    "gpu_latency_ms": null,
+    "memory_mb": 8
+  },
+  "gnn": {
+    "cpu_latency_ms": 0.0055,
+    "gpu_latency_ms": 0.0563,
+    "memory_mb": 50
+  },
+  "transformer": {
+    "cpu_latency_ms": 1.3994,
+    "gpu_latency_ms": 0.784,
+    "memory_mb": 8.6
+  },
+  "rl_dqn": {
+    "cpu_latency_ms": 0.1065,
+    "gpu_latency_ms": 0.1555,
+    "memory_mb": 0.8
+  }
+}

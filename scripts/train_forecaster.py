@@ -1,4 +1,5 @@
 """Train leakage-safe LightGBM demand/fare models and forecast the holdout week."""
+
 from __future__ import annotations
 
 import argparse
@@ -117,14 +118,8 @@ def _feature_ablation(
 ) -> dict[str, object]:
     groups = {
         "without_lags": [column for column in FEATURE_COLUMNS if not column.startswith("lag_demand_")],
-        "without_rolling": [
-            column for column in FEATURE_COLUMNS if not column.startswith("rolling_demand_")
-        ],
-        "without_neighborhood": [
-            column
-            for column in FEATURE_COLUMNS
-            if not column.startswith("neighbor_")
-        ],
+        "without_rolling": [column for column in FEATURE_COLUMNS if not column.startswith("rolling_demand_")],
+        "without_neighborhood": [column for column in FEATURE_COLUMNS if not column.startswith("neighbor_")],
     }
     actual = validation["target_demand"].to_numpy(dtype=float)
     results = {

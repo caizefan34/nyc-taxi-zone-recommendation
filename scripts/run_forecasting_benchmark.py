@@ -1,4 +1,5 @@
 """Compare the historical single-step strategy with supervised forecasts."""
+
 from __future__ import annotations
 
 import argparse

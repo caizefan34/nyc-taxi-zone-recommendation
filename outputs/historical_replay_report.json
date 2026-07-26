@@ -1,0 +1,66 @@
+{
+  "methodology": {
+    "type": "historical_replay",
+    "description": "Policy evaluated against historical demand distribution",
+    "n_steps": 64,
+    "demand_zones": [
+      161,
+      170,
+      236,
+      237
+    ]
+  },
+  "results": [
+    {
+      "policy": "hot_zone",
+      "n_steps": 64,
+      "total_revenue": 9099.94,
+      "avg_revenue_per_step": 142.19,
+      "total_pickups": 568,
+      "utilization": 0.4437,
+      "demand_coverage": 0.9965,
+      "source": "historical_replay"
+    },
+    {
+      "policy": "single_step",
+      "n_steps": 64,
+      "total_revenue": 9099.94,
+      "avg_revenue_per_step": 142.19,
+      "total_pickups": 568,
+      "utilization": 0.4437,
+      "demand_coverage": 0.9965,
+      "source": "historical_replay"
+    },
+    {
+      "policy": "dqn",
+      "n_steps": 64,
+      "total_revenue": 9099.94,
+      "avg_revenue_per_step": 142.19,
+      "total_pickups": 568,
+      "utilization": 0.4437,
+      "demand_coverage": 0.9965,
+      "source": "historical_replay"
+    },
+    {
+      "policy": "double_dqn",
+      "n_steps": 64,
+      "total_revenue": 9099.94,
+      "avg_revenue_per_step": 142.19,
+      "total_pickups": 568,
+      "utilization": 0.4437,
+      "demand_coverage": 0.9965,
+      "source": "historical_replay"
+    },
+    {
+      "policy": "iql",
+      "n_steps": 64,
+      "total_revenue": 9099.94,
+      "avg_revenue_per_step": 142.19,
+      "total_pickups": 568,
+      "utilization": 0.4437,
+      "demand_coverage": 0.9965,
+      "source": "historical_replay"
+    }
+  ],
+  "disclaimer": "Historical replay evaluates policies against recorded demand. Results are simulation-based and do not reflect real deployment dynamics (driver learning, demand elasticity, etc.)."
+}

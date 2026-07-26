@@ -1,0 +1,65 @@
+﻿# @package _global_
+# Hydra-based experiment configuration for NYC Taxi Zone Recommendation.
+
+defaults:
+  - _self_
+
+project:
+  name: nyc-taxi-zone-recommendation
+  version: 1.0.0
+
+data:
+  years: [2022, 2023, 2024, 2025]
+  raw_root: data/raw
+  processed_root: data/processed/multi_year
+  splits:
+    train: [2022, 2023]
+    validation: [2024]
+    test: [2025]
+
+forecast:
+  model: lightgbm
+  features:
+    - zone_id
+    - weekday
+    - hour
+    - half_hour_bucket
+    - time_slot
+    - lag_demand_1
+    - lag_demand_2
+    - lag_demand_48
+    - lag_demand_336
+    - rolling_demand_mean_3
+    - rolling_demand_mean_48
+    - rolling_demand_mean_336
+    - neighbor_lag_demand_mean
+    - neighbor_lag_demand_std
+    - neighbor_lag_demand_max
+    - neighbor_mean_travel_minutes
+
+simulator:
+  driver_count: 50
+  demand_supply_ratio: 1.0
+  seed: 42
+
+rl:
+  dqn:
+    gamma: 0.9
+    learning_rate: 0.0001
+    batch_size: 64
+    replay_capacity: 100000
+  double_dqn:
+    gamma: 0.9
+    learning_rate: 0.0001
+
+offline_rl:
+  iql:
+    tau: 0.7
+    beta: 3.0
+    batch_size: 256
+    hidden_dim: 256
+
+evaluation:
+  runs: 20
+  drivers: 50
+  bootstrap_samples: 1000

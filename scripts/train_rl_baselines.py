@@ -1,4 +1,5 @@
 """Train DQN/Double-DQN on pre-holdout data and benchmark the learned policies."""
+
 from __future__ import annotations
 
 import argparse
@@ -263,9 +264,7 @@ def main() -> None:
             "strategies": {name: _summarize(strategy_results) for name, strategy_results in results.items()},
             "paired_revenue": {
                 "dqn_vs_single_step": paired_comparison(revenue["dqn"], revenue["single_step"]),
-                "double_dqn_vs_single_step": paired_comparison(
-                    revenue["double_dqn"], revenue["single_step"]
-                ),
+                "double_dqn_vs_single_step": paired_comparison(revenue["double_dqn"], revenue["single_step"]),
                 "double_dqn_vs_dqn": paired_comparison(revenue["double_dqn"], revenue["dqn"]),
             },
         },
