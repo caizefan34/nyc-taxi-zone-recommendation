@@ -5,10 +5,16 @@ var MapModule = {
     init: function() {
         var self = this;
         this.map = L.map("map", { center: [40.758, -73.985], zoom: 13, zoomControl: true });
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            attribution: "&copy; OpenStreetMap contributors",
-            maxZoom: 18
+        var tl = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+            maxZoom: 19,
+            maxNativeZoom: 18,
+            attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>, &copy; <a href=\"https://carto.com/\">CARTO</a>"
         }).addTo(this.map);
+        tl.on('tileerror', function() {
+            if (!tl._retried) { tl._retried = true;
+                tl.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+            }
+        });
         this.plotZones();
     },
     getDemandColor: function(level) {
