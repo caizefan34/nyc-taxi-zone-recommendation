@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYC Mobility AI — Urban Mobility Decision Intelligence</title>
+<meta name="description" content="An open-source benchmark platform for AI-driven urban mobility: forecasting, simulation, and offline reinforcement learning with reproducible evaluation on NYC taxi data.">
+<meta name="keywords" content="urban mobility, reinforcement learning, NYC taxi, simulation, benchmark, AI, machine learning, demand forecasting">
+<meta property="og:title" content="NYC Mobility AI">
+<meta property="og:description" content="AI-driven urban mobility benchmark platform">
+<meta property="og:image" content="assets/social-preview.svg">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0a0a0f; --card: #141420; --border: #252540;
+  --accent: #4f8fff; --accent2: #7c5ce7; --text: #e0e0f0; --muted: #8888aa;
+  --green: #2ea44f; --orange: #e05d44; --yellow: #f0c040;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* Hero */
+.hero {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #0d0d2b 0%, #1a1040 30%, #0d1a30 60%, #0a0a1a 100%);
+  padding: 80px 0 60px; text-align: center;
+}
+.hero::before {
+  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(79,143,255,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 40%, rgba(124,92,231,0.06) 0%, transparent 50%);
+  animation: heroPulse 8s ease-in-out infinite;
+}
+@keyframes heroPulse { 0%,100% {opacity:.6} 50% {opacity:1} }
+.hero-content { position: relative; z-index: 1; }
+.hero-badge {
+  display: inline-block; background: rgba(79,143,255,0.15); border: 1px solid rgba(79,143,255,0.3);
+  color: var(--accent); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500;
+  margin-bottom: 24px; letter-spacing: 0.5px;
+}
+.hero h1 {
+  font-size: clamp(32px, 6vw, 56px); font-weight: 800; line-height: 1.15;
+  background: linear-gradient(135deg, #fff 0%, #a0c4ff 50%, #c4b5fd 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 16px;
+}
+.hero p {
+  font-size: 18px; color: var(--muted); max-width: 650px; margin: 0 auto 32px;
+}
+.hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px;
+  border-radius: 8px; font-size: 15px; font-weight: 600; border: none; cursor: pointer;
+  transition: all 0.2s; text-decoration: none !important;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #3d7be6; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(79,143,255,0.3); }
+.btn-secondary { background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: rgba(255,255,255,0.14); }
+.btn-outline { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.btn-outline:hover { background: rgba(79,143,255,0.1); }
+
+/* Stats bar */
+.stats-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 32px 0; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; text-align: center; }
+.stat-value { font-size: 32px; font-weight: 800; }
+.stat-value.accent { color: var(--accent); }
+.stat-value.green { color: var(--green); }
+.stat-value.orange { color: var(--orange); }
+.stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Sections */
+.section { padding: 64px 0; }
+.section-tag { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+.section h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+.section p.subtitle { color: var(--muted); font-size: 16px; margin-bottom: 40px; max-width: 600px; }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 28px; transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card-icon { font-size: 28px; margin-bottom: 12px; }
+.card h3 { font-size: 17px; margin-bottom: 8px; }
+.card p { font-size: 14px; color: var(--muted); }
+
+/* Results table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+td { font-variant-numeric: tabular-nums; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+.best { color: var(--green); font-weight: 700; }
+
+/* Map preview */
+.map-preview {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  overflow: hidden; height: 300px; position: relative;
+}
+.map-preview-overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(10,10,15,0.7); z-index: 2; transition: background 0.3s;
+}
+.map-preview-overlay:hover { background: rgba(10,10,15,0.4); }
+.map-preview-overlay a { font-size: 20px; font-weight: 700; }
+
+/* Footer */
+.footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--muted); font-size: 13px; }
+.footer a { color: var(--muted); margin: 0 12px; }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content container">
+    <div class="hero-badge">🔬 Research-Grade · Open Source</div>
+    <h1>AI-Driven Urban Mobility<br>Decision Intelligence</h1>
+    <p>An open-source benchmark platform combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning — with reproducible evaluation on NYC taxi data.</p>
+    <div class="hero-buttons">
+      <a href="web/" class="btn btn-primary">🚀 Launch Interactive Demo</a>
+      <a href="docs/" class="btn btn-secondary">📖 Read the Docs</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn btn-outline">⭐ GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats-bar">
+  <div class="container stats-grid">
+    <div><div class="stat-value accent">0.9565</div><div class="stat-label">NDCG@3 (Two-Step)</div></div>
+    <div><div class="stat-value green">+$139</div><div class="stat-label">Daily Revenue Lift</div></div>
+    <div><div class="stat-value orange">1.4868</div><div class="stat-label">Demand Forecast MAE</div></div>
+    <div><div class="stat-value accent">319</div><div class="stat-label">Tests Passing</div></div>
+  </div>
+</section>
+
+<!-- What We Do -->
+<section class="section">
+  <div class="container">
+    <div class="section-tag">Platform</div>
+    <h2>What We Build</h2>
+    <p class="subtitle">A complete pipeline from raw taxi trips to deployable recommendation policies.</p>
+    <div class="cards">
+      <div class="card"><div class="card-icon">📊</div><h3>Demand Forecasting</h3><p>Leakage-safe LightGBM and XGBoost models with GraphSAGE/GAT spatial features. Strictly-prior temporal splits guarantee no future information leakage.</p></div>
+      <div class="card"><div class="card-icon">🏙️</div><h3>Multi-Agent Simulation</h3><p>Finite-demand simulator with configurable fleet size, explicit competition, and demand depletion. Tests policies under realistic market pressure.</p></div>
+      <div class="card"><div class="card-icon">🧠</div><h3>Reinforcement Learning</h3><p>Gymnasium-compatible environment with DQN and Double DQN baselines. Masked action spaces reflect real-world travel constraints.</p></div>
+      <div class="card"><div class="card-icon">📐</div><h3>Reproducible Benchmark</h3><p>All metrics checked into the repository. Paired statistical tests, horizon experiments, and exposure analysis with full audit trails.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Key Results -->
+<section class="section" style="background:var(--card)">
+  <div class="container">
+    <div class="section-tag">Results</div>
+    <h2>Key Performance Metrics</h2>
+    <p class="subtitle">All values are reproducible. Run <code>make all</code> to verify.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Strategy</th><th>NDCG@3</th><th>Hit@3</th><th>Daily Fare</th><th>vs Hot Zone</th></tr></thead>
+        <tbody>
+          <tr><td>Hot Zone (baseline)</td><td>0.7846</td><td>0.5842</td><td>$431.21</td><td>—</td></tr>
+          <tr><td>Single-Step</td><td>0.9024</td><td>0.8804</td><td>$548.77</td><td>+$117.56</td></tr>
+          <tr><td class="best">Two-Step Horizon</td><td class="best">0.9565</td><td class="best">0.9714</td><td class="best">$570.61</td><td class="best">+$139.40</td></tr>
+          <tr><td>DQN (50-driver)</td><td>—</td><td>—</td><td>$466.59</td><td>+$53.74 vs Single-Step</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:20px;font-size:13px;color:var(--muted)">
+      ⚠ Simulator outcomes only — not production revenue estimates. <a href="docs/methodology.html">See methodology</a>.
+    </p>
+  </div>
+</section>
+
+<!-- Map Preview -->
+<section class="section">
+  <div class="container">
+    <div class="section-tag">Interactive</div>
+    <h2>Explore NYC Taxi Zones</h2>
+    <p class="subtitle">263 zones, real-time demand patterns, AI-powered recommendations.</p>
+    <div class="map-preview">
+      <iframe src="web/" style="width:100%;height:100%;border:none;filter:brightness(0.9)" loading="lazy" title="NYC Taxi Zone Map"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section class="section" style="background:var(--card)">
+  <div class="container">
+    <div class="section-tag">Architecture</div>
+    <h2>How It Works</h2>
+    <p class="subtitle">End-to-end pipeline for urban mobility intelligence.</p>
+    <div class="cards">
+      <div class="card"><div class="card-icon">1️⃣</div><h3>Data Pipeline</h3><p>Raw NYC TLC trips → chronological split → cleaning → zone-time statistics</p></div>
+      <div class="card"><div class="card-icon">2️⃣</div><h3>Forecast Training</h3><p>Feature engineering → LightGBM/XGBoost → recursive holdout predictions</p></div>
+      <div class="card"><div class="card-icon">3️⃣</div><h3>Policy Optimization</h3><p>Two-step planning · DQN · Double DQN · finite-horizon MDP · online Q-learning</p></div>
+      <div class="card"><div class="card-icon">4️⃣</div><h3>Benchmark & Audit</h3><p>Paired tests · horizon sensitivity · robustness checks · exposure analysis</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation">GitHub</a>
+      <a href="docs/">Documentation</a>
+      <a href="web/">Web Demo</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CITATION.cff">Cite</a>
+    </p>
+    <p style="margin-top:8px">MIT License · Built for reproducible research</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,8 +1,8 @@
-name: Build Sphinx Docs and Deploy to GitHub Pages
+﻿name: Deploy Unified Site to GitHub Pages
 
 on:
   push:
-    branches: [master, main]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -19,24 +19,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
           pip install sphinx sphinx-rtd-theme myst-parser
-      - name: Build Sphinx docs
+
+      - name: Build Sphinx docs into /docs/ subpath
         run: |
           cd docs
-          sphinx-build -b html . _build/html
+          sphinx-build -b html . _build/html/docs
+
       - name: Build self-contained web app
         run: |
           python scripts/build_web.py
-      - name: Copy interactive web app to docs output
+
+      - name: Copy web demo to /web/
         run: |
           mkdir -p docs/_build/html/web
           cp -r web/index.html web/css web/js web/data web/assets docs/_build/html/web/ 2>/dev/null || true
+
+      - name: Copy landing page to root
+        run: |
+          cp pages/index.html docs/_build/html/index.html
+
+      - name: Copy assets
+        run: |
+          mkdir -p docs/_build/html/assets
+          cp -r assets/* docs/_build/html/assets/ 2>/dev/null || true
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

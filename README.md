@@ -14,9 +14,9 @@
   </p>
 
   <p>
-    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/"><strong>🚀 Live Demo</strong></a>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/"><strong>🚀 Live Demo</strong></a>
     &nbsp;·&nbsp;
-    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/"><strong>📖 Documentation</strong></a>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/"><strong>📖 Documentation</strong></a>
     &nbsp;·&nbsp;
     <a href="docs/demo_gallery.md"><strong>🎬 Demo Gallery</strong></a>
     &nbsp;·&nbsp;
