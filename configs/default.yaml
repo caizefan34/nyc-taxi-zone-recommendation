@@ -1,0 +1,47 @@
+# Urban Mobility Decision Intelligence — Default Configuration
+# Loaded at startup by src/common/config.py
+
+project:
+  name: "Urban Mobility Decision Intelligence"
+  version: "3.0.0"
+
+paths:
+  models_dir: "models/registry"
+  outputs_dir: "outputs"
+  experiments_dir: "outputs/experiments"
+  shadow_dir: "outputs/shadow"
+  ab_dir: "outputs/ab"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  workers: 1
+  cors_origins: ["*"]
+
+logging:
+  level: "INFO"
+  structured: true
+  request_id_header: "X-Request-ID"
+
+models:
+  default_recommendation: "two_step"
+  default_forecast: "historical_average"
+  available:
+    recommendation: ["hot_zone", "single_step", "two_step"]
+    forecasting: ["historical_average", "lightgbm", "xgboost", "ensemble"]
+
+decision:
+  top_k: 3
+  deterministic: true
+  confidence:
+    min_score_separation: 0.01
+
+simulation:
+  default_fleet_size: 100
+  default_demand_supply_ratio: 1.0
+  default_seed: 42
+
+evaluation:
+  source_label: "simulation/historical_replay"
+  note: "All results from historical replay or simulation. Not production evidence."

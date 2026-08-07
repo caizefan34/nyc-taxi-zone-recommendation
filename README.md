@@ -1,9 +1,9 @@
 <div align="center">
-  <img src="assets/social-preview.svg" width="100%" alt="NYC Taxi Zone Recommendation">
+  <img src="assets/social-preview.svg" width="100%" alt="Urban Mobility Decision Intelligence">
 
-  <h1>Dynamic Urban Mobility Decision System</h1>
+  <h1>Urban Mobility Decision Intelligence</h1>
 
-  <p><strong>An open-source benchmark platform for AI-driven urban mobility decision making — combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning with reproducible evaluation.</strong></p>
+  <p><strong>An open-source decision intelligence platform for dynamic fleet repositioning — combining demand forecasting, multi-agent simulation, reinforcement learning, and reproducible evaluation.</strong></p>
 
   <p>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"></a>
@@ -11,31 +11,54 @@
     <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&amp;label=tests" alt="Tests"></a>
     <a href="docs/badges/reproducibility.svg"><img src="docs/badges/reproducibility.svg" alt="Reproducible"></a>
     <a href="docs/badges/benchmark.svg"><img src="docs/badges/benchmark.svg" alt="Benchmark"></a>
-    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/"><img src="https://img.shields.io/badge/demo-available-success" alt="Demo"></a>
-    <a href="docs/leaderboard.md"><img src="https://img.shields.io/badge/benchmark-open-blue" alt="Benchmark"></a>
+    <a href="#quick-start"><img src="https://img.shields.io/badge/docker-ready-blue" alt="Docker"></a>
     <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen" alt="Contributions"></a>
   </p>
 
   <p>
-    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/"><strong>🚀 Live Demo</strong></a>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/"><strong>Live Demo</strong></a>
     &nbsp;·&nbsp;
-    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/"><strong>📖 Documentation</strong></a>
+    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/"><strong>Documentation</strong></a>
     &nbsp;·&nbsp;
-    <a href="docs/demo_gallery.md"><strong>🎬 Demo Gallery</strong></a>
+    <a href="#quick-start"><strong>API</strong></a>
     &nbsp;·&nbsp;
-    <a href="ROADMAP.md"><strong>🗺️ Roadmap</strong></a>
+    <a href="#docker"><strong>Docker</strong></a>
     &nbsp;·&nbsp;
-    <a href="CONTRIBUTING.md"><strong>🤝 Contribute</strong></a>
+    <a href="ROADMAP.md"><strong>Roadmap</strong></a>
   </p>
 </div>
 
 ---
 
+## Platform Overview
+
+```
+Historical/Real-time Mobility Data
+          ↓
+   Demand Forecasting
+          ↓
+ Supply-Demand Modeling
+          ↓
+  Mobility Simulation
+          ↓
+ Decision / Policy Engine
+          ↓
+   Fleet Optimization
+          ↓
+Recommendation / API / Dashboard
+          ↓
+Shadow Evaluation / A-B Testing
+```
+
+**NYC Taxi** is the reference implementation. The architecture generalizes to any city with zone-based trip data: Chicago, London, Singapore, ride-hailing, delivery, autonomous fleets.
+
+---
+
 ## Why this project?
 
-**The problem:** Taxi drivers waste 30–60% of their shift cruising for passengers. In NYC alone, this represents millions of dollars in lost revenue and unnecessary congestion annually.
+**The problem:** Taxi drivers waste 30-60% of their shift cruising for passengers. In NYC alone, this represents millions of dollars in lost revenue and unnecessary congestion annually.
 
-**The approach:** We treat taxi repositioning as a finite-horizon sequential decision problem:
+**The approach:** We treat fleet repositioning as a sequential decision problem combining forecasting, simulation, and optimization:
 
 ```
 Historical trips  →  Demand Forecasting  →  Simulator  →  Policy Optimization  →  Recommendation
@@ -45,33 +68,59 @@ Historical trips  →  Demand Forecasting  →  Simulator  →  Policy Optimizat
                     GraphSAGE + GAT        Competition      Reproducible benchmark
 ```
 
-**The contribution:** A reproducible, research-grade benchmark platform where any forecasting model, simulator, or policy can be evaluated under consistent, leakage-safe conditions.
+**The contribution:** A reproducible, research-grade platform where forecasting models, simulators, and policies can be evaluated under consistent, leakage-safe conditions — plus production-style API and Docker deployment for pilot readiness.
 
 ---
 
-## System Architecture
+## Quick Start
 
-```mermaid
-graph TD
-    A[NYC TLC Raw Trips] --> B[Data Pipeline]
-    B --> C[Cleaned Dataset]
-    C --> D[Demand Forecasting]
-    C --> E[OD Graph Learning]
-    D --> F[Multi-Agent Simulator]
-    E --> F
-    F --> G[Policy Training]
-    G --> H[Benchmark Evaluation]
-    H --> I[Research Reports]
-    
-    subgraph Policies
-        P1[Hot Zone]
-        P2[Single-Step]
-        P3[Two-Step Horizon]
-        P4[DQN / Double DQN]
-    end
-    
-    F --> P1 & P2 & P3 & P4
-    P1 & P2 & P3 & P4 --> H
+### Docker (one command)
+
+```bash
+docker compose up
+# API → http://localhost:8000/docs
+# Demo → http://localhost:8501
+```
+
+### Local
+
+```bash
+git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
+cd nyc-taxi-zone-recommendation
+pip install -e ".[dev]"
+
+# API
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+
+# Demo
+streamlit run app/app.py
+```
+
+### Quick API Example
+
+```bash
+curl -X POST http://localhost:8000/v1/recommendations \
+  -H "Content-Type: application/json" \
+  -d '{"vehicle_id": "v001", "zone_id": 161}'
+```
+
+```json
+{
+  "recommendation": {
+    "vehicle_id": "v001",
+    "current_zone": 161,
+    "recommended_zone": 132,
+    "confidence": 0.87,
+    "ranked_zones": [
+      {"zone_id": 132, "score": 0.91, "expected_demand": 41.7},
+      {"zone_id": 236, "score": 0.85, "expected_demand": 38.2}
+    ],
+    "model_version": "two-step-v1"
+  },
+  "metadata": {
+    "source": "simulation/historical_replay"
+  }
+}
 ```
 
 ---
@@ -104,9 +153,7 @@ Two-Step vs Single-Step: +$21.84/day, paired bootstrap 95% CI [$5.00, $39.53], p
 | LightGBM | 1.5114 | 5.0707 |
 | Ensemble (LightGBM + XGBoost) | **1.4868** | **4.9810** |
 
-The ensemble demand MAE improvement is 0.2406 per zone-slot with timestamp-block bootstrap 95% CI [0.1960, 0.2820].
-
-Better forecast accuracy does not automatically improve recommendation. The forecast-enhanced single-step strategy scores -$17.88/day vs the historical Single-Step in paired rollout, with 95% CI [-$38.15, $3.03]. The production/default Two-Step strategy remains unchanged.
+> Better forecast accuracy does not automatically improve recommendation. The forecast-enhanced single-step strategy scores -$17.88/day vs the historical Single-Step. See [Decision-Aware Forecasting](docs/research/decision_aware_forecasting.md).
 
 ### Graph-enhanced forecasting
 
@@ -129,144 +176,163 @@ At fixed fleet size, raising the demand/supply ratio from 0.5 to 2.0 increases S
 | Algorithm | Avg revenue vs Single-Step | 95% CI |
 |---|---|---|
 | DQN | +53.74 | [46.21, 61.57] |
-| Double DQN | −25.27 | [−32.77, −17.97] |
+| Double DQN | -25.27 | [-32.77, -17.97] |
 
 DQN minus Single-Step is +53.74 per driver. These intervals cover evaluation-market seeds for one trained network per algorithm, not training uncertainty or real deployment effects. The default recommender remains unchanged. See [outputs/rl_benchmark.md](outputs/rl_benchmark.md).
 
-> **⚠ Important:** These are simulator outcomes, not production revenue estimates. See [Simulator boundary](#simulator-boundary) below.
+> **Important:** These are simulator outcomes, not production revenue estimates. See [Scientific Limitations](#scientific-limitations) below.
 
 ---
 
-## Quick Start
+## System Architecture
 
-```bash
-git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
-cd nyc-taxi-zone-recommendation
-python -m pip install -e ".[dev,forecasting,graph,rl]"
-```
-
-### 🚀 ## Try the interactive demo
-
-**[Open Live Demo](https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/) — Interactive NYC taxi zone map with real-time recommendations.**
-
-Or run locally:
-
-```bash
-pip install streamlit
-streamlit run app/app.py
-```
-
-Or visit the [Live Web Demo](https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/).
-
-### Run the data pipeline
-
-```bash
-python -m scripts.run_data_pipeline
-```
-
-### Evaluate strategies
-
-```bash
-make static
-```
-
-See [full benchmark table](outputs/benchmark_report.md) and [evaluation report](outputs/evaluation_report.md).
-
-### Reproduce all results
-
-```bash
-make all
-```
-
-### Testing
-
-```bash
-python -m pytest tests -q   # 113 tests
-ruff check src tests scripts
+```mermaid
+graph TD
+    A[NYC TLC Raw Trips] --> B[Data Pipeline]
+    B --> C[Cleaned Dataset]
+    C --> D[Demand Forecasting]
+    C --> E[OD Graph Learning]
+    D --> F[Decision Engine]
+    E --> F
+    F --> G[Multi-Agent Simulator]
+    G --> H[Policy Evaluation]
+    H --> I[API / Dashboard]
+    
+    subgraph Policies
+        P1[Hot Zone]
+        P2[Single-Step]
+        P3[Two-Step Horizon]
+        P4[DQN / Double DQN]
+    end
+    
+    F --> P1 & P2 & P3 & P4
+    P1 & P2 & P3 & P4 --> H
 ```
 
 ---
 
-## Features
+## Platform Capabilities
 
-- **Chronological data cleaning** of January 2023 NYC TLC Yellow Taxi trips
-- **Leakage-safe demand forecasting** with LightGBM/XGBoost and strictly-prior temporal splits
-- **Graph neural features** via OD-weighted GraphSAGE (MAE 1.5037) and GAT embeddings
-- **All-pairs shortest-path** travel time matrix via Dijkstra on directed OD graph
-- **Multiple policies:** Hot Zone, Single-Step, Two-Step Horizon, DQN, Double DQN
-- **Multi-agent simulator** with configurable fleet, finite demand, competition, and saturation metrics
-- **Gymnasium-compatible RL environment** with masked candidate actions
-- **Paired statistical tests**, horizon experiments, robustness checks, and exposure analysis
-- **Counterfactual estimators** (IPS, SNIPS, DR) with tested formulas
-- **Reproducible benchmark framework** with checked-in reference metrics
+### Research
+- Leakage-safe demand forecasting with LightGBM/XGBoost and strictly-prior temporal splits
+- Graph neural features via OD-weighted GraphSAGE and GAT
+- Multiple policies: Hot Zone, Single-Step, Two-Step Horizon, DQN, Double DQN
+- Multi-agent simulator with configurable fleet, finite demand, competition
+- Paired statistical tests, robustness checks, exposure analysis
+- Counterfactual estimators (IPS, SNIPS, DR)
 
----
-
-## Simulator boundary
-
-> ⚠ **Read before citing results.**
-
-The legacy rollout is useful for controlled single-driver comparison, but it has material limitations:
-
-- one driver; immutable historical demand; no demand depletion or competition
-- no congestion, airport queues, or supply-demand feedback
-- fixed 60%/30%/10% compliance over ranked Top-3
-
-The multi-agent simulator improves on this with a configurable fleet, finite trip inventory, simultaneous competition, and explicit demand depletion. However, it still omits congestion, airport queue rules, endogenous passenger demand, strategic driver adaptation, and market equilibrium.
-
-**Rollout improvements must not be presented as production revenue lift.**
+### Engineering
+- **REST API** (FastAPI) — `/health`, `/ready`, `/v1/recommendations`, `/v1/demand/forecast`
+- **Docker** — `docker compose up` for API + Demo
+- **Decision Engine** — Unified recommendation schema with rich metadata
+- **Shadow Evaluation** — Compare AI vs actual without execution
+- **A/B Testing Framework** — Bootstrap CIs, effect size, statistical significance
+- **Model Registry** — File-based versioning with training metadata
+- **Cross-city abstraction** — CityAdapter interface; NYC reference implementation
+- **Observability** — Structured logging, request latency tracking, metrics snapshot
 
 ---
 
-## Counterfactual and offline-RL boundary
-
-NYC TLC trips do not contain logged reposition recommendations, logging-policy propensities, or driver acceptance. Valid IPS, SNIPS, doubly robust, CQL, or BCQ evaluation of a reposition policy is therefore not identifiable from these records alone.
-
-The repository provides tested IPS/SNIPS/DR formulas for future data containing the required logging fields. The Q-learning extension is explicitly online Q-learning inside an estimated simulator, not offline RL.
-
----
-
-## Exposure and market impact
-
-Two-Step strategy airport exposure: 70.33% weighted (55.0% JFK). Exposure Gini: 0.982. Effective exposure count: 5.51 zones. These indicate substantial saturation risk absent from the single-driver simulator.
-
-See the full [research-grade audit](outputs/research_grade_audit.md) and [robustness plot](outputs/audit_robustness.png).
-
----
-
-## Repository structure
+## Repository Structure
 
 ```text
 src/
-  1_data_clean/                 raw split, cleaning, statistics
-  2_recommendation_algorithm/   baselines, two-step, finite horizons, parameter selection
-  3_extension_task/             temporal analysis, sensitivity, simulator Q-learning
-  eval/                         static diagnostic and legacy rollout
-  simulator/multi_agent/        finite demand, competing drivers, saturation metrics
-  rl/                           Gymnasium environment, DQN, Double DQN, strategy adapter
-  mdp/                          corrected model-based value iteration
-  forecasting/                  causal features, tree models, evaluation, strategy adapter
-  graph/                        leakage-safe OD graph, GraphSAGE, GAT, message features
-  audit/                        leakage, OPE formulas, statistics, fairness
-  common/                       config, data loader, logging
-scripts/                        reproducible research experiment runners
-tests/                          unit and data-backed integration tests (113 tests)
-outputs/                        checked-in report and reference metric snapshots
-configs/                        unified configuration
-docs/                           research documentation and audit reports
-archive/                        deprecated code preserved with migration notes
+  decision/              Decision Engine (unified recommendation)
+  api/                   FastAPI REST API
+  evaluation/            Shadow, A/B, historical replay
+  cities/                Cross-city abstraction (NYC adapter)
+  monitoring/            Metrics, model registry
+  forecasting/           LightGBM, XGBoost, feature pipeline
+  graph/                 GraphSAGE, GAT, OD graph
+  simulator/             Multi-agent v1 + v2, calibration
+  rl/                    Gymnasium env, DQN/DoubleDQN, offline RL
+  mdp/                   Model-based value iteration
+  common/                Config, data loader, logging
+  interfaces/            ABCs, adapters, model registry
+  1_data_clean/          Original data pipeline (preserved)
+  2_recommendation_algorithm/  Original strategies (preserved)
+  3_extension_task/      Original extensions (preserved)
+scripts/                 Experiment runners and utilities
+tests/                   322 tests passing
+configs/                 Configuration profiles
+docs/                    Documentation and audit reports
 ```
+
+---
+
+## Scientific Limitations
+
+> **Read before citing results.**
+
+### Simulator boundary
+
+The multi-agent simulator improves on single-driver rollouts with a configurable fleet, finite trip inventory, and explicit competition. However, it still omits:
+- Congestion and traffic dynamics
+- Airport queue rules
+- Endogenous passenger demand
+- Strategic driver adaptation
+- Market equilibrium effects
+
+**Rollout improvements must not be presented as production revenue lift.**
+
+### Counterfactual boundary
+
+NYC TLC trips do not contain logged reposition recommendations, logging-policy propensities, or driver acceptance. Valid IPS, SNIPS, or doubly robust evaluation is therefore not identifiable from these records alone.
+
+### Forecast-decision gap
+
+Better forecast accuracy (lower MAE/RMSE) has been shown NOT to improve recommendation decisions in this domain. The platform explicitly separates forecast and decision metrics.
+
+### Exposure and market impact
+
+Two-Step strategy airport exposure: 70.33% weighted. Exposure Gini: 0.982. These indicate substantial saturation risk at scale — a key research question for the platform.
+
+---
+
+## Docker
+
+```bash
+# Start API + Demo
+docker compose up
+
+# API documentation
+open http://localhost:8000/docs
+
+# Demo dashboard
+open http://localhost:8501
+```
+
+See [.env.example](.env.example) for configuration.
+
+---
+
+## Reproduce Research Results
+
+```bash
+# Data pipeline
+python -m scripts.run_data_pipeline --force-split
+python -m scripts.build_travel_time_matrix
+
+# Static evaluation
+make static
+
+# Full benchmark
+make all
+
+# Tests
+pytest tests -q  # 322 tests
+```
+
+See [docs/reproduction.md](docs/reproduction.md) for detailed instructions.
 
 ---
 
 ## Citation
 
-If you use this project in your research, please cite:
-
 ```bibtex
 @software{cai2025nyc_taxi_recommendation,
   author       = {Zefan Cai},
-  title        = {NYC Taxi Zone Recommendation: An Open-Source Benchmark Platform for AI-Driven Urban Mobility},
+  title        = {Urban Mobility Decision Intelligence: An Open-Source Platform for AI-Driven Fleet Repositioning},
   year         = {2025},
   publisher    = {GitHub},
   url          = {https://github.com/caizefan34/nyc-taxi-zone-recommendation},
@@ -274,13 +340,21 @@ If you use this project in your research, please cite:
 }
 ```
 
-See also [CITATION.cff](CITATION.cff).
+---
+
+## Enterprise / Research Pilot
+
+The open-source project provides the research and engineering foundation.
+
+For organizations interested in fleet optimization, mobility forecasting, controlled pilot deployment, or custom city integration, see [docs/enterprise/pilot.md](docs/enterprise/pilot.md).
+
+The platform is designed for research pilots and controlled fleet experiments. No real-world A/B tests have been conducted.
 
 ---
 
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding models, benchmarks, or experiments. Good first issues are tagged in the [issue tracker](https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues).
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. Good first issues are tagged in the [issue tracker](https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues).
 
 ---
 
@@ -292,4 +366,4 @@ MIT License. See [LICENSE](LICENSE).
 
 ## Status
 
-This is an educational/research prototype, not a production dispatch system. See [ROADMAP.md](ROADMAP.md) for future directions.
+This is an educational/research prototype with production-style engineering foundations, not a production dispatch system. See [ROADMAP.md](ROADMAP.md) for future directions.
