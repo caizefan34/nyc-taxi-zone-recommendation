@@ -1,0 +1,9 @@
+# Simulation experiment configuration
+simulation:
+  fleet_size: 100
+  demand_supply_ratio: 1.0
+  seed: 42
+  start_zone: 132
+  horizon_days: 7
+  demand_source: "historical_replay"
+  note: "Uses pre-computed historical demand statistics."

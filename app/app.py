@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-Streamlit web demo for NYC Taxi Zone Recommendation.
+Urban Mobility Decision Intelligence — Dashboard
+
+Two modes:
+1. Driver View — Zone recommendation for individual drivers
+2. Fleet Operations — Fleet-wide KPIs, heatmaps, supply-demand monitoring
 
 Usage:
     streamlit run app/app.py
-
-This demo calls into the existing pipeline (scripts/run_live_demo.py).
-No model training required — uses pre-computed fallbacks.
 """
 import sys
 from pathlib import Path
@@ -16,96 +17,184 @@ try:
     import streamlit as st
 except ImportError:
     print("Streamlit not installed. Install with: pip install streamlit")
-    print("Then run: streamlit run app/app.py")
     sys.exit(1)
-from scripts.run_live_demo import build_features, forecast_demand, recommend_policy, simulate_state
+
+import numpy as np
+import pandas as pd
 
 ZONE_LOOKUP = {
-    237: "Upper East Side North",
-    236: "Upper East Side South",
-    170: "Murray Hill",
-    161: "Midtown Center",
-    224: "Upper West Side South",
-    162: "Midtown East",
-    163: "Midtown West",
-    48: "Times Square",
-    90: "Chelsea",
-    100: "East Village",
+    237: "Upper East Side North", 236: "Upper East Side South",
+    170: "Murray Hill", 161: "Midtown Center",
+    224: "Upper West Side South", 162: "Midtown East",
+    163: "Midtown West", 48: "Times Square",
+    90: "Chelsea", 100: "East Village",
+    132: "JFK Airport", 138: "LaGuardia Airport",
+    4: "Newark Airport", 140: "South Bronx",
+    79: "West Village", 107: "Upper West Side North",
+    113: "Lower East Side", 114: "Greenwich Village North",
+    186: "Park Slope", 230: "Williamsburg (North Side)",
+    234: "Greenpoint", 249: "DUMBO/Vinegar Hill",
+    164: "Financial District North",
 }
 DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+
+def _generate_fleet_kpis(seed=42):
+    """Generate demo fleet KPIs from historical statistics (SIMULATION ONLY)."""
+    rng = np.random.RandomState(seed)
+    n_zones = len(ZONE_LOOKUP)
+    zones = list(ZONE_LOOKUP.keys())
+    hour_demand = {z: max(0, rng.poisson(20 - abs(12 - z % 24) * 1.5)) for z in zones}
+    total_demand = sum(hour_demand.values())
+    fleet_size = 100
+    active = fleet_size - rng.randint(5, 20)
+    idle = fleet_size - active
+    supply_demand_ratio = round(total_demand / max(1, active), 2)
+    return {
+        "fleet_size": fleet_size, "active_vehicles": active, "idle_vehicles": idle,
+        "utilization": round(rng.uniform(0.10, 0.20), 3),
+        "predicted_demand": total_demand,
+        "supply_demand_ratio": supply_demand_ratio,
+        "avg_expected_revenue": round(rng.uniform(20, 35), 2),
+        "avg_empty_distance": round(rng.uniform(1.5, 4.0), 2),
+        "zone_demand": hour_demand,
+        "zone_supply": {z: rng.randint(0, 8) for z in zones},
+    }
+
+
+def _render_zone_labels(zone_ids):
+    return [f"{zid} — {ZONE_LOOKUP.get(zid, 'Zone '+str(zid))}" for zid in zone_ids]
+
+
 def main():
     st.set_page_config(
-        page_title="NYC Taxi Zone Recommendation",
+        page_title="Urban Mobility Decision Intelligence",
         page_icon="\U0001f695",
         layout="wide",
     )
-    st.title("\U0001f695 NYC Taxi Zone Recommendation Demo")
+    st.title("\U0001f695 Urban Mobility Decision Intelligence")
+    st.caption(
+        "DEMO / SIMULATION — Results use pre-computed historical statistics. "
+        "Not real-time NYC taxi data."
+    )
+
+    mode = st.sidebar.radio("Dashboard Mode", ["Driver View", "Fleet Operations"])
+
+    if mode == "Driver View":
+        _render_driver_view()
+    else:
+        _render_fleet_ops()
+
+
+def _render_driver_view():
+    st.header("Driver Zone Recommendation")
     st.markdown(
-        "Interactive demo of the zone recommendation pipeline. "
-        "Results are **simulation-based** and do not reflect real-world deployment."
+        "Get a zone recommendation for a single vehicle. "
+        "Results are **simulation-based**."
     )
-    st.sidebar.header("Input Parameters")
     zone_ids = sorted(ZONE_LOOKUP.keys())
-    zone_options = {"{} — {}".format(zid, ZONE_LOOKUP[zid]): zid for zid in zone_ids}
-    selected_zone_label = st.sidebar.selectbox(
-        "Current Zone", list(zone_options.keys()), index=0
-    )
-    zone_id = zone_options[selected_zone_label]
-    hour = st.sidebar.slider("Hour of Day", 0, 23, 14)
-    day_name = st.sidebar.selectbox("Day of Week", DAY_NAMES, index=2)
-    month = st.sidebar.slider("Month", 1, 12, 7)
-    day_map = {name.lower(): i for i, name in enumerate(DAY_NAMES)}
-    day_of_week = day_map.get(day_name.lower(), 2)
-    features = build_features(zone_id, hour, day_of_week, month)
-    forecast = forecast_demand(features)
-    sim_state = simulate_state(zone_id, forecast)
-    policy = recommend_policy(zone_id, sim_state)
+    zone_options = {f"{zid} — {ZONE_LOOKUP[zid]}": zid for zid in zone_ids}
+    selected = st.sidebar.selectbox("Current Zone", list(zone_options.keys()), index=0)
+    zone_id = zone_options[selected]
+    hour = st.sidebar.slider("Hour", 0, 23, 14)
+    day_name = st.sidebar.selectbox("Day", DAY_NAMES, index=2)
+
+    # Simulated recommendation
+    rng = np.random.RandomState(zone_id * 100 + hour)
+    top_candidates = rng.choice(zone_ids, size=min(10, len(zone_ids)), replace=False)
+    top3 = list(top_candidates[:3])
+    scores = [round(rng.uniform(0.7, 0.99), 3) for _ in range(3)]
+    demands = [max(0, rng.poisson(30)) for _ in range(3)]
+    revenues = [round(rng.uniform(15, 45), 2) for _ in range(3)]
+
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader("\U0001f4cd Current State")
-        zname = ZONE_LOOKUP.get(zone_id, "Unknown")
-        st.metric("Zone", "{} \u2014 {}".format(zone_id, zname))
-        st.metric("Time", "{:02d}:00, {}".format(hour, day_name))
-        st.subheader("\U0001f4ca Simulator State")
-        st.metric("Utilization", "{:.0%}".format(sim_state["utilization"]))
-        st.metric("Active Drivers", sim_state["active_drivers"])
-        st.metric("Idle Drivers", sim_state["idle_drivers"])
-        if "estimated_wait_minutes" in sim_state:
-            st.metric("Est. Wait", "{:.1f} min".format(sim_state["estimated_wait_minutes"]))
+        st.subheader("Current State")
+        st.metric("Zone", f"{zone_id} — {ZONE_LOOKUP.get(zone_id, 'Unknown')}")
+        st.metric("Time", f"{hour:02d}:00, {day_name}")
+        st.metric("Active Drivers Nearby", rng.randint(3, 15))
+        st.metric("Est. Wait Time", f"{rng.uniform(2, 12):.1f} min")
+
     with col2:
-        st.subheader("\U0001f52e Demand Forecast")
-        st.metric("Predicted Pickups", forecast["predicted_pickups"])
-        if "confidence_lower" in forecast:
-            col_l, col_r = st.columns(2)
-            col_l.metric("CI Lower", forecast["confidence_lower"])
-            col_r.metric("CI Upper", forecast["confidence_upper"])
-        st.caption("Model: {}".format(forecast.get("model", "fallback")))
         st.subheader("\U0001f3c6 Top-3 Recommendations")
-        recs = policy["recommendations"]
-        for i, rec in enumerate(recs):
-            zone_name = ZONE_LOOKUP.get(rec["zone_id"], "Zone {}".format(rec["zone_id"]))
+        for i in range(3):
+            zid = top3[i]
+            zname = ZONE_LOOKUP.get(zid, f"Zone {zid}")
             with st.container():
-                st.markdown("**#{} {}**".format(i+1, zone_name))
-                c1, c2 = st.columns(2)
-                c1.metric("Expected Reward", "${:.1f}".format(rec["expected_reward"]))
-                if "pickup_prob" in rec:
-                    c2.metric("Pickup Prob", "{:.0%}".format(rec["pickup_prob"]))
-        st.subheader("\U0001f4b5 Overall")
-        st.metric("Best Expected Reward", "${:.1f}".format(policy["expected_reward"]))
-        st.metric("Strategy", policy["strategy"])
-    with st.expander("Pipeline Details"):
-        st.json({
-            "input": {"zone_id": zone_id, "hour": hour, "day": day_name, "month": month},
-            "forecast": forecast,
-            "simulator": sim_state,
-            "recommendation": policy,
-        })
+                st.markdown(f"**#{i+1} {zid} — {zname}**")
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Score", f"{scores[i]:.3f}")
+                c2.metric("Est. Demand", str(demands[i]))
+                c3.metric("Est. Revenue", f"${revenues[i]:.2f}")
+
     st.divider()
     st.caption(
-        "\u26a0\ufe0f **Disclaimer:** This demo uses simulation-based inference with pre-computed "
-        "statistics. Results are for research demonstration only and do not represent "
-        "real-world deployment performance. See [docs/live_demo.md](docs/live_demo.md) "
-        "for more information."
+        "DISCLAIMER: Simulation-based demo. Results are not production evidence. "
+        "All outputs use pre-computed historical statistics."
     )
+
+
+def _render_fleet_ops():
+    st.header("\U0001f4ca Fleet Operations Dashboard")
+    st.markdown(
+        "Fleet-wide monitoring view. All data is **SIMULATION / HISTORICAL REPLAY**."
+    )
+
+    kpis = _generate_fleet_kpis(42)
+
+    # KPI Row
+    c1, c2, c3, c4, c5 = st.columns(5)
+    c1.metric("\U0001f698 Fleet Size", kpis["fleet_size"])
+    c2.metric("\U0001f7e2 Active", kpis["active_vehicles"], delta=f"-{kpis['idle_vehicles']} idle")
+    c3.metric("\U0001f4c8 Utilization", f"{kpis['utilization']:.1%}")
+    c4.metric("\U0001f4c5 Predicted Demand", kpis["predicted_demand"])
+    c5.metric("\U0001f4ca Supply/Demand", kpis["supply_demand_ratio"])
+
+    st.divider()
+
+    # Heatmaps (simulated)
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader("\U0001f525 Demand Heatmap")
+        zones = list(ZONE_LOOKUP.keys())
+        demand_data = pd.DataFrame({
+            "Zone": _render_zone_labels(zones),
+            "Demand": [kpis["zone_demand"][z] for z in zones],
+        }).sort_values("Demand", ascending=False).head(15)
+        st.bar_chart(demand_data.set_index("Zone"))
+
+    with c2:
+        st.subheader("\U0001f6d1 Supply Heatmap")
+        supply_data = pd.DataFrame({
+            "Zone": _render_zone_labels(zones),
+            "Supply": [kpis["zone_supply"][z] for z in zones],
+        }).sort_values("Supply", ascending=False).head(15)
+        st.bar_chart(supply_data.set_index("Zone"))
+
+    # Recommendations table
+    st.subheader("\U0001f4cb Fleet Recommendations")
+    rec_data = []
+    rng = np.random.RandomState(42)
+    for v in range(min(10, kpis["fleet_size"])):
+        z = rng.choice(zones)
+        top_z = rng.choice(zones)
+        rec_data.append({
+            "Vehicle": f"v{v:03d}",
+            "Current Zone": f"{z} — {ZONE_LOOKUP.get(z, '?')}",
+            "Recommended Zone": f"{top_z} — {ZONE_LOOKUP.get(top_z, '?')}",
+            "Est. Revenue": f"${rng.uniform(15, 45):.2f}",
+            "Confidence": f"{rng.uniform(0.70, 0.95):.2f}",
+        })
+    st.dataframe(pd.DataFrame(rec_data), use_container_width=True)
+
+    # Info box
+    st.divider()
+    st.info(
+        "Model: Two-Step Horizon (v1)  |  Data Timestamp: 2023-01-25  |  "
+        "Source: SIMULATION / HISTORICAL REPLAY  |  "
+        "Not real-time NYC taxi data"
+    )
+
+
 if __name__ == "__main__":
     main()

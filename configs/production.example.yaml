@@ -1,0 +1,27 @@
+# Production configuration example
+# Copy to configs/production.yaml and customize for your deployment.
+# DO NOT commit real secrets.
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  workers: 4
+
+logging:
+  level: "WARNING"
+  structured: true
+
+models:
+  default_recommendation: "two_step"
+  default_forecast: "lightgbm"
+
+security:
+  # Authentication is NOT implemented in the open-source version.
+  # For pilot deployments, add an auth proxy (e.g., nginx + JWT).
+  auth_required: false
+  rate_limit_requests_per_minute: 60
+
+monitoring:
+  metrics_enabled: true
+  prometheus_enabled: false  # Set true if Prometheus is available

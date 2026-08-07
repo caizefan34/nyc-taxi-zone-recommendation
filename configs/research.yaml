@@ -1,0 +1,15 @@
+# Research experiment configuration
+# Used for reproducible benchmark runs.
+
+research:
+  random_seed: 20230722
+  n_bootstrap: 2000
+  ci_level: 0.95
+
+evaluation:
+  metrics: ["ndcg@3", "hit@3", "revenue", "utilization", "empty_distance"]
+  source_label: "simulation"
+  note: "All research results are simulation-based. Not production evidence."
+
+reproducibility:
+  required_fields: ["git_commit", "config_hash", "random_seed", "dataset_version"]

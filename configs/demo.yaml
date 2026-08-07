@@ -1,0 +1,8 @@
+# Demo configuration
+demo:
+  fleet_size: 100
+  start_zone: 161
+  policy: "two_step"
+  baseline: "hot_zone"
+  source: "simulation/historical_replay"
+  note: "Demo results are simulated. Not real-time NYC data."

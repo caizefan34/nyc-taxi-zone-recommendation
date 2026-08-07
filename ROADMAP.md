@@ -1,15 +1,13 @@
 # ROADMAP
 
-## Completed ✅
-
-### v1.0 — Core Platform
+## v1.0 — Research Foundation ✓
 - [x] Data pipeline: chronological cleaning, statistics
 - [x] Strategies: Hot Zone, Single-Step, Two-Step Horizon
 - [x] Evaluation: NDCG@3, Hit@3, reference utility
 - [x] Single-driver rollout simulator
 - [x] Parameter selection grid search
 
-### v2.0 — Research Upgrade
+## v2.0 — Research Benchmark ✓
 - [x] Leakage-safe demand forecasting (LightGBM, XGBoost)
 - [x] OD graph features (GraphSAGE, GAT)
 - [x] Multi-agent finite-demand simulator
@@ -20,36 +18,55 @@
 - [x] Research-grade audit (fairness, exposure, temporal)
 - [x] GitHub Pages documentation
 
-### v2.1 — Community & Visibility
-- [x] Repository architecture cleanup (Phase 15)
-- [x] README redesign with hero section and badges
+## v2.1 — Community & Visibility ✓
+- [x] Repository architecture cleanup
+- [x] README redesign with badges
 - [x] Project showcase landing page
-- [x] Demo gallery
 - [x] Issue templates for external contributors
 - [x] Enhanced CONTRIBUTING.md
 
-## Current 🔄
+## v3.0 — Decision Intelligence Platform 🔄
+- [x] Unified decision engine with rich metadata schema
+- [x] REST API (FastAPI): /health, /ready, /v1/recommendations
+- [x] Docker Compose one-click deployment (API + Demo)
+- [x] Enterprise config system (default, api, research, production)
+- [x] Constraint-aware policy layer
+- [x] Model registry / versioning
+- [x] Structured observability (logging, metrics)
+- [ ] Fleet operations dashboard enhancements
+- [ ] Open benchmark leaderboard
+- [ ] Cross-city data pipeline prototypes
 
-- [ ] Interactive web demo
-- [ ] Benchmark dashboard visualization
-- [ ] Cross-city validation pipeline
-- [ ] Expanded issue triage for community contributions
+## v3.5 — Real-world Evaluation 🔄
+- [x] Historical replay framework
+- [x] Shadow evaluation mode (record, don't execute)
+- [x] A/B testing framework with bootstrap CIs
+- [ ] Real-world shadow evaluation pilot
+- [ ] Controlled A/B test deployment
 
-## Future 🚀
-
-### v3.0 — Cross-City & Production
-- [ ] Cross-city data pipeline (Chicago, London, Singapore)
+## v4.0 — Multi-City
+- [x] CityAdapter abstraction
+- [x] NYC reference implementation
+- [ ] Chicago taxi data integration
+- [ ] London transport integration
+- [ ] Singapore mobility data integration
 - [ ] Transfer learning across cities
-- [ ] Real-time inference API
-- [ ] Docker Compose one-click deployment
-- [ ] Kubernetes Helm chart
 
-### v4.0 — Real Deployment
-- [ ] A/B testing framework
+## v5.0 — Enterprise Pilot
+- [ ] Fleet integration API
+- [ ] Real-time data pipeline
 - [ ] Production monitoring dashboard
 - [ ] Online learning with bandit feedback
-- [ ] Driver app integration prototype
-- [ ] Fleet operator dashboard
+- [ ] Private deployment documentation
+- [ ] Real-world A/B test results
+
+## Research Directions
+
+1. **Decision-aware forecasting**: Can we train forecasters that directly optimize decision quality?
+2. **Policy adoption dynamics**: What happens when many drivers follow the same AI policy?
+3. **Market equilibrium**: Can recommendation systems become self-defeating through market impact?
+4. **Fairness-constrained optimization**: Balancing revenue, utilization, and service coverage across zones
+5. **Multi-city transfer**: Can models trained on NYC generalize to other cities?
 
 ## How to contribute
 

@@ -108,6 +108,9 @@ def main():
 git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
 cd nyc-taxi-zone-recommendation
 pip install -e ".[dev,forecasting,graph,rl]"
+
+# Or with Docker
+docker compose up
 ```
 
 ## Code style

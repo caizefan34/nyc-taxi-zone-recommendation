@@ -1,38 +1,44 @@
-version: "3.9"
-
 services:
-  nyc-taxi:
-    build: .
-    image: nyc-taxi-recommendation
+  api:
+    build:
+      context: .
+      target: api
+    image: nyc-taxi-api:latest
+    ports:
+      - "8000:8000"
     volumes:
       - .:/app
       - /app/__pycache__
     environment:
       - PYTHONPATH=/app
-    working_dir: /app
-    entrypoint: ["make"]
-    command: ["help"]
+      - DEMO_MODE=sample
+    restart: unless-stopped
+
+  demo:
+    build:
+      context: .
+      target: demo
+    image: nyc-taxi-demo:latest
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    environment:
+      - PYTHONPATH=/app
+      - DEMO_MODE=sample
+    depends_on:
+      - api
+    restart: unless-stopped
 
   test:
-    build: .
-    image: nyc-taxi-recommendation
+    build:
+      context: .
+      target: test
+    image: nyc-taxi-test:latest
     volumes:
       - .:/app
       - /app/__pycache__
     environment:
       - PYTHONPATH=/app
-    working_dir: /app
-    entrypoint: ["make"]
-    command: ["test"]
-
-  train:
-    build: .
-    image: nyc-taxi-recommendation
-    volumes:
-      - .:/app
-      - /app/__pycache__
-    environment:
-      - PYTHONPATH=/app
-    working_dir: /app
-    entrypoint: ["make"]
-    command: ["train"]
+    command: ["pytest", "tests/", "-q", "--tb=short", "-o", "addopts="]

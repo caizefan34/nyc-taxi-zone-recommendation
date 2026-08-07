@@ -1,0 +1,17 @@
+# API server configuration
+# Usage: cp configs/api.yaml configs/active.yaml
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  workers: 1
+  cors_origins: ["*"]
+
+logging:
+  level: "INFO"
+  structured: true
+
+models:
+  default_recommendation: "two_step"
+  default_forecast: "historical_average"
