@@ -106,7 +106,8 @@ def run_decision_aware_comparison(
     print("-" * 60)
     for name in sorted(results):
         r = results[name]
-        print(f"{name:<20s} {r['forecast_mae']:<10.4f} {r['forecast_rmse']:<10.4f} {r['decision_ndcg_at_3']:<10.4f} {r['decision_hit_at_3']:<10.4f}")
+        print(f"{name:<20s} {r['forecast_mae']:<10.4f} {r['forecast_rmse']:<10.4f} "
+              f"{r['decision_ndcg_at_3']:<10.4f} {r['decision_hit_at_3']:<10.4f}")
 
     return experiment
 

@@ -7,12 +7,10 @@ Trip data from TfL taxi/PHV (Private Hire Vehicle) records.
 """
 from __future__ import annotations
 
-from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 from src.cities.base import CityAdapter, MobilityTrip, MobilityZone
-
 
 LONDON_BOROUGHS = {
     1: "City of London", 2: "Westminster", 3: "Camden", 4: "Islington",

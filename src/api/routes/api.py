@@ -10,7 +10,6 @@ from fastapi import APIRouter, HTTPException, Request
 from src.api.schemas.request_response import (
     DemandForecastRequest,
     DemandForecastResponse,
-    ErrorResponse,
     FleetOptimizeRequest,
     FleetOptimizeResponse,
     HealthResponse,
@@ -93,7 +92,10 @@ async def recommend(request: RecommendationRequest, req: Request):
     )
 
     if rec is None:
-        raise HTTPException(status_code=500, detail=f"Failed to generate recommendation with model {request.model_name}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate recommendation with model {request.model_name}",
+        )
 
     ranked_zones = [
         RankedZoneResponse(

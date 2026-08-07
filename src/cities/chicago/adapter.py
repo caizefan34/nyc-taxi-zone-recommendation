@@ -7,7 +7,6 @@ Community areas (77) serve as zones, analogous to NYC's 263 taxi zones.
 """
 from __future__ import annotations
 
-from datetime import datetime
 from pathlib import Path
 from typing import Optional
 

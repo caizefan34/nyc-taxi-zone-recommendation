@@ -1,0 +1,25 @@
+{
+  "control": "Hot Zone (Baseline)",
+  "treatment": "Two-Step (AI)",
+  "source": "simulation",
+  "n_bootstrap": 2000,
+  "metrics": {
+    "revenue_per_vehicle": {
+      "mean_difference": 3.1928,
+      "ci_lower": 2.6334,
+      "ci_upper": 3.8143,
+      "effect_size_cohens_d": 4.1483,
+      "statistically_significant": true,
+      "n_pairs": 7
+    },
+    "utilization": {
+      "mean_difference": 0.0401,
+      "ci_lower": 0.0335,
+      "ci_upper": 0.0477,
+      "effect_size_cohens_d": 7.0357,
+      "statistically_significant": true,
+      "n_pairs": 7
+    }
+  },
+  "note": "Results from simulator. Not production evidence."
+}

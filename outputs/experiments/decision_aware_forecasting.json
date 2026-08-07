@@ -1,0 +1,55 @@
+{
+  "experiment_id": "decision_aware_20260807_231906",
+  "research_question": "Does better forecasting accuracy produce better decisions?",
+  "n_zones": 50,
+  "n_trials": 100,
+  "seed": 42,
+  "results": {
+    "historical_average": {
+      "forecast_mae": 3.1688,
+      "forecast_rmse": 3.9799,
+      "decision_ndcg_at_3": 0.5328,
+      "decision_hit_at_3": 0.49
+    },
+    "lightgbm": {
+      "forecast_mae": 1.5956,
+      "forecast_rmse": 2.0049,
+      "decision_ndcg_at_3": 0.747,
+      "decision_hit_at_3": 0.7033
+    },
+    "xgboost": {
+      "forecast_mae": 1.98,
+      "forecast_rmse": 2.4735,
+      "decision_ndcg_at_3": 0.7093,
+      "decision_hit_at_3": 0.6467
+    },
+    "ensemble": {
+      "forecast_mae": 1.1938,
+      "forecast_rmse": 1.4906,
+      "decision_ndcg_at_3": 0.8283,
+      "decision_hit_at_3": 0.7967
+    },
+    "oracle": {
+      "forecast_mae": 0.0,
+      "forecast_rmse": 0.0,
+      "decision_ndcg_at_3": 1.0,
+      "decision_hit_at_3": 1.0
+    }
+  },
+  "forecast_ranking": [
+    "oracle",
+    "ensemble",
+    "lightgbm",
+    "xgboost",
+    "historical_average"
+  ],
+  "decision_ranking": [
+    "oracle",
+    "ensemble",
+    "lightgbm",
+    "xgboost",
+    "historical_average"
+  ],
+  "correlation_note": "Rank correlation between forecast accuracy and decision quality indicates whether improving MAE/RMSE translates to better recommendations.",
+  "note": "Synthetic experiment. Real results require trained models and historical data."
+}

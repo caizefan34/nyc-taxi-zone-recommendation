@@ -9,7 +9,6 @@ All results are clearly marked: HISTORICAL REPLAY / OFFLINE SHADOW EVALUATION.
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path

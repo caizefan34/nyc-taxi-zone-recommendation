@@ -26,7 +26,6 @@ from src.evaluation.ab.testing import (
     compare_policies,
     generate_ab_report,
 )
-from src.evaluation.shadow.evaluator import ShadowEvaluator
 
 
 def run_enterprise_demo(
@@ -46,9 +45,9 @@ def run_enterprise_demo(
     print()
     print(f"  Fleet:       {fleet_size} vehicles")
     print(f"  Duration:    {n_days} days")
-    print(f"  AI Policy:   Two-Step Horizon")
-    print(f"  Baseline:    Hot Zone Ranking")
-    print(f"  Data Source: SIMULATION / HISTORICAL REPLAY")
+    print("  AI Policy:   Two-Step Horizon")
+    print("  Baseline:    Hot Zone Ranking")
+    print("  Data Source: SIMULATION / HISTORICAL REPLAY")
     print()
 
     zones = [132, 161, 236, 237, 170, 48, 90, 100, 224, 162, 163,

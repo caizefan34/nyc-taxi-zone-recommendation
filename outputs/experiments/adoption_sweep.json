@@ -1,0 +1,124 @@
+{
+  "experiment_id": "adoption_sweep_20260807_234548",
+  "research_question": "Does increasing AI policy adoption cause policy degradation through market saturation and competition?",
+  "fleet_size": 100,
+  "duration_days": 7,
+  "seed": 42,
+  "results": {
+    "1%": {
+      "adoption_rate": 0.01,
+      "n_ai_drivers": 1,
+      "n_baseline_drivers": 99,
+      "ai_avg_revenue": 24.98,
+      "baseline_avg_revenue": 21.09,
+      "ai_utilization": 0.1822,
+      "baseline_utilization": 0.1265,
+      "zone_concentration_top3": 0.5714,
+      "saturation_rate": 0.0,
+      "revenue_gap": 3.89
+    },
+    "5%": {
+      "adoption_rate": 0.05,
+      "n_ai_drivers": 5,
+      "n_baseline_drivers": 95,
+      "ai_avg_revenue": 27.06,
+      "baseline_avg_revenue": 21.21,
+      "ai_utilization": 0.1789,
+      "baseline_utilization": 0.1264,
+      "zone_concentration_top3": 0.3143,
+      "saturation_rate": 0.0,
+      "revenue_gap": 5.85
+    },
+    "10%": {
+      "adoption_rate": 0.1,
+      "n_ai_drivers": 10,
+      "n_baseline_drivers": 90,
+      "ai_avg_revenue": 24.64,
+      "baseline_avg_revenue": 21.17,
+      "ai_utilization": 0.1548,
+      "baseline_utilization": 0.1241,
+      "zone_concentration_top3": 0.2286,
+      "saturation_rate": 0.0088,
+      "revenue_gap": 3.47
+    },
+    "25%": {
+      "adoption_rate": 0.25,
+      "n_ai_drivers": 25,
+      "n_baseline_drivers": 75,
+      "ai_avg_revenue": 23.17,
+      "baseline_avg_revenue": 21.29,
+      "ai_utilization": 0.1526,
+      "baseline_utilization": 0.1266,
+      "zone_concentration_top3": 0.24,
+      "saturation_rate": 0.4296,
+      "revenue_gap": 1.88
+    },
+    "50%": {
+      "adoption_rate": 0.5,
+      "n_ai_drivers": 50,
+      "n_baseline_drivers": 50,
+      "ai_avg_revenue": 21.24,
+      "baseline_avg_revenue": 21.9,
+      "ai_utilization": 0.1484,
+      "baseline_utilization": 0.1249,
+      "zone_concentration_top3": 0.1943,
+      "saturation_rate": 0.7445,
+      "revenue_gap": -0.65
+    },
+    "75%": {
+      "adoption_rate": 0.75,
+      "n_ai_drivers": 75,
+      "n_baseline_drivers": 25,
+      "ai_avg_revenue": 19.2,
+      "baseline_avg_revenue": 20.93,
+      "ai_utilization": 0.1423,
+      "baseline_utilization": 0.1265,
+      "zone_concentration_top3": 0.1981,
+      "saturation_rate": 0.8357,
+      "revenue_gap": -1.73
+    },
+    "100%": {
+      "adoption_rate": 1.0,
+      "n_ai_drivers": 100,
+      "n_baseline_drivers": 0,
+      "ai_avg_revenue": 17.24,
+      "baseline_avg_revenue": 0.0,
+      "ai_utilization": 0.1312,
+      "baseline_utilization": NaN,
+      "zone_concentration_top3": 0.1857,
+      "saturation_rate": 0.9214,
+      "revenue_gap": 17.24
+    }
+  },
+  "observations": {
+    "revenue_trend": [
+      24.98,
+      27.06,
+      24.64,
+      23.17,
+      21.24,
+      19.2,
+      17.24
+    ],
+    "saturation_trend": [
+      0.0,
+      0.0,
+      0.0088,
+      0.4296,
+      0.7445,
+      0.8357,
+      0.9214
+    ],
+    "concentration_trend": [
+      0.5714,
+      0.3143,
+      0.2286,
+      0.24,
+      0.1943,
+      0.1981,
+      0.1857
+    ]
+  },
+  "note": "SIMULATION only. Results use synthetic demand and simplified competition. Not production evidence. Does not include congestion, airport queues, endogenous demand, or strategic adaptation.",
+  "source": "simulation"
+}

@@ -5,7 +5,6 @@ Data sources: LTA (Land Transport Authority) open data, taxis, ride-hail.
 """
 from __future__ import annotations
 
-from datetime import datetime
 from pathlib import Path
 from typing import Optional
 

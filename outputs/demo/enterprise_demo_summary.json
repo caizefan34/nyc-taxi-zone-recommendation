@@ -1,0 +1,45 @@
+{
+  "demo_scenario": "Fleet optimization comparison",
+  "fleet_size": 100,
+  "duration_days": 7,
+  "source": "simulation/historical_replay",
+  "control": {
+    "policy_name": "Hot Zone (Baseline)",
+    "revenue_per_vehicle_mean": 21.7077,
+    "revenue_per_vehicle_std": 0.4188,
+    "utilization_mean": 0.1512,
+    "utilization_std": 0.0064
+  },
+  "treatment": {
+    "policy_name": "Two-Step (AI)",
+    "revenue_per_vehicle_mean": 24.9006,
+    "revenue_per_vehicle_std": 1.0047,
+    "utilization_mean": 0.1913,
+    "utilization_std": 0.0049
+  },
+  "comparison": {
+    "control": "Hot Zone (Baseline)",
+    "treatment": "Two-Step (AI)",
+    "source": "simulation",
+    "n_bootstrap": 2000,
+    "metrics": {
+      "revenue_per_vehicle": {
+        "mean_difference": 3.1928,
+        "ci_lower": 2.6334,
+        "ci_upper": 3.8143,
+        "effect_size_cohens_d": 4.1483,
+        "statistically_significant": true,
+        "n_pairs": 7
+      },
+      "utilization": {
+        "mean_difference": 0.0401,
+        "ci_lower": 0.0335,
+        "ci_upper": 0.0477,
+        "effect_size_cohens_d": 7.0357,
+        "statistically_significant": true,
+        "n_pairs": 7
+      }
+    },
+    "note": "Results from simulator. Not production evidence."
+  }
+}
