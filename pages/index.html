@@ -3,183 +3,353 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NYC Mobility AI — Urban Mobility Decision Intelligence</title>
+<title>Urban Mobility Decision Intelligence — Research Platform</title>
 <meta name="description" content="An open-source decision intelligence platform for dynamic fleet repositioning — demand forecasting, multi-agent simulation, offline reinforcement learning, and reproducible policy evaluation on NYC taxi data.">
-<meta name="keywords" content="urban mobility, reinforcement learning, offline RL, doubly robust, OPE, NYC taxi, simulation, benchmark, AI, machine learning, demand forecasting, IQL, DQN">
-<meta property="og:title" content="NYC Mobility AI — Decision Intelligence Platform">
-<meta property="og:description" content="Open-source platform for AI-driven fleet repositioning: forecasting, simulation, offline RL, and reproducible evaluation">
+<meta name="keywords" content="urban mobility, reinforcement learning, offline RL, doubly robust, OPE, NYC taxi, simulation, benchmark, AI, machine learning, demand forecasting, IQL, DQN, GraphSAGE, research">
+<meta property="og:title" content="Urban Mobility Decision Intelligence — Open-Source Research Platform">
+<meta property="og:description" content="AI-driven fleet repositioning: demand forecasting, multi-agent simulation, offline RL, and reproducible evaluation on NYC taxi data">
 <meta property="og:image" content="assets/social-preview.svg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --bg: #0a0a0f; --card: #141420; --border: #252540;
-  --accent: #4f8fff; --accent2: #7c5ce7; --text: #e0e0f0; --muted: #8888aa;
-  --green: #2ea44f; --orange: #e05d44; --yellow: #f0c040;
-}
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
-.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #08080f; --bg2: #0d0d1a; --card: #111122;
+    --border: #1e1e3a; --border-hover: #2a2a55;
+    --accent: #4f8fff; --accent2: #7c5ce7; --accent3: #22d3a0;
+    --text: #e2e2f0; --text2: #8888b0; --text3: #5a5a80;
+    --grad-hero: linear-gradient(135deg, #0a0a20 0%, #0f1035 25%, #0d1a30 50%, #1a0e2e 75%, #0a0a20 100%);
+    --grad-title: linear-gradient(135deg, #e0e7ff 0%, #93b4f5 40%, #c4b5fd 100%);
+    --glow-blue: 0 0 40px rgba(79,143,255,0.15);
+    --glow-purple: 0 0 40px rgba(124,92,231,0.12);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+  a:hover { color: #7ab4ff; }
 
-.hero {
-  position: relative; overflow: hidden;
-  background: linear-gradient(135deg, #0d0d2b 0%, #1a1040 30%, #0d1a30 60%, #0a0a1a 100%);
-  padding: 80px 0 60px; text-align: center;
-}
-.hero::before {
-  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(ellipse at 30% 50%, rgba(79,143,255,0.08) 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 40%, rgba(124,92,231,0.06) 0%, transparent 50%);
-  animation: heroPulse 8s ease-in-out infinite;
-}
-@keyframes heroPulse { 0%,100% {opacity:.6} 50% {opacity:1} }
-.hero-content { position: relative; z-index: 1; }
-.hero-badge {
-  display: inline-block; background: rgba(79,143,255,0.15); border: 1px solid rgba(79,143,255,0.3);
-  color: var(--accent); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500;
-  margin-bottom: 24px; letter-spacing: 0.5px;
-}
-.hero h1 {
-  font-size: clamp(32px, 6vw, 56px); font-weight: 800; line-height: 1.15;
-  background: linear-gradient(135deg, #fff 0%, #a0c4ff 50%, #c4b5fd 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  margin-bottom: 16px;
-}
-.hero p {
-  font-size: 18px; color: var(--muted); max-width: 700px; margin: 0 auto 32px;
-}
-.hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-.btn {
-  display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px;
-  border-radius: 8px; font-size: 15px; font-weight: 600; border: none; cursor: pointer;
-  transition: all 0.2s; text-decoration: none !important;
-}
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: #3d7be6; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(79,143,255,0.3); }
-.btn-secondary { background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid var(--border); }
-.btn-secondary:hover { background: rgba(255,255,255,0.14); }
-.btn-outline { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-.btn-outline:hover { background: rgba(79,143,255,0.1); }
+  /* Navigation */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,8,15,0.85); backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; display: flex; align-items: center;
+    justify-content: space-between; height: 56px;
+  }
+  .nav-logo { font-weight: 700; font-size: 16px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .nav-logo .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a { font-size: 14px; color: var(--text2); font-weight: 500; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links .btn-github {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 6px;
+    font-size: 13px; border: 1px solid rgba(255,255,255,0.1);
+  }
+  .nav-links .btn-github:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
 
-.stats-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 32px 0; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; text-align: center; }
-.stat-value { font-size: 32px; font-weight: 800; }
-.stat-value.accent { color: var(--accent); }
-.stat-value.green { color: var(--green); }
-.stat-value.orange { color: var(--orange); }
-.stat-value.yellow { color: var(--yellow); }
-.stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 
-.section { padding: 64px 0; }
-.section-dark { background: var(--card); }
-.section-tag { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
-.section h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
-.section p.subtitle { color: var(--muted); font-size: 16px; margin-bottom: 40px; max-width: 650px; }
+  /* Hero */
+  .hero {
+    position: relative; overflow: hidden;
+    background: var(--grad-hero);
+    padding: 120px 0 80px; text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -60%; left: -60%; width: 220%; height: 220%;
+    background:
+      radial-gradient(ellipse at 25% 50%, rgba(79,143,255,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 75% 40%, rgba(124,92,231,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(34,211,160,0.03) 0%, transparent 40%);
+    animation: heroFloat 12s ease-in-out infinite;
+  }
+  @keyframes heroFloat { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(10px,-10px) scale(1.02); } 66% { transform: translate(-5px,5px) scale(0.98); } }
+  .hero-content { position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(79,143,255,0.1); border: 1px solid rgba(79,143,255,0.2);
+    color: var(--accent); padding: 5px 18px; border-radius: 24px; font-size: 13px;
+    font-weight: 500; margin-bottom: 28px; letter-spacing: 0.3px;
+  }
+  .hero-badge .pulse {
+    width: 6px; height: 6px; background: var(--accent3); border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; box-shadow: 0 0 8px var(--accent3); } }
+  .hero h1 {
+    font-size: clamp(34px, 6.5vw, 60px); font-weight: 800; line-height: 1.12;
+    background: var(--grad-title); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 20px; letter-spacing: -0.02em;
+  }
+  .hero p.subtitle {
+    font-size: 18px; color: var(--text2); max-width: 680px; margin: 0 auto 36px; line-height: 1.6;
+  }
+  .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px;
+    border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: all 0.25s; text-decoration: none !important; white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #4f8fff, #3d6fd9);
+    color: #fff; box-shadow: 0 4px 24px rgba(79,143,255,0.25);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 32px rgba(79,143,255,0.4); color: #fff; }
+  .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-outline:hover { background: rgba(255,255,255,0.06); border-color: var(--border-hover); color: var(--text); }
+  .btn-accent { background: rgba(124,92,231,0.12); color: var(--accent2); border: 1px solid rgba(124,92,231,0.25); }
+  .btn-accent:hover { background: rgba(124,92,231,0.2); border-color: rgba(124,92,231,0.4); color: #a78bfa; }
 
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-.card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-  padding: 28px; transition: border-color 0.2s, transform 0.2s;
-}
-.card:hover { border-color: var(--accent); transform: translateY(-2px); }
-.card-icon { font-size: 28px; margin-bottom: 12px; }
-.card h3 { font-size: 17px; margin-bottom: 8px; }
-.card p { font-size: 14px; color: var(--muted); }
+  /* Stats */
+  .stats-bar { padding: 40px 0; background: var(--bg2); border-bottom: 1px solid var(--border); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 24px; text-align: center; }
+  .stat-value { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  .stat-value.blue { color: var(--accent); }
+  .stat-value.green { color: var(--accent3); }
+  .stat-value.purple { color: var(--accent2); }
+  .stat-value.amber { color: #fbbf24; }
+  .stat-label { font-size: 12px; color: var(--text3); margin-top: 6px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; }
+  .stat-note { font-size: 11px; color: var(--text3); margin-top: 4px; }
 
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
-th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-td { font-variant-numeric: tabular-nums; }
-tr:hover td { background: rgba(255,255,255,0.02); }
-.best { color: var(--green); font-weight: 700; }
+  /* Sections */
+  .section { padding: 72px 0; }
+  .section-alt { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .section-label {
+    display: inline-block; font-size: 11px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;
+  }
+  .section h2 { font-size: 30px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .section h3 { font-size: 18px; font-weight: 600; margin: 28px 0 10px; }
+  .section p.desc { color: var(--text2); font-size: 16px; margin-bottom: 40px; max-width: 600px; }
 
-.code-block {
-  background: #0d0d1a; border: 1px solid var(--border); border-radius: 8px;
-  padding: 20px 24px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px;
-  overflow-x: auto; margin: 20px 0;
-}
-.code-block .c { color: #666; }
-.code-block .k { color: var(--accent); }
+  /* Cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 20px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 28px; transition: all 0.25s; position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .card:hover { border-color: var(--border-hover); transform: translateY(-3px); box-shadow: var(--glow-blue); }
+  .card:hover::before { opacity: 1; }
+  .card-icon { font-size: 24px; margin-bottom: 14px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(79,143,255,0.08); border-radius: 10px; }
+  .card h3 { font-size: 17px; margin: 0 0 8px; }
+  .card p { font-size: 14px; color: var(--text2); line-height: 1.6; }
 
-.tag {
-  display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 11px;
-  font-weight: 600; margin-right: 6px;
-}
-.tag-blue { background: rgba(79,143,255,0.15); color: var(--accent); }
-.tag-green { background: rgba(46,164,79,0.15); color: var(--green); }
-.tag-purple { background: rgba(124,92,231,0.15); color: var(--accent2); }
+  .tag {
+    display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 11px;
+    font-weight: 600; margin-right: 6px; margin-top: 4px;
+  }
+  .tag-blue { background: rgba(79,143,255,0.12); color: var(--accent); }
+  .tag-purple { background: rgba(124,92,231,0.12); color: var(--accent2); }
+  .tag-green { background: rgba(34,211,160,0.12); color: var(--accent3); }
 
-.footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--muted); font-size: 13px; }
-.footer a { color: var(--muted); margin: 0 12px; }
+  /* Tables */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 13px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--text3); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
+  td { font-variant-numeric: tabular-nums; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .best { color: var(--accent3); font-weight: 700; }
+
+  /* Code */
+  .code-block {
+    background: #08081a; border: 1px solid var(--border); border-radius: 10px;
+    padding: 22px 28px; font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace;
+    font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 16px 0;
+  }
+  .code-block .cmt { color: #555; }
+  .code-block .kw { color: var(--accent); }
+  .code-block .val { color: var(--accent3); }
+
+  /* Pipeline */
+  .pipeline {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0; justify-content: center;
+    font-family: 'SF Mono','Fira Code',monospace; font-size: 12px;
+  }
+  .pipeline .step {
+    background: var(--card); border: 1px solid var(--border); padding: 10px 18px;
+    border-radius: 8px; color: var(--text2); white-space: nowrap;
+  }
+  .pipeline .arrow { display: flex; align-items: center; color: var(--text3); font-size: 16px; }
+
+  /* CTA */
+  .cta {
+    text-align: center; padding: 64px 24px; border-radius: 16px;
+    background: linear-gradient(135deg, rgba(79,143,255,0.06), rgba(124,92,231,0.06));
+    border: 1px solid rgba(124,92,231,0.15); margin: 40px 0;
+  }
+  .cta h2 { font-size: 26px; margin-bottom: 8px; }
+  .cta p { color: var(--text2); margin-bottom: 24px; }
+  .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* Footer */
+  .footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; }
+  .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .footer-links a { color: var(--text2); font-size: 14px; }
+  .footer-copy { color: var(--text3); font-size: 12px; }
+  .footer-copy a { color: var(--text3); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero { padding: 100px 0 56px; }
+    .hero h1 { font-size: 28px; }
+    .nav-links { display: none; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .section { padding: 48px 0; }
+  }
 </style>
 </head>
 <body>
 
-<section class="hero">
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo"><span class="dot"></span>NYC Mobility AI</a>
+    <div class="nav-links">
+      <a href="#platform">Platform</a>
+      <a href="#results">Results</a>
+      <a href="#quickstart">Quick Start</a>
+      <a href="docs/">Docs</a>
+      <a href="web/">Demo</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn-github">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 00-2.53 15.59c.4.07.55-.17.55-.38v-1.34c-2.22.48-2.69-1.07-2.69-1.07-.36-.92-.89-1.16-.89-1.16-.73-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.64 7.64 0 014 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.74.54 1.49v2.2c0 .21.15.46.55.38A8.01 8.01 0 008 0z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="top">
   <div class="hero-content container">
-    <div class="hero-badge">v3.0 &bull; Decision Intelligence Platform</div>
-    <h1>AI-Driven Urban Mobility<br>Decision Intelligence</h1>
-    <p>An open-source platform combining demand forecasting, multi-agent simulation, offline reinforcement learning, and reproducible policy evaluation — with REST API, Docker deployment, and interactive demo.</p>
+    <div class="hero-badge">
+      <span class="pulse"></span> v3.0.0 · Research Platform · MIT License
+    </div>
+    <h1>Urban Mobility<br>Decision Intelligence</h1>
+    <p class="subtitle">
+      An open-source research platform for AI-driven fleet repositioning.
+      Demand forecasting, multi-agent simulation, offline reinforcement learning,
+      and reproducible policy evaluation — all in one system.
+    </p>
     <div class="hero-buttons">
-      <a href="web/" class="btn btn-primary">Launch Interactive Demo</a>
-      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn btn-secondary">GitHub</a>
-      <a href="docs/" class="btn btn-outline">Documentation</a>
+      <a href="web/" class="btn btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+        Launch Demo
+      </a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn btn-outline">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 00-2.53 15.59c.4.07.55-.17.55-.38v-1.34c-2.22.48-2.69-1.07-2.69-1.07-.36-.92-.89-1.16-.89-1.16-.73-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.64 7.64 0 014 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.74.54 1.49v2.2c0 .21.15.46.55.38A8.01 8.01 0 008 0z"/></svg>
+        Star on GitHub
+      </a>
+      <a href="docs/" class="btn btn-accent">Documentation</a>
+      <a href="docs/research_paper_draft.md" class="btn btn-outline">Paper Draft</a>
     </div>
   </div>
 </section>
 
+<!-- Stats Bar -->
 <section class="stats-bar">
   <div class="container stats-grid">
-    <div><div class="stat-value accent">0.9565</div><div class="stat-label">NDCG@3 (Two-Step)</div></div>
-    <div><div class="stat-value green">+$139</div><div class="stat-label">Daily Revenue Lift</div></div>
-    <div><div class="stat-value orange">+$53.74</div><div class="stat-label">DQN vs Single-Step</div></div>
-    <div><div class="stat-value yellow">402</div><div class="stat-label">Tests Passing</div></div>
-    <div><div class="stat-value accent">3</div><div class="stat-label">Docker Services</div></div>
+    <div>
+      <div class="stat-value blue">0.9565</div>
+      <div class="stat-label">NDCG@3 (Two-Step)</div>
+      <div class="stat-note">3,360 queries</div>
+    </div>
+    <div>
+      <div class="stat-value green">+$139.40</div>
+      <div class="stat-label">Daily Revenue Lift</div>
+      <div class="stat-note">vs Hot Zone baseline</div>
+    </div>
+    <div>
+      <div class="stat-value purple">+$53.74</div>
+      <div class="stat-label">DQN Advantage</div>
+      <div class="stat-note">per driver / day</div>
+    </div>
+    <div>
+      <div class="stat-value amber">402</div>
+      <div class="stat-label">Tests Passing</div>
+      <div class="stat-note">CI verified</div>
+    </div>
+    <div>
+      <div class="stat-value blue">263</div>
+      <div class="stat-label">NYC Taxi Zones</div>
+      <div class="stat-note">full coverage</div>
+    </div>
   </div>
 </section>
 
-<section class="section">
+<!-- Platform -->
+<section class="section" id="platform">
   <div class="container">
-    <div class="section-tag">Platform</div>
+    <div class="section-label">Platform Capabilities</div>
     <h2>What This Platform Does</h2>
-    <p class="subtitle">A complete decision intelligence pipeline — from raw trip data to deployable policies with rigorous evaluation.</p>
-    <div class="cards">
+    <p class="desc">A complete decision intelligence pipeline — from raw trip data to deployable policies with rigorous evaluation.</p>
+    <div class="pipeline">
+      <span class="step">NYC TLC Data</span>
+      <span class="arrow">→</span>
+      <span class="step">Demand Forecasting</span>
+      <span class="arrow">→</span>
+      <span class="step">Supply-Demand Model</span>
+      <span class="arrow">→</span>
+      <span class="step">Multi-Agent Sim</span>
+      <span class="arrow">→</span>
+      <span class="step">Policy Optimization</span>
+      <span class="arrow">→</span>
+      <span class="step">Evaluation (OPE)</span>
+      <span class="arrow">→</span>
+      <span class="step">API / Dashboard</span>
+    </div>
+    <div class="cards" style="margin-top:24px">
       <div class="card">
         <div class="card-icon">&#128200;</div>
         <h3>Demand Forecasting</h3>
-        <p>Leakage-safe LightGBM + XGBoost ensemble with GraphSAGE/GAT spatial features. Strictly-prior temporal splits prevent data leakage. MAE 1.49 on 263-zone NYC predictions.</p>
-        <p style="margin-top:8px"><span class="tag tag-blue">LightGBM</span><span class="tag tag-purple">XGBoost</span><span class="tag tag-green">GraphSAGE</span></p>
+        <p>Leakage-safe LightGBM + XGBoost ensemble with GraphSAGE/GAT spatial features. Strictly-prior temporal splits. MAE 1.49.</p>
+        <div style="margin-top:10px"><span class="tag tag-blue">LightGBM</span><span class="tag tag-purple">XGBoost</span><span class="tag tag-green">GraphSAGE</span></div>
       </div>
       <div class="card">
         <div class="card-icon">&#127750;</div>
         <h3>Multi-Agent Simulation</h3>
-        <p>Configurable fleet simulator with finite depletable demand, explicit competition, shift constraints, and calibrated travel times. Tests policies under realistic market pressure.</p>
-        <p style="margin-top:8px"><span class="tag tag-blue">v2 Engine</span><span class="tag tag-green">50+ drivers</span></p>
+        <p>Configurable fleet with finite demand, explicit competition, shift constraints, and calibrated travel times. Tests policies under market pressure.</p>
+        <div style="margin-top:10px"><span class="tag tag-blue">v2 Engine</span><span class="tag tag-green">50+ drivers</span></div>
       </div>
       <div class="card">
         <div class="card-icon">&#129504;</div>
         <h3>Reinforcement Learning</h3>
-        <p>DQN, Double DQN, and Implicit Q-Learning (IQL) with Gymnasium environment. Masked action spaces, offline replay buffers, and trajectory-aware evaluation.</p>
-        <p style="margin-top:8px"><span class="tag tag-blue">DQN</span><span class="tag tag-purple">Double DQN</span><span class="tag tag-green">IQL</span></p>
+        <p>DQN, Double DQN, and IQL with Gymnasium environment. Masked actions, offline replay buffers, and trajectory-aware training.</p>
+        <div style="margin-top:10px"><span class="tag tag-blue">DQN</span><span class="tag tag-purple">Double DQN</span><span class="tag tag-green">IQL</span></div>
       </div>
       <div class="card">
         <div class="card-icon">&#128300;</div>
         <h3>Offline Policy Evaluation</h3>
-        <p>Trajectory-level Weighted Importance Sampling and sequential Doubly Robust estimation with complete-trajectory bootstrap confidence intervals. FQE diagnostic for nuisance models.</p>
-        <p style="margin-top:8px"><span class="tag tag-blue">WIS</span><span class="tag tag-purple">Doubly Robust</span><span class="tag tag-green">Bootstrap CI</span></p>
+        <p>Trajectory-level Weighted Importance Sampling and sequential Doubly Robust estimation with bootstrap confidence intervals.</p>
+        <div style="margin-top:10px"><span class="tag tag-blue">WIS</span><span class="tag tag-purple">Doubly Robust</span><span class="tag tag-green">Bootstrap CI</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section section-dark">
+<!-- Results -->
+<section class="section section-alt" id="results">
   <div class="container">
-    <div class="section-tag">Results</div>
-    <h2>Key Performance Metrics</h2>
-    <p class="subtitle">All values are reproducible. Run <code>make all</code> to verify.</p>
+    <div class="section-label">Key Results</div>
+    <h2>Reproducible Benchmarks</h2>
+    <p class="desc">All metrics are reproducible via <code>make all</code>. See <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation#scientific-limitations">Scientific Limitations</a>.</p>
 
-    <h3 style="margin-bottom:12px;margin-top:32px">Static Diagnostic (3,360 queries)</h3>
+    <h3>Static Diagnostic (3,360 queries)</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Strategy</th><th>NDCG@3</th><th>Hit@3</th><th>Utility@1</th></tr></thead>
@@ -191,7 +361,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       </table>
     </div>
 
-    <h3 style="margin-bottom:12px;margin-top:32px">100-Seed Simulator Rollout (7 days)</h3>
+    <h3>100-Seed Simulator Rollout (7 days)</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Strategy</th><th>Mean Daily Fare</th><th>vs Hot Zone</th></tr></thead>
@@ -203,19 +373,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       </table>
     </div>
 
-    <h3 style="margin-bottom:12px;margin-top:32px">Multi-Agent Competition (50 drivers)</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Strategy</th><th>Avg Revenue</th><th>Utilization</th></tr></thead>
-        <tbody>
-          <tr><td>Random</td><td>$189.42</td><td>3.1%</td></tr>
-          <tr><td>Single-Step</td><td>$412.85</td><td>10.8%</td></tr>
-          <tr><td class="best">Two-Step Horizon</td><td class="best">$438.17</td><td class="best">12.3%</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3 style="margin-bottom:12px;margin-top:32px">Deep RL Baselines (vs Single-Step)</h3>
+    <h3>Deep RL vs Single-Step</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Algorithm</th><th>Revenue Delta</th><th>95% CI</th></tr></thead>
@@ -226,104 +384,112 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       </table>
     </div>
 
-    <h3 style="margin-bottom:12px;margin-top:32px">Offline Policy Evaluation (Trajectory-Level)</h3>
+    <h3>Offline Policy Evaluation (Trajectory-Level)</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Policy</th><th>WIS Estimate</th><th>Sequential DR</th></tr></thead>
         <tbody>
           <tr><td>Stay (on-policy)</td><td>$438.55</td><td>$431.74</td></tr>
-          <tr><td>IQL (off-policy, uniform behavior)</td><td>$0.00</td><td>$12.44</td></tr>
+          <tr><td>IQL (off-policy)</td><td>$0.00 *</td><td>$12.44</td></tr>
         </tbody>
       </table>
     </div>
-
-    <p style="margin-top:20px;font-size:13px;color:var(--muted)">
-      All results are simulator outcomes — not production revenue estimates. IQL results reflect deterministic-target overlap limitations with uniform exploration data. See <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation#scientific-limitations">Scientific Limitations</a>.
+    <p style="font-size:12px;color:var(--text3);margin-top:8px">
+      * IQL deterministic target + uniform exploration → support overlap failure. See <a href="docs/offline_rl_protocol.md">Offline RL Protocol</a>.
     </p>
   </div>
 </section>
 
-<section class="section">
+<!-- Quick Start -->
+<section class="section" id="quickstart">
   <div class="container">
-    <div class="section-tag">Quick Start</div>
-    <h2>Try It Now</h2>
-    <p class="subtitle">One command to start the full platform.</p>
+    <div class="section-label">Quick Start</div>
+    <h2>Run It Locally</h2>
+    <p class="desc">One command to start the full platform with API and interactive demo.</p>
     <div class="code-block">
-      <span class="c"># Clone and start the platform (API + Demo)</span><br>
-      git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git<br>
-      <span class="k">cd</span> nyc-taxi-zone-recommendation<br>
-      docker compose up<br>
+      <span class="cmt"># Clone and start (API + Demo)</span><br>
+      <span class="kw">git clone</span> https://github.com/caizefan34/nyc-taxi-zone-recommendation.git<br>
+      <span class="kw">cd</span> nyc-taxi-zone-recommendation<br>
+      <span class="kw">docker compose up</span><br>
       <br>
-      <span class="c"># API → http://localhost:8000/docs</span><br>
-      <span class="c"># Demo → http://localhost:8501</span>
+      <span class="cmt"># API → http://localhost:8000/docs</span><br>
+      <span class="cmt"># Demo → http://localhost:8501</span>
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
       <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn btn-primary">Star on GitHub</a>
-      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CONTRIBUTING.md" class="btn btn-secondary">Contribute</a>
-      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CITATION.cff" class="btn btn-outline">Cite This Work</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/fork" class="btn btn-outline">Fork Repository</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CITATION.cff" class="btn btn-accent">Cite This Work</a>
     </div>
   </div>
 </section>
 
-<section class="section section-dark">
+<!-- Engineering -->
+<section class="section section-alt">
   <div class="container">
-    <div class="section-tag">Engineering</div>
+    <div class="section-label">Engineering</div>
     <h2>Production-Ready Infrastructure</h2>
-    <p class="subtitle">Beyond research: REST API, Docker, CI/CD, and observability included.</p>
+    <p class="desc">Beyond research: REST API, Docker, CI/CD, and observability built in.</p>
     <div class="cards">
       <div class="card">
-        <div class="card-icon">&#9881;</div>
+        <div class="card-icon">&#128295;</div>
         <h3>REST API (FastAPI)</h3>
-        <p><code>/health</code>, <code>/ready</code>, <code>/v1/recommendations</code>, <code>/v1/demand/forecast</code> endpoints with auto-generated OpenAPI docs.</p>
-        <p style="margin-top:8px"><span class="tag tag-blue">FastAPI</span><span class="tag tag-green">Pydantic v2</span></p>
+        <p><code>/health</code>, <code>/ready</code>, <code>/v1/recommendations</code>, <code>/v1/demand/forecast</code> with auto-generated OpenAPI docs.</p>
+        <span class="tag tag-blue">FastAPI</span><span class="tag tag-green">Pydantic v2</span>
       </div>
       <div class="card">
         <div class="card-icon">&#128230;</div>
         <h3>Docker & Compose</h3>
-        <p>Multi-stage builds for api, demo, and test targets. Health checks on all services. One-command <code>docker compose up</code>.</p>
-        <p style="margin-top:8px"><span class="tag tag-blue">Docker</span><span class="tag tag-green">Compose</span></p>
+        <p>Multi-stage builds with health checks. One-command <code>docker compose up</code> for API + Demo.</p>
+        <span class="tag tag-blue">Docker</span><span class="tag tag-green">Compose</span>
       </div>
       <div class="card">
         <div class="card-icon">&#128260;</div>
         <h3>CI/CD (GitHub Actions)</h3>
-        <p>Python 3.10/3.12 matrix, Ruff lint, full test suite with coverage, Docker build smoke, and API health polling on every push.</p>
-        <p style="margin-top:8px"><span class="tag tag-blue">CI</span><span class="tag tag-green">Codecov</span></p>
+        <p>Python 3.10/3.12 matrix, lint, full test suite + coverage, Docker smoke test on every push.</p>
+        <span class="tag tag-blue">CI</span><span class="tag tag-purple">Codecov</span>
       </div>
       <div class="card">
         <div class="card-icon">&#128221;</div>
-        <h3>Observability</h3>
-        <p>Structured logging, request latency tracking, model registry with versioning, metrics snapshots, and shadow evaluation mode.</p>
-        <p style="margin-top:8px"><span class="tag tag-blue">Logging</span><span class="tag tag-purple">Registry</span></p>
+        <h3>Observability & Registry</h3>
+        <p>Structured logging, request latency tracking, model versioning, metrics snapshots, shadow evaluation.</p>
+        <span class="tag tag-blue">Logging</span><span class="tag tag-purple">Registry</span>
       </div>
     </div>
   </div>
 </section>
 
+<!-- CTA -->
 <section class="section">
   <div class="container">
-    <div class="section-tag">Architecture</div>
-    <h2>How It Works</h2>
-    <p class="subtitle">End-to-end pipeline for urban mobility intelligence.</p>
-    <div class="cards">
-      <div class="card"><div class="card-icon">1</div><h3>Data Pipeline</h3><p>Raw NYC TLC trips &rarr; chronological split &rarr; cleaning &rarr; zone-time statistics &rarr; travel-time matrix</p></div>
-      <div class="card"><div class="card-icon">2</div><h3>Demand Forecasting</h3><p>Feature engineering &rarr; LightGBM + XGBoost ensemble &rarr; GraphSAGE/GAT spatial encoding &rarr; recursive holdout predictions</p></div>
-      <div class="card"><div class="card-icon">3</div><h3>Policy Optimization</h3><p>Two-step MDP planning &middot; DQN &middot; Double DQN &middot; IQL offline RL &middot; Model-based value iteration</p></div>
-      <div class="card"><div class="card-icon">4</div><h3>Evaluation & Deploy</h3><p>Paired statistical tests &middot; Offline OPE (WIS/DR) &middot; Exposure analysis &middot; REST API &middot; Docker deploy</p></div>
+    <div class="cta">
+      <h2>Collaborate With Us</h2>
+      <p>Researchers, engineers, and domain experts — contribute to the platform,<br>add your city, benchmark your policy, or co-author the paper.</p>
+      <div class="cta-btns">
+        <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions" class="btn btn-primary">Join Discussions</a>
+        <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CONTRIBUTING.md" class="btn btn-outline">Contribute</a>
+        <a href="docs/research_paper_draft.md" class="btn btn-accent">Read Paper Draft</a>
+      </div>
     </div>
   </div>
 </section>
 
+<!-- Footer -->
 <footer class="footer">
   <div class="container">
-    <p>
+    <div class="footer-links">
       <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation">GitHub</a>
       <a href="docs/">Documentation</a>
       <a href="web/">Web Demo</a>
       <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CITATION.cff">Cite</a>
       <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/ROADMAP.md">Roadmap</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions">Discussions</a>
+    </div>
+    <p class="footer-copy">
+      MIT License · Built for reproducible research at <a href="https://www.sjtu.edu.cn/">Shanghai Jiao Tong University</a> · v3.0.0<br>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation">caizefan34/nyc-taxi-zone-recommendation</a>
     </p>
-    <p style="margin-top:8px">MIT License &middot; Built for reproducible research &middot; v3.0.0</p>
   </div>
 </footer>
+
 </body>
 </html>

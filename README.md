@@ -3,28 +3,43 @@
 
   <h1>Urban Mobility Decision Intelligence</h1>
 
-  <p><strong>An open-source decision intelligence platform for dynamic fleet repositioning — combining demand forecasting, multi-agent simulation, reinforcement learning, and reproducible evaluation.</strong></p>
-
   <p>
-    <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&amp;label=tests" alt="Tests"></a>
-    <a href="docs/badges/reproducibility.svg"><img src="docs/badges/reproducibility.svg" alt="Reproducible"></a>
-    <a href="docs/badges/benchmark.svg"><img src="docs/badges/benchmark.svg" alt="Benchmark"></a>
-    <a href="#quick-start"><img src="https://img.shields.io/badge/docker-ready-blue" alt="Docker"></a>
-    <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen" alt="Contributions"></a>
+    <strong>
+      An open-source decision intelligence platform for dynamic fleet repositioning —<br>
+      demand forecasting, multi-agent simulation, offline reinforcement learning, and reproducible evaluation.
+    </strong>
   </p>
 
+  <!-- Badges -->
+  <p>
+    <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white" alt="Python"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?logo=opensourceinitiative&logoColor=white" alt="License"></a>
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&logo=githubactions&logoColor=white&label=tests" alt="CI"></a>
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation"><img src="https://img.shields.io/github/stars/caizefan34/nyc-taxi-zone-recommendation?style=social" alt="Stars"></a>
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation"><img src="https://img.shields.io/github/forks/caizefan34/nyc-taxi-zone-recommendation?style=social" alt="Forks"></a>
+  </p>
+  <p>
+    <a href="docs/badges/reproducibility.svg"><img src="docs/badges/reproducibility.svg" alt="Reproducible"></a>
+    <a href="docs/badges/benchmark.svg"><img src="docs/badges/benchmark.svg" alt="Benchmark"></a>
+    <a href="docs/badges/documentation.svg"><img src="docs/badges/documentation.svg" alt="Documentation"></a>
+    <a href="#quick-start"><img src="https://img.shields.io/badge/docker-ready-blue?logo=docker&logoColor=white" alt="Docker"></a>
+    <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen?logo=github" alt="Contributions"></a>
+    <a href="https://doi.org/10.5281/zenodo.placeholder"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.placeholder-blue?logo=doi" alt="DOI"></a>
+  </p>
+
+  <!-- Quick Links -->
   <p>
     <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/"><strong>Live Demo</strong></a>
     &nbsp;·&nbsp;
     <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/"><strong>Documentation</strong></a>
     &nbsp;·&nbsp;
-    <a href="#quick-start"><strong>API</strong></a>
+    <a href="#quick-start"><strong>Quick Start</strong></a>
     &nbsp;·&nbsp;
-    <a href="#docker"><strong>Docker</strong></a>
+    <a href="docs/research_paper_draft.md"><strong>Paper Draft</strong></a>
     &nbsp;·&nbsp;
     <a href="ROADMAP.md"><strong>Roadmap</strong></a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions"><strong>Discussions</strong></a>
   </p>
 </div>
 
@@ -379,19 +394,37 @@ See [docs/reproduction.md](docs/reproduction.md) for detailed instructions.
 
 ---
 
-## Enterprise / Research Pilot
+## How to Collaborate
 
-The open-source project provides the research and engineering foundation.
+This platform is designed for multi-disciplinary collaboration. Whether you're a researcher, engineer, or domain expert, there are concrete ways to contribute and collaborate.
 
-For organizations interested in fleet optimization, mobility forecasting, controlled pilot deployment, or custom city integration, see [docs/enterprise/pilot.md](docs/enterprise/pilot.md).
+### For Researchers
 
-The platform is designed for research pilots and controlled fleet experiments. No real-world A/B tests have been conducted.
+- **Use as a benchmark** — Standardized evaluation protocol with leakage-safe splits, paired statistical tests, and reproducible baselines. Submit your policy or forecaster via [external contribution guide](docs/external_contribution.md).
+- **Extend the methods** — Add new policies (RL, planning, bandit), forecasting models (transformers, diffusion), or graph learning approaches. The modular `src/` layout supports drop-in replacements.
+- **Publish together** — See [docs/research_paper_draft.md](docs/research_paper_draft.md) for a manuscript draft. Co-authorship opportunities for substantial methodological or experimental contributions.
+- **Cross-city adaptation** — Implement a city adapter for your city (Chicago, London, Singapore, etc.). See [docs/cross_city_extension.md](docs/cross_city_extension.md).
 
----
+### For Engineers
 
-## Contributing
+- **Productionize** — REST API, Docker, CI/CD, and observability are already in place. Help with load testing, Kubernetes configs, monitoring dashboards, or cloud deployment.
+- **New features** — Streaming data pipeline, real-time inference, Redis caching, WebSocket-based live updates. Check [ROADMAP.md](ROADMAP.md).
+- **Infrastructure** — Multi-cloud deployment, Terraform, Helm charts, GitHub Actions improvements.
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. Good first issues are tagged in the [issue tracker](https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues).
+### For Domain Experts
+
+- **Review assumptions** — Feedback on simulator realism, market modeling, driver behavior, and NYC-specific constraints is invaluable.
+- **Documentation & tutorials** — Improve onboarding, write Jupyter notebook tutorials, create video walkthroughs.
+- **Industry partnerships** — Fleet operators, ride-hailing companies, or transit agencies interested in pilot studies. See [docs/enterprise/pilot.md](docs/enterprise/pilot.md).
+
+### Start Collaborating
+
+1. **Open a Discussion** — [GitHub Discussions](https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions) for questions, ideas, and coordination
+2. **Pick an Issue** — Look for `good first issue` or `help wanted` tags
+3. **Propose an Experiment** — Use the [experiment proposal template](.github/ISSUE_TEMPLATE/experiment_proposal.md)
+4. **Submit a PR** — See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
+
+**Contact:** Zefan Cai — caizefan@sjtu.edu.cn — [Shanghai Jiao Tong University](https://www.sjtu.edu.cn/)
 
 ---
 
@@ -401,6 +434,36 @@ MIT License. See [LICENSE](LICENSE).
 
 ---
 
-## Status
+## Contributing
 
-This is an educational/research prototype with production-style engineering foundations, not a production dispatch system. Platform version: **v3.0.0**. See [ROADMAP.md](ROADMAP.md) for future directions.
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. Good first issues are tagged in the [issue tracker](https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues).
+
+### Contributors
+
+<a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=caizefan34/nyc-taxi-zone-recommendation" />
+</a>
+
+---
+
+## Acknowledgments
+
+This work is conducted at [Shanghai Jiao Tong University](https://www.sjtu.edu.cn/). The platform builds on NYC TLC open data, and we gratefully acknowledge the TLC for maintaining this valuable public resource.
+
+Research methodology draws from:
+- Offline reinforcement learning (Levine et al., 2020)
+- Doubly robust policy evaluation (Jiang & Li, 2016; Thomas & Brunskill, 2016)
+- Spatiotemporal demand forecasting for urban mobility
+
+---
+
+## Star History
+
+<a href="https://star-history.com/#caizefan34/nyc-taxi-zone-recommendation&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=caizefan34/nyc-taxi-zone-recommendation&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=caizefan34/nyc-taxi-zone-recommendation&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=caizefan34/nyc-taxi-zone-recommendation&type=Date" />
+  </picture>
+</a>
+

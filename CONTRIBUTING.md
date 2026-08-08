@@ -1,13 +1,27 @@
-# Contributing to NYC Taxi Zone Recommendation
+# Contributing to Urban Mobility Decision Intelligence
 
 ## Welcome!
 
-We welcome contributions from researchers, engineers, and students. Whether you want to add a new model, create a benchmark, improve documentation, or fix a bug — this guide will help you get started.
+We welcome contributions from researchers, engineers, and students. Whether you want to add a new model, benchmark your policy, improve documentation, contribute a city adapter, or co-author the paper — this guide will help you get started.
 
-## Quick links
+### Ways to Contribute
+
+| Contribution Type | Impact | Good For |
+|---|---|---|
+| New policy/algorithm | High | RL/ML researchers |
+| New city adapter | High | Domain experts, engineers |
+| Benchmark submission | Medium | Anyone with compute |
+| Bug fixes | Medium | Developers |
+| Documentation | Medium | Technical writers |
+| Paper collaboration | High | Academic researchers |
+| Code review | Medium | Experienced developers |
+
+## Quick Links
 
 - [Good first issues](https://github.com/caizefan34/nyc-taxi-zone-recommendation/labels/good%20first%20issue)
 - [Roadmap](ROADMAP.md)
+- [Paper Draft](docs/research_paper_draft.md)
+- [Discussions](https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions)
 - [Issue tracker](https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues)
 
 ---

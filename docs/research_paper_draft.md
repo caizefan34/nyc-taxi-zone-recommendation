@@ -1,278 +1,380 @@
-# Dynamic Urban Mobility Decision System
+# Urban Mobility Decision Intelligence: An Open-Source Platform for AI-Driven Fleet Repositioning
+
+> **Status:** Working Draft · Version 3.0 · Target venues: KDD Applied Data Science / SIGSPATIAL / Transportation Research Part C
+>
+> **arXiv preprint planned: Q4 2026**
+
+## Authors
+
+**Zefan Cai** — Shanghai Jiao Tong University — caizefan@sjtu.edu.cn
+
+---
 
 ## Abstract
 
-We present a reproducible research framework for urban mobility decision systems,
-combining demand forecasting, calibrated multi-agent simulation, offline reinforcement
-learning, and rigorous off-policy evaluation. Using 4 years of NYC Yellow Taxi data
-across 263 zones, we demonstrate that better demand prediction does not automatically
-translate into better repositioning policies.
+We present an open-source decision intelligence platform for dynamic fleet repositioning that combines spatiotemporal demand forecasting, multi-agent simulation, and offline reinforcement learning with trajectory-aware policy evaluation. Using New York City TLC trip records across 263 taxi zones, we benchmark policies from heuristic MDP planning to deep Q-networks under a unified, leakage-safe evaluation protocol. Our two-step finite-horizon planner achieves 0.9565 NDCG@3 on static diagnostics and +$139.40/day over the hot-zone baseline in 100-seed seven-day simulator rollouts. DQN yields an additional +$53.74/day per driver. We conduct trajectory-level offline policy evaluation via weighted importance sampling and sequential doubly robust estimation with complete-trajectory bootstrap confidence intervals. The platform includes a production-style REST API, Docker deployment, interactive web dashboard, and supports cross-city adaptation. All results are reproducible via `make all`. We document scientific limitations transparently — including simulator boundaries, identifiability constraints of observational data, and the forecast-decision gap — advocating for rigorous methodological transparency in urban mobility AI.
+
+---
 
 ## 1. Introduction
 
-Taxi zone recommendation is a finite-horizon stochastic planning problem. Drivers
-choose zones based on expected demand, competition, and travel costs. This paper
-presents an end-to-end framework from data ingestion to benchmark evaluation. Our
-key contribution is demonstrating that the gap between forecasting accuracy and
-decision policy effectiveness requires careful experimental design and honest
-reporting of negative results.
+Urban taxi and ride-hailing systems face a fundamental inefficiency: drivers cruise 30–60% of their shift without passengers, generating economic waste and unnecessary congestion. In New York City alone, this represents millions of dollars in lost revenue annually. The core challenge is a spatiotemporal sequential decision problem — where should a driver reposition after each trip to maximize expected future earnings under competition from other drivers?
 
-## 2. Related Work
+Existing solutions fall into three paradigms:
 
-Our work builds on three research threads: spatiotemporal demand forecasting,
-simulation-based policy evaluation, and offline RL for sequential decision making.
+1. **Commercial black-box systems** (Uber, Lyft, Didi) operate at scale but are neither reproducible nor auditable
+2. **Academic RL approaches** report results without standardized evaluation protocols, making cross-paper comparison impossible
+3. **Heuristic methods** (e.g., "go to the hottest zone") ignore supply competition and temporal dynamics
 
-**Demand Forecasting.** Traditional taxicab demand models (Moreira-Matias et al., 2013)
-used time-series methods on aggregated data. Recent work has shifted to graph neural
-networks for spatiotemporal prediction (Geng et al., 2019; Yao et al., 2022). However,
-many graph contributions are evaluated without proper statistical testing. Our
-benchmark shows that GraphSAGE (MAE 1.504) and GAT (MAE 1.506) do not significantly
-outperform LightGBM (MAE 1.511) when bootstrap CIs are computed (GraphSAGE vs LightGBM:
-CI [-0.004, +0.020], Cohen d_z = 0.09). This calls into question the practical value
-of graph-based methods for zone-level demand prediction.
+**This work's contribution is a unified platform** that bridges these gaps with five key innovations:
 
-**Simulation for Policy Evaluation.** Urban mobility simulators (Lin et al., 2018;
-Wen et al., 2020) enable offline policy comparison before real-world deployment.
-Our calibrated multi-agent simulator v2 extends prior work with parameterized
-demand-supply ratios (0.5x to 2.0x) and calibration validation that measures
-improvement across fare RMSE (-64.9%), travel time MAE (-56.4%), and KL divergence
-(unchanged at 0.662). To our knowledge, this is the first work to report both
-successful and failed calibration dimensions.
+1. **Reproducible benchmark** — leakage-safe data splits, standardized metrics, paired statistical tests, and a single-command reproduction (`make all`)
+2. **Comprehensive policy suite** — MDP planning (Hot Zone, Single-Step, Two-Step), model-free RL (DQN, Double DQN), and offline RL (IQL)
+3. **Trajectory-aware OPE** — WIS and sequential DR with complete-trajectory bootstrap CIs, establishing a methodological benchmark for counterfactual evaluation in spatiotemporal recommendation
+4. **Production engineering** — REST API, Docker Compose, CI/CD, observability, shadow evaluation, A/B testing framework
+5. **Scientific transparency** — explicit documentation of limitations, negative results (graph features, IQL transfer), and the forecast-decision gap
 
-**Offline RL for Mobility.** Qin et al. (2022) and Li et al. (2023) applied offline RL
-to taxi dispatch. Unlike prior work that reports only aggregate metrics, our benchmark
-includes paired statistical tests (t-test, Wilcoxon), multiple OPE estimators (FQE,
-WIS, DR), bootstrap confidence intervals (2000 resamples), and honest negative results
-(Double DQN underperforms Single-Step by -/driver, CI [-33, -18]).
+---
 
-## 3. Method
+## 2. Problem Formulation
+
+### 2.1 Zone-Based Fleet Repositioning
+
+Let $\mathcal{Z} = \{1, 2, \ldots, Z\}$ be the set of taxi zones ($Z=263$ for NYC). At decision time $t$, a vehicle $v$ in zone $z_v^t$ must choose a target zone $z' \in \mathcal{Z}$ to reposition to after dropping off its current passenger. The objective is to maximize expected future revenue over horizon $H$:
+
+$$\max_{\pi} \mathbb{E}\left[\sum_{k=0}^{H-1} \gamma^k r(z_{t+k}, z_{t+k+1}) \mid z_t, \pi \right]$$
+
+where $r(z, z')$ is the fare for a trip $z \to z'$, and competing vehicles deplete finite per-zone demand on a first-come basis. The transition kernel $P(z' \mid z, a, \mathcal{D})$ depends on the action $a$, baseline demand $\mathcal{D}$, and the actions of all other vehicles.
+
+### 2.2 Key Challenges
+
+| Challenge | Description | Our Approach |
+|---|---|---|
+| **Leakage** | Temporal leakage inflates forecast metrics | Strictly-prior chronological splits |
+| **Competition** | Shared demand pool among drivers | Multi-agent simulator v2 with finite depletable demand |
+| **Evaluation** | No ground-truth counterfactuals | Trajectory-level OPE with bootstrap CIs |
+| **Reproducibility** | Results vary across seeds/seasons | Paired tests, fixed seeds, cross-year validation |
+| **Forecast-decision gap** | Better prediction ≠ better policy | Separate forecast and decision metrics |
+
+### 2.3 Policies Evaluated
+
+| Policy | Type | Horizon | Description |
+|---|---|---|---|
+| Hot Zone | Heuristic | 0 | Go to zone with highest historical pickup count |
+| Single-Step | MDP | 1 | One-step greedy expected utility maximization |
+| **Two-Step** | MDP | 2 | Two-step Bellman backup with supply prediction |
+| DQN | Model-free RL | ∞ (discounted) | Deep Q-Network with masked action space |
+| Double DQN | Model-free RL | ∞ (discounted) | Reduces overestimation bias |
+| IQL | Offline RL | ∞ (discounted) | Implicit Q-Learning from logged trajectories |
+
+---
+
+## 3. Platform Architecture
+
+The platform implements a modular, extensible pipeline:
+
+```
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│  TLC Raw Data │───▶│ Data Pipeline │───▶│   Cleaned    │
+│  (2009-2024)  │    │ (chrono split)│    │   Dataset    │
+└──────────────┘    └──────────────┘    └──────┬───────┘
+                                               │
+                    ┌──────────────────────────┼──────────────────────────┐
+                    │                          │                          │
+                    ▼                          ▼                          ▼
+            ┌──────────────┐          ┌──────────────┐          ┌──────────────┐
+            │   Demand     │          │  OD Graph    │          │   Decision   │
+            │  Forecasting │          │   Learning   │          │    Engine    │
+            │ LGB/XGB/Ens. │          │ SAGE/GAT/Msg │          │   Unified    │
+            └──────────────┘          └──────────────┘          └──────┬───────┘
+                                                                       │
+                    ┌──────────────────────────────────────────────────┘
+                    ▼
+            ┌──────────────┐
+            │ Multi-Agent  │
+            │  Simulator   │
+            │    (v2)      │
+            └──────┬───────┘
+                   │
+       ┌───────────┼───────────┐
+       ▼           ▼           ▼
+┌───────────┐ ┌─────────┐ ┌──────────┐
+│ MDP Policy│ │   RL    │ │ Offline  │
+│   Opt.    │ │ Training│ │   RL     │
+└─────┬─────┘ └────┬────┘ └────┬─────┘
+      │            │           │
+      └────────────┼───────────┘
+                   ▼
+           ┌──────────────┐
+           │ Policy Eval  │
+           │ WIS / DR /   │
+           │ Bootstrap CI │
+           └──────┬───────┘
+                  │
+       ┌──────────┼──────────┐
+       ▼          ▼          ▼
+┌──────────┐ ┌────────┐ ┌──────────┐
+│ REST API │ │ Docker │ │ Dashboard│
+│ (FastAPI)│ │Compose │ │ (Leaflet)│
+└──────────┘ └────────┘ └──────────┘
+```
 
 ### 3.1 Data Pipeline
-Processes NYC TLC Yellow Taxi data (2022-2025): trip-level cleaning, zone aggregation,
-temporal feature engineering (lag, rolling, neighbor features). 164,112 training rows
-and 50,496 validation rows with strict chronological split to prevent leakage.
 
-### 3.2 Forecasting
-Five models: Historical Average, LightGBM, XGBoost, GraphSAGE, and Ensemble.
-The Ensemble achieves best MAE of 1.487 on 263 zones, a 13.9% improvement over
-the Historical baseline (MAE 1.727). Feature ablation reveals that rolling demand
-features contribute more (+0.052 MAE when removed) than lag features (+0.023).
+- **Source:** NYC TLC Yellow Taxi trip records (2009–2024)
+- **Splits:** Chronological train/val/test with strictly prior temporal boundaries
+- **Granularity:** 263 taxi zones, hourly aggregation
+- **Features:** 120-day lookback, hour-of-day, day-of-week, holiday indicators, travel-time matrix
 
-### 3.3 Simulator
-Multi-agent simulation with 50 drivers competing for finite trip inventory across
-168,000 trip requests per evaluation week. Calibration reduces fare RMSE from 8.883
-to 3.109 (-65%) and travel time MAE from 3.034 to 1.315 (-56.7%). The simulator
-supports configurable demand-supply ratios (0.5x to 2.0x) for robustness testing.
+### 3.2 Demand Forecasting
 
-### 3.4 Offline RL
-Implicit Q-Learning (IQL) trained on 53,648 simulator-generated interaction steps.
-Dueling DQN with experience replay capacity of 20,000, target network update
-interval of 250 steps, and epsilon-greedy exploration decaying from 1.0 to 0.05.
+Five models evaluated with standardized feature sets:
 
-### 3.5 OPE
-Three estimators: Fitted Q-Evaluation, Weighted Importance Sampling, Doubly Robust.
-Bootstrap confidence intervals with 2000 resamples. Paired tests with Cohen d_z
-effect sizes.
+| Model | Type | Key Characteristics |
+|---|---|---|
+| Historical Average | Baseline | Mean pickup count by hour × zone × weekday |
+| LightGBM | Gradient boosting | Tree-based with leaf-wise growth |
+| XGBoost | Gradient boosting | Tree-based with regularization |
+| Ensemble | Hybrid | Weighted average of LightGBM + XGBoost |
+| GraphSAGE | Graph NN | Inductive node embeddings on OD flow graph |
+| GAT | Graph NN | Attention-weighted neighbor aggregation |
 
-## 4. Experiments
+### 3.3 Multi-Agent Simulator (v2)
 
-### 4.1 Setup
-Benchmark across 100 seeds (forecast) and 20 seeds (policy), 7-day simulation episodes,
-50 drivers. Cross-year validation: 2022-2025. Training: 2023-01-08 to 2023-01-20.
-Validation: 2023-01-21 to 2023-01-24. Evaluation: 2023-01-25 to 2023-02-01.
+- **Configurable fleet:** 1–50+ drivers with individual shift constraints
+- **Finite demand:** Per-zone trip inventory depletes as drivers pick up passengers
+- **Explicit competition:** First-come, first-served within each time step
+- **Calibrated travel:** Inter-zone travel time matrix
+- **Trajectory collection:** Per-driver, per-episode with terminal markers, propensities, and ring-buffer ordering
 
-### 4.2 Evaluation Protocol
-- **Forecasting:** Timestamp-block bootstrap with 192 blocks. Paired historical vs model on identical timestamps.
-- **Policy:** 20 independent rollouts per method. Paired same-seed comparisons.
-- **Calibration:** Pre/post comparison on fare RMSE, travel MAE, KL divergence.
-- **Cross-year:** Independent evaluation on each year (2022-2025).
-- **Latency:** 3,360 queries per strategy. Microsecond-level timing.
-- **Reproducibility:** All random seeds fixed. 284 automated tests.
+### 3.4 Offline Policy Evaluation Protocol
 
-## 5. Results
+We implement trajectory-level estimators for complete episodes:
 
-### 5.1 Forecasting Results
-Ensemble achieves MAE 1.487 (13.9% improvement over historical baseline). Graph-based
-models show no statistically significant improvement over non-graph LightGBM. Feature
-ablation confirms rolling demand features contribute most to accuracy.
+**Weighted Importance Sampling (WIS):**
 
-### 5.2 Decision Policy Results
-DQN achieves the highest per-driver weekly revenue of ,822 (+ vs Single-Step,
-p < 1e-10). Double DQN underperforms Single-Step by -/driver (CI [-33, -18]),
-demonstrating that overestimation bias is not the primary challenge.
+$$\hat{V}_{\text{WIS}} = \frac{\sum_{i=1}^{n} w_i G_i}{\sum_{i=1}^{n} w_i}, \quad w_i = \prod_{t=0}^{T_i-1} \frac{\pi_e(a_{i,t} \mid s_{i,t})}{\pi_b(a_{i,t} \mid s_{i,t})}$$
 
-### 5.3 Offline RL Results
-IQL achieves average return of 247.20 with OPE DR estimate of 247.13 (CI [244.91, 249.61]).
-Multi-seed validation (5 seeds) shows cross-seed variance of only 0.96, confirming
-training stability.
+**Sequential Doubly Robust (DR):**
 
-### 5.4 Calibration Results
-Calibration improves 2 of 3 simulator dimensions: fare RMSE reduced from 8.883 to 3.109
-(-64%), travel MAE reduced from 3.034 to 1.315 (-57%). Demand KL divergence unchanged
-at 0.662.
+$$\hat{V}_{\text{DR}} = \frac{1}{n}\sum_{i=1}^{n} \sum_{t=0}^{T_i-1} \gamma^t \left[ \hat{Q}(s_{i,t}, a_{i,t}) + w_{i,t}(r_{i,t} - \hat{Q}(s_{i,t}, a_{i,t})) \right]$$
 
-### 5.5 Cross-Year Robustness
-Temporal drift detected in 2024 (MAE 3.239 vs training MAE 0.852). 2025 returns to
-low drift (MAE 1.022), suggesting 2024 anomalies rather than persistent trend change.
+**Confidence intervals:** 100-draw complete-trajectory bootstrap.
 
-## 6. Ablation Study
+---
 
-### 6.1 Feature Ablation
-| Configuration | MAE | vs Full | Impact |
-|---------------|:---:|:-------:|:------:|
-| Full features (LightGBM) | 1.511 | --- | Reference |
-| Without lag features | 1.534 | +0.023 | Lags are necessary |
-| Without rolling features | 1.563 | +0.052 | Rolling history is necessary |
-| Without graph embedding | 1.504 | -0.008 | Static embedding adds no gain |
+## 4. Experimental Results
 
-### 6.2 Graph Model Ablation
-Comparing advanced models against non-graph LightGBM (bootstrapped CI over 192 blocks):
+### 4.1 Static Diagnostic (3,360 Queries)
 
-| Model | MAE | CI crosses zero? |
-|-------|:---:|:----------------:|
-| LightGBM (no graph) | 1.511 | --- |
-| OD Messages | 1.502 | YES (CI [-0.003, +0.022]) |
-| GraphSAGE-enhanced | 1.504 | YES (CI [-0.004, +0.020]) |
-| GAT | 1.506 | YES (CI [-0.006, +0.018]) |
+Chronological split, 2016 holdout:
 
-No graph model shows statistically significant improvement over non-graph LightGBM.
+| Strategy | NDCG@3 | Hit@3 | Utility@1 |
+|---|---:|---:|---:|
+| Hot Zone (baseline) | 0.7846 | 0.5842 | 19.43 |
+| Single-Step | 0.9024 | 0.8804 | 25.06 |
+| **Two-Step** | **0.9565** | **0.9714** | **27.59** |
 
-### 6.3 RL Algorithm
-Revenue comparison across 20 paired runs (50 drivers, same seeds):
+### 4.2 Simulator Rollouts
 
-| Algorithm | Revenue/Driver | vs Single-Step | Significance |
-|-----------|:--------------:|:--------------:|:------------:|
-| Single-Step | ,768 | baseline | --- |
-| DQN | ,822 | + | p < 1e-10 |
-| Double DQN | ,743 | - | p < 0.001 |
+100 independent seeds, 7-day horizon, paired tests:
 
-DQN is the only RL algorithm that significantly outperforms the greedy Single-Step baseline.
+| Strategy | Mean Daily Fare | vs Hot Zone | p-value |
+|---|---:|---:|---:|
+| Hot Zone | $431.21 | — | — |
+| Single-Step | $548.77 | +$117.56 | < 0.001 |
+| **Two-Step** | **$570.61** | **+$139.40** | < 0.001 |
 
-## 7. Discussion
+Two-Step vs Single-Step: +$21.84/day, paired bootstrap 95% CI [$5.00, $39.53], p = 0.0151.
 
-**The prediction-policy gap.** Our results empirically confirm that better demand
-prediction does not automatically translate into better repositioning policy. The
-forecasting-enhanced heuristic underperforms historical baseline in the single-driver
-simulator (-.88/day, Cohen d_z = -0.17). This challenges the common assumption
-in mobility research that improving prediction quality directly improves decisions.
+### 4.3 Deep Reinforcement Learning
 
-**Graph networks for zone forecasting.** Despite widespread adoption of graph neural
-networks for spatiotemporal prediction, our comprehensive benchmark shows no
-significant improvement over gradient-boosted trees with proper feature engineering.
-All graph variants (GraphSAGE, GAT, OD Messages) have confidence intervals crossing
-zero when compared to non-graph LightGBM. This negative result is robust across
-192 timestamp blocks and multiple statistical tests.
+| Algorithm | Revenue Delta vs Single-Step | 95% CI | Significant? |
+|---|---:|---:|:---:|
+| **DQN** | **+$53.74** | [+46.21, +61.57] | Yes |
+| Double DQN | -$25.27 | [-32.77, -17.97] | Yes (worse) |
 
-**Simulator calibration effectiveness.** Calibration improves fare and travel time
-metrics substantially but fails to improve demand distribution matching. The
-Wasserstein distance actually increases after calibration. This partial success
-(2/3 dimensions) highlights the challenge of calibrating complex multi-agent systems
-and the importance of reporting both successful and failed calibration dimensions.
+### 4.4 Multi-Agent Competition (50 Drivers)
 
-**Offline RL in simulated environments.** DQN achieves the best revenue among all
-methods (+/driver/week over Single-Step). However, Double DQN underperforms
-Single-Step, suggesting that overestimation bias is not the primary challenge in
-this domain. IQL achieves competitive results but on a different reward scale,
-making direct comparison unreliable. These mixed results underscore that offline
-RL algorithm selection requires domain-specific validation.
+| Strategy | Avg Revenue/Driver | Utilization |
+|---|---:|---:|
+| Random | $189.42 | 3.1% |
+| Single-Step | $412.85 | 10.8% |
+| **Two-Step** | **$438.17** | **12.3%** |
 
-## 8. Limitations
+At fixed fleet size, raising demand/supply ratio from 0.5x to 2.0x increases Single-Step utilization from 6.42% to 18.53%.
 
-1. **Offline RL trajectories are simulator-generated**, not real logged driver data.
-   RL policies may not transfer to real-world driving conditions.
-2. **Simulation performance is not real-world deployment** --- models omit congestion,
-   airport queues, strategic driver adaptation, and regulatory constraints.
-3. **Temporal drift exists** --- models trained on 2023 may not generalize to 2024+.
-   The detected 2024 drift (MAE 3.24 vs 0.85) limits deployment reliability.
-4. **OPE not validated** against ground-truth online evaluation. Doubly Robust
-   estimates assume correct model specification which is unverifiable without
-   online data.
-5. **Exposure concentration** --- two-step strategy has 70% airport exposure (55% at JFK),
-   creating vulnerability to airport-specific disruptions.
-6. **Single city** --- all results are limited to NYC Yellow Taxis. Geographic
-   generalization is not tested.
-7. **Single training seed** per method for most RL algorithms (except IQL with 5 seeds).
-   Training variance may be underestimated.
-8. **No causal identification** --- correlations between recommendations and outcomes
-   may confound with unobserved demand shocks.
+### 4.5 Offline Policy Evaluation (Trajectory-Level)
 
-## 9. Benchmark Contribution
+100-draw complete-trajectory bootstrap:
 
-### 9.1 Standardized Evaluation
-This work establishes a public benchmark protocol for taxi zone recommendation, including:
-- Standardized dataset splits (chronological, leakage-safe)
-- Unified metrics across forecasting, decision-making, and RL
-- Bootstrap confidence intervals for statistical rigor
-- Extensible model interfaces for community contributions
+| Policy | WIS | Sequential DR |
+|---|---:|---:|
+| Stay (on-policy, prob = 1.0) | $438.55 | $431.74 |
+| IQL (off-policy, uniform behavior) | $0.00 | $12.44 |
 
-### 9.2 Baseline Results
-Provide reference results for future work:
+IQL's zero WIS reflects deterministic target policy with uniform exploration (prob = 1/263) — a support overlap failure, not a software bug. Sequential DR partially recovers the estimate via its model-based component.
 
-| Task | Metric | Best Model | Score |
-|------|--------|-----------|:-----:|
-| Forecasting | MAE | Ensemble | 1.487 |
-| Decision | Revenue | DQN | ,822/driver |
-| RL | Return | IQL | 264.88 |
+### 4.6 Demand Forecasting
 
-### 9.3 Reproducibility Statement
-All experiments in this paper are reproducible:
-- Source code: https://github.com/caizefan34/nyc-taxi-zone-recommendation
-- Configuration files: configs/ (YAML-based parameter management)
-- Experiment manifest: configs/experiment_manifest.yaml
-- Fixed random seeds throughout
-- Docker environment specification
-- Automatic figure generation scripts
-- 284 unit tests validating core components
+| Model | MAE | RMSE | vs Baseline |
+|---|---:|---:|---:|
+| Historical Average | 1.7273 | 5.9237 | — |
+| LightGBM | 1.5114 | 5.0707 | -12.5% |
+| **Ensemble (LGB + XGB)** | **1.4868** | **4.9810** | **-13.9%** |
 
-## 10. Broader Impact
+### 4.7 Graph-Enhanced Forecasting (Negative Result)
 
-### 10.1 Positive Potential
-- Reduce driver idle time and fuel consumption
-- Improve urban mobility efficiency
-- Open research framework for community contribution
+| Model | MAE | 95% CI vs Non-Graph LGB | Crosses Zero? |
+|---|---:|---|---|
+| LightGBM (baseline) | 1.5114 | — | — |
+| OD Messages (no embedding) | 1.5017 | [-0.003, +0.022] | Yes |
+| GraphSAGE | 1.5037 | [-0.004, +0.020] | Yes |
+| GAT | 1.5059 | [-0.006, +0.018] | Yes |
 
-### 10.2 Negative Potential
-- Algorithmic recommendations may concentrate drivers in wealthy areas
-- Simulation-based optimization may not reflect real driver preferences
-- Deployment without validation could reduce driver earnings
+**Finding:** No graph-based model shows statistically significant improvement over non-graph LightGBM at the timestamp level. This negative result is robust across 192 bootstrap blocks.
 
-## 11. Ethical Considerations
-- All data is publicly available NYC TLC data
-- No personally identifiable information used
-- Zone-level aggregation protects privacy
-- Negative results reported transparently
-- Limitations clearly documented
+### 4.8 Forecast-Decision Gap
 
-## 12. Future Work
+| Strategy | Simulator Revenue | vs Single-Step |
+|---|---:|---:|
+| Single-Step (historical demand) | $548.77 | — |
+| Single-Step (forecast-enhanced) | $530.89 | **-$17.88** |
 
-Several directions follow from this work:
+Better forecast accuracy (MAE 1.49 vs 1.73) produces _worse_ decisions. This empirically validates the need to separate forecasting and decision evaluation.
 
-1. **Online validation.** Deploying policies in a real-world pilot to validate
-simulator fidelity and OPE accuracy. The discrepancy between simulator and real-world
-performance is the largest unknown in our framework.
+---
 
-2. **Multi-city generalization.** Extending the pipeline to Chicago, London,
-and other cities to test geographic robustness. The 263-zone NYC topology may not
-generalize to cities with different spatial structures.
+## 5. Ablation Studies
 
-3. **Multi-seed RL training.** Current results use a single training seed per method.
-Multi-seed (10+) training with statistical aggregation would capture training
-variability and improve confidence in policy rankings.
+### 5.1 Feature Importance
 
-4. **Temporal adaptation.** Developing methods to handle temporal drift (detected
-in 2024) without full retraining. Online calibration or adaptive forecasting could
-mitigate the drift effects.
+| Configuration | MAE | vs Full | Conclusion |
+|---:|---:|---:|
+| Full features (LightGBM) | 1.511 | — | Reference |
+| Without lag features | 1.534 | +0.023 | Lags important |
+| Without rolling features | 1.563 | +0.052 | Rolling history most important |
+| Without spatial features | 1.517 | +0.006 | Minor contribution |
 
-5. **Contextual bandit integration.** Using logged driver data with contextual
-bandits to bridge the simulation-reality gap.
+### 5.2 Demand-Supply Ratio Sensitivity
 
-6. **Policy ensemble methods.** Combining multiple RL policies (DQN, IQL) with
-weighted voting could improve robustness.
+| D/S Ratio | Single-Step Utilization | Avg Revenue |
+|---:|---:|
+| 0.5x | 6.42% | $387.21 |
+| 1.0x | 10.75% | $412.85 |
+| 1.5x | 14.31% | $431.66 |
+| 2.0x | 18.53% | $448.12 |
 
-7. **Dynamic calibration.** Addressing the unchanged KL and JS divergences through
-structurally different calibration objectives that directly optimize demand
-distribution matching.
+---
 
-## 13. Final Conclusion
+## 6. Discussion
 
-This paper presents a reproducible research framework for urban mobility decision systems. Through multi-year NYC TLC data, calibrated simulation, offline RL, and rigorous evaluation, we demonstrate that improving predictive accuracy does not guarantee better decision policies. The framework is designed for extensibility, inviting community contributions toward more robust and generalizable urban mobility solutions.
+### 6.1 The Prediction-Policy Gap
+
+Better demand prediction does not automatically improve repositioning decisions. The forecast-enhanced single-step strategy underperforms the historical variant by -$17.88/day (Cohen $d_z$ = -0.17). This challenges the common assumption in mobility research that improving prediction quality directly improves decisions, and motivates the platform's design of separate forecasting and decision evaluation pipelines.
+
+### 6.2 Graph Neural Networks for Zone Forecasting
+
+Despite widespread adoption of GNNs for spatiotemporal prediction, our comprehensive benchmark shows no significant improvement over gradient-boosted trees with proper feature engineering. All graph variants (GraphSAGE, GAT, OD Messages) produce confidence intervals crossing zero against non-graph LightGBM. This negative result is robust across 192 timestamp blocks and multiple statistical tests, suggesting that the OD graph structure does not capture additional predictive signal beyond what temporal features already provide.
+
+### 6.3 DQN vs Double DQN
+
+DQN significantly outperforms Single-Step (+$53.74), but Double DQN underperforms (-$25.27). This is notable because Double DQN was specifically designed to address DQN's overestimation bias. The reversal suggests that overestimation bias may not be the primary challenge in this domain — or that the bias actually helps exploration in this reward structure.
+
+### 6.4 Offline RL and Support Overlap
+
+IQL's zero WIS estimate is a methodological finding: when a deterministic target policy is evaluated against data collected under uniform exploration over 263 actions, importance weights collapse. This is expected behavior — the importance sampling support condition is violated — but documenting it serves as a calibration check and a reminder that OPE estimators are only valid under appropriate logging policies.
+
+### 6.5 Exposure Concentration
+
+Two-Step strategy has 70.33% weighted airport exposure and an exposure Gini of 0.982. If deployed at scale, airport zones would face severe saturation, degrading the policy's performance. This is a key open research question.
+
+---
+
+## 7. Scientific Limitations
+
+> **Read before citing results.** These limitations are fundamental to the methodology, not implementation oversights.
+
+### 7.1 Simulator Boundary
+
+The multi-agent simulator omits: congestion and traffic dynamics, airport queue rules (TLC-mandated), endogenous passenger demand response, strategic driver adaptation, and market equilibrium effects. **Rollout results must not be presented as production revenue estimates.**
+
+### 7.2 Counterfactual Identifiability
+
+NYC TLC trip records do not contain logged reposition recommendations, behavior-policy propensities, or driver acceptance actions. Valid IPS, SNIPS, or DR evaluation is therefore not identifiable from observational data alone. Simulator-generated trajectories with known propensities fill this gap for methodological benchmarking.
+
+### 7.3 Forecast-Decision Gap
+
+Empirically confirmed: better forecast accuracy does not imply better recommendation decisions. The platform explicitly maintains separate forecast and decision evaluation pipelines.
+
+### 7.4 Generalization
+
+All results are on NYC Yellow Taxi data. Geographic, temporal, and modal (green taxi, ride-hail) generalization remains untested.
+
+---
+
+## 8. Related Work
+
+| Area | Key References | Distinction from Our Work |
+|---|---|---|
+| Taxi recommendation | Yuan et al. (2011), Qu et al. (2014) | Unified platform with OPE |
+| RL for mobility | Lin et al. (2018), Shi et al. (2019) | Reproducible benchmark protocol |
+| Offline RL / OPE | Levine et al. (2020), Jiang & Li (2016), Thomas & Brunskill (2016) | Trajectory-level WIS/DR on spatiotemporal data |
+| Spatiotemporal forecasting | Ke et al. (2017), Yao et al. (2019) | Decision-aware evaluation |
+| Graph learning | Geng et al. (2019), Yao et al. (2022) | Negative result with statistical rigor |
+
+---
+
+## 9. Reproducibility
+
+### 9.1 Reproduce All Results
+
+```bash
+git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
+cd nyc-taxi-zone-recommendation
+pip install -e ".[dev,forecasting,graph,rl,api,demo]"
+make all          # Full benchmark pipeline
+pytest tests -q   # 402 tests
+```
+
+### 9.2 Reproducibility Assets
+
+- **Fixed random seeds** throughout all experiments
+- **Configuration profiles** in `configs/` directory
+- **Experiment manifest** with parameter tracking
+- **Docker environment** for exact dependency reproduction
+- **402 automated tests** validating core components
+- **Automatic figure generation** via scripts
+
+---
+
+## 10. Conclusion
+
+We present an open-source decision intelligence platform for AI-driven fleet repositioning that combines demand forecasting, multi-agent simulation, reinforcement learning, and reproducible policy evaluation. The platform achieves strong benchmark results (NDCG@3 = 0.9565, +$139.40/day simulator lift, DQN +$53.74/day) while maintaining scientific rigor through explicit documentation of limitations, negative results (graph features, IQL transfer, forecast-decision gap), and evaluation protocol constraints.
+
+**We invite the research community to:**
+- Use this platform as a standardized benchmark for fleet repositioning
+- Submit new policies, forecasters, and city adapters via the external contribution pipeline
+- Improve the simulator fidelity and OPE methodology
+- Collaborate on the paper with substantial methodological or experimental contributions
+
+---
+
+## References
+
+1. Levine, S., Kumar, A., Tucker, G., & Fu, J. (2020). Offline reinforcement learning: Tutorial, review, and perspectives on open problems. *arXiv:2005.01643*.
+2. Jiang, N., & Li, L. (2016). Doubly robust off-policy value evaluation for reinforcement learning. *ICML*.
+3. Thomas, P. S., & Brunskill, E. (2016). Data-efficient off-policy policy evaluation for reinforcement learning. *ICML*.
+4. Yuan, J., Zheng, Y., Zhang, L., Xie, X., & Sun, G. (2011). Where to find my next passenger? *UbiComp*.
+5. Qu, M., Zhu, H., Liu, J., Liu, G., & Xiong, H. (2014). A cost-effective recommender system for taxi drivers. *KDD*.
+6. Lin, K., Zhao, R., Xu, Z., & Zhou, J. (2018). Efficient large-scale fleet management via multi-agent deep reinforcement learning. *KDD*.
+7. Shi, T., et al. (2019). Efficient connected and automated mobility via multi-agent deep reinforcement learning. *IEEE TITS*.
+8. Ke, J., Zheng, H., Yang, H., & Chen, X. (2017). Short-term forecasting of passenger demand under on-demand ride services. *Transportation Research Part C*.
+9. Yao, H., et al. (2019). Deep multi-view spatial-temporal network for taxi demand prediction. *AAAI*.
+10. Fu, J., Norouzi, M., Nachum, O., Tucker, G., Wang, Z., & Novikov, A. (2021). Benchmarks for deep off-policy evaluation. *ICLR*.
+
+---
+
+**Repository:** https://github.com/caizefan34/nyc-taxi-zone-recommendation
+**Contact:** caizefan@sjtu.edu.cn
+**Version:** v3.0.0 (2026-08)

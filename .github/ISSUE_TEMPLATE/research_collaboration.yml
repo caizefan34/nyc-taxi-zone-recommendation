@@ -1,0 +1,49 @@
+---
+name: Research Collaboration
+description: Propose a research collaboration, co-authorship, or academic partnership
+title: "[COLLAB] "
+labels: ["collaboration", "research"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your interest in collaborating! This platform welcomes research partnerships.
+
+  - type: dropdown
+    id: collab_type
+    attributes:
+      label: Collaboration Type
+      description: What kind of collaboration are you proposing?
+      options:
+        - New policy/algorithm contribution
+        - New city/region adaptation
+        - Methodology improvement (OPE, forecasting, simulation)
+        - Joint paper/publication
+        - Industry pilot/deployment
+        - Other (describe below)
+    validations:
+      required: true
+
+  - type: input
+    id: affiliation
+    attributes:
+      label: Affiliation
+      description: Your institution or organization
+      placeholder: "e.g., MIT, Uber, City of Chicago"
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Collaboration Proposal
+      description: Describe your proposed collaboration, including scope, timeline, and expected contribution
+    validations:
+      required: true
+
+  - type: textarea
+    id: expertise
+    attributes:
+      label: Relevant Expertise
+      description: What expertise or resources do you bring to the collaboration?
+    validations:
+      required: true
