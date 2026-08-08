@@ -1,8 +1,8 @@
-title: Dynamic Urban Mobility Decision System
+title: Urban Mobility Decision Intelligence
 description: >-
-  An open-source benchmark platform combining forecasting, simulation,
-  and offline reinforcement learning for urban mobility decision optimization
-  with reproducible evaluation on NYC taxi data.
+  An open-source decision intelligence platform combining demand forecasting,
+  multi-agent simulation, and offline reinforcement learning for AI-driven
+  fleet repositioning with reproducible evaluation on NYC taxi data.
 theme: jekyll-theme-cayman
 show_downloads: false
 github:

@@ -101,5 +101,3 @@ All metrics are checked in as reference snapshots in `outputs/` with timestamped
 | Saturday night | 11:00 PM | Clear | Greenwich Village → Meatpacking | Nightlife flow |
 | Airport surge | 4:00 PM | Thunderstorm | JFK → Manhattan | Airport backlog |
 | Holiday eve | 6:00 PM | Snow | Penn Station → residential | Transit hub exit |
-
-*(Screenshots and GIFs for each scenario coming soon — contributions welcome!)*

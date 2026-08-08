@@ -1,4 +1,4 @@
-# NYC Taxi Zone Recommendation — Interactive Demo
+# Live Demo Guide
 
 ## Quick Start
 
@@ -6,28 +6,27 @@
 Visit: https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/
 
 ### Option 2: Run Locally
-
 ```bash
-pip install -r requirements-demo.txt
-python app/app.py
+pip install -e ".[demo]"
+streamlit run app/app.py
 ```
 
-### Option 3: Streamlit App
-
+### Option 3: Docker
 ```bash
-pip install streamlit
-streamlit run app/app.py
+docker compose up
+# Demo → http://localhost:8501
 ```
 
 ## What This Demo Shows
 
-- **Demand Forecast**: Predict taxi demand for any NYC zone and time
-- **Policy Recommendation**: Top-3 zone recommendations using Two-Step Horizon planner
-- **Simulation Outcome**: Expected revenue, travel time, and zone comparison
+- **Interactive Map**: Explore NYC's 263 taxi zones with demand heatmaps
+- **Demand Forecast**: Predict taxi demand for any zone and time
+- **Policy Simulation**: Step-by-step AI decision walkthrough
+- **Before/After Comparison**: Revenue, utilization, and wait time improvements
 
 ## Data Used
 
-This demo uses pre-computed sample statistics (5MB). No large dataset download required.
+Uses pre-computed sample statistics (5MB). No large dataset download required.
 
 ## Limitations
 

@@ -1,30 +1,33 @@
 # Configuration Guide
 
-## `config.yaml`
+## Config Files
 
-Single unified configuration file for the entire project. Load via:
+Configuration is split into purpose-specific YAML files under `configs/`:
+
+| File | Purpose |
+|---|---|
+| `default.yaml` | Base defaults for all modes |
+| `dataset.yaml` | Data paths and split configuration |
+| `model.yaml` | Model hyperparameters (LightGBM, XGBoost) |
+| `simulation.yaml` | Multi-agent simulator settings |
+| `simulator.yaml` | Simulator v2 calibration parameters |
+| `rl.yaml` | RL training parameters (DQN, Double DQN) |
+| `api.yaml` | API server configuration |
+| `demo.yaml` | Demo mode settings |
+| `research.yaml` | Research experiment parameters |
+| `production.example.yaml` | Production deployment template |
+| `experiment_manifest.yaml` | Full pipeline experiment manifest |
+| `city_template.yaml` | Cross-city adapter template |
+
+### Loading Configs
 
 ```python
 from src.common.config import get_config
-config = get_config()
+config = get_config("path/to/config.yaml")
 ```
-
-### Sections
-
-| Section | Purpose |
-|---|---|
-| `project` | Metadata (name, version) |
-| `paths` | Data file locations (raw, processed, meta, outputs) |
-| `domain` | Constants: 263 zones, 48 half-hour slots, 336 week slots |
-| `cleaning` | Data cleaning thresholds (duration, fare, distance, speed) |
-| `algorithm` | Two-step planner hyperparameters (gamma, lambda, pickup saturation) |
-| `qlearning` | Q-learning hyperparameters (gamma, alpha, epsilon, episodes) |
-| `parameter_grid` | Grid search values for parameter selection |
-| `logging` | Log format and level |
 
 ### Notes
 
 - All paths relative to project root
-- Single config file — no duplicate or version-variant YAMLs found
-- No orphan experiment configs detected
-- No app/ or web/ configs (those directories do not exist)
+- `production.example.yaml` is a template — copy and customize for deployment
+- `city_template.yaml` provides the CityAdapter interface for new cities
