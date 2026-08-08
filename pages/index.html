@@ -1,495 +1,962 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Urban Mobility Decision Intelligence — Research Platform</title>
-<meta name="description" content="An open-source decision intelligence platform for dynamic fleet repositioning — demand forecasting, multi-agent simulation, offline reinforcement learning, and reproducible policy evaluation on NYC taxi data.">
-<meta name="keywords" content="urban mobility, reinforcement learning, offline RL, doubly robust, OPE, NYC taxi, simulation, benchmark, AI, machine learning, demand forecasting, IQL, DQN, GraphSAGE, research">
-<meta property="og:title" content="Urban Mobility Decision Intelligence — Open-Source Research Platform">
-<meta property="og:description" content="AI-driven fleet repositioning: demand forecasting, multi-agent simulation, offline RL, and reproducible evaluation on NYC taxi data">
-<meta property="og:image" content="assets/social-preview.svg">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --bg: #08080f; --bg2: #0d0d1a; --card: #111122;
-    --border: #1e1e3a; --border-hover: #2a2a55;
-    --accent: #4f8fff; --accent2: #7c5ce7; --accent3: #22d3a0;
-    --text: #e2e2f0; --text2: #8888b0; --text3: #5a5a80;
-    --grad-hero: linear-gradient(135deg, #0a0a20 0%, #0f1035 25%, #0d1a30 50%, #1a0e2e 75%, #0a0a20 100%);
-    --grad-title: linear-gradient(135deg, #e0e7ff 0%, #93b4f5 40%, #c4b5fd 100%);
-    --glow-blue: 0 0 40px rgba(79,143,255,0.15);
-    --glow-purple: 0 0 40px rgba(124,92,231,0.12);
-  }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
-    background: var(--bg); color: var(--text); line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-  }
-  a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
-  a:hover { color: #7ab4ff; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Mobility Decision Intelligence — Research Platform</title>
+    <style id="theme-vars">
+/* Urban Mobility AI — Brand Design Tokens */
+/* Free-explore mode: single brand hue (electric blue) */
 
-  /* Navigation */
-  .nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(8,8,15,0.85); backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    padding: 0 24px;
-  }
-  .nav-inner {
-    max-width: 1200px; margin: 0 auto; display: flex; align-items: center;
-    justify-content: space-between; height: 56px;
-  }
-  .nav-logo { font-weight: 700; font-size: 16px; color: var(--text); display: flex; align-items: center; gap: 8px; }
-  .nav-logo .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
-  .nav-links { display: flex; gap: 24px; align-items: center; }
-  .nav-links a { font-size: 14px; color: var(--text2); font-weight: 500; }
-  .nav-links a:hover { color: var(--text); }
-  .nav-links .btn-github {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 6px;
-    font-size: 13px; border: 1px solid rgba(255,255,255,0.1);
-  }
-  .nav-links .btn-github:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
+:root {
+  /* Page surfaces */
+  --um-background: #0a0a14;
+  --um-foreground: #e8e8f5;
 
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  /* Card surfaces */
+  --um-card: #11111e;
+  --um-card-foreground: #e8e8f5;
 
-  /* Hero */
-  .hero {
-    position: relative; overflow: hidden;
-    background: var(--grad-hero);
-    padding: 120px 0 80px; text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-  .hero::before {
-    content: ''; position: absolute; top: -60%; left: -60%; width: 220%; height: 220%;
-    background:
-      radial-gradient(ellipse at 25% 50%, rgba(79,143,255,0.07) 0%, transparent 50%),
-      radial-gradient(ellipse at 75% 40%, rgba(124,92,231,0.05) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 80%, rgba(34,211,160,0.03) 0%, transparent 40%);
-    animation: heroFloat 12s ease-in-out infinite;
-  }
-  @keyframes heroFloat { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(10px,-10px) scale(1.02); } 66% { transform: translate(-5px,5px) scale(0.98); } }
-  .hero-content { position: relative; z-index: 1; }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(79,143,255,0.1); border: 1px solid rgba(79,143,255,0.2);
-    color: var(--accent); padding: 5px 18px; border-radius: 24px; font-size: 13px;
-    font-weight: 500; margin-bottom: 28px; letter-spacing: 0.3px;
-  }
-  .hero-badge .pulse {
-    width: 6px; height: 6px; background: var(--accent3); border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; box-shadow: 0 0 8px var(--accent3); } }
-  .hero h1 {
-    font-size: clamp(34px, 6.5vw, 60px); font-weight: 800; line-height: 1.12;
-    background: var(--grad-title); -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent; background-clip: text;
-    margin-bottom: 20px; letter-spacing: -0.02em;
-  }
-  .hero p.subtitle {
-    font-size: 18px; color: var(--text2); max-width: 680px; margin: 0 auto 36px; line-height: 1.6;
-  }
-  .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px;
-    border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
-    transition: all 0.25s; text-decoration: none !important; white-space: nowrap;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, #4f8fff, #3d6fd9);
-    color: #fff; box-shadow: 0 4px 24px rgba(79,143,255,0.25);
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 32px rgba(79,143,255,0.4); color: #fff; }
-  .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-  .btn-outline:hover { background: rgba(255,255,255,0.06); border-color: var(--border-hover); color: var(--text); }
-  .btn-accent { background: rgba(124,92,231,0.12); color: var(--accent2); border: 1px solid rgba(124,92,231,0.25); }
-  .btn-accent:hover { background: rgba(124,92,231,0.2); border-color: rgba(124,92,231,0.4); color: #a78bfa; }
+  /* Popover / floating layers */
+  --um-popover: #161628;
+  --um-popover-foreground: #e8e8f5;
 
-  /* Stats */
-  .stats-bar { padding: 40px 0; background: var(--bg2); border-bottom: 1px solid var(--border); }
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 24px; text-align: center; }
-  .stat-value { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
-  .stat-value.blue { color: var(--accent); }
-  .stat-value.green { color: var(--accent3); }
-  .stat-value.purple { color: var(--accent2); }
-  .stat-value.amber { color: #fbbf24; }
-  .stat-label { font-size: 12px; color: var(--text3); margin-top: 6px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; }
-  .stat-note { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  /* Brand primary — electric blue */
+  --um-primary: #4f8fff;
+  --um-primary-foreground: #ffffff;
 
-  /* Sections */
-  .section { padding: 72px 0; }
-  .section-alt { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .section-label {
-    display: inline-block; font-size: 11px; font-weight: 700; color: var(--accent);
-    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;
-  }
-  .section h2 { font-size: 30px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em; }
-  .section h3 { font-size: 18px; font-weight: 600; margin: 28px 0 10px; }
-  .section p.desc { color: var(--text2); font-size: 16px; margin-bottom: 40px; max-width: 600px; }
+  /* Muted / secondary */
+  --um-muted: #1a1a2e;
+  --um-muted-foreground: #9595b0;
 
-  /* Cards */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 20px; }
-  .card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-    padding: 28px; transition: all 0.25s; position: relative; overflow: hidden;
-  }
-  .card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    opacity: 0; transition: opacity 0.25s;
-  }
-  .card:hover { border-color: var(--border-hover); transform: translateY(-3px); box-shadow: var(--glow-blue); }
-  .card:hover::before { opacity: 1; }
-  .card-icon { font-size: 24px; margin-bottom: 14px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(79,143,255,0.08); border-radius: 10px; }
-  .card h3 { font-size: 17px; margin: 0 0 8px; }
-  .card p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+  /* Border & input */
+  --um-border: #1e1e35;
+  --um-input: #1e1e35;
+  --um-ring: #4f8fff;
 
-  .tag {
-    display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 11px;
-    font-weight: 600; margin-right: 6px; margin-top: 4px;
-  }
-  .tag-blue { background: rgba(79,143,255,0.12); color: var(--accent); }
-  .tag-purple { background: rgba(124,92,231,0.12); color: var(--accent2); }
-  .tag-green { background: rgba(34,211,160,0.12); color: var(--accent3); }
+  /* Semantic state colors (not brand hues) */
+  --um-state-success: #22d3a0;
+  --um-state-warning: #fbbf24;
+  --um-state-error: #f87171;
+  --um-state-info: #4f8fff;
 
-  /* Tables */
-  .table-wrap { overflow-x: auto; margin: 16px 0; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { padding: 13px 16px; text-align: left; border-bottom: 1px solid var(--border); }
-  th { color: var(--text3); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
-  td { font-variant-numeric: tabular-nums; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-  .best { color: var(--accent3); font-weight: 700; }
+  /* Radius scale */
+  --um-radius-sm: 4px;
+  --um-radius-md: 8px;
+  --um-radius-lg: 16px;
 
-  /* Code */
-  .code-block {
-    background: #08081a; border: 1px solid var(--border); border-radius: 10px;
-    padding: 22px 28px; font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace;
-    font-size: 13px; overflow-x: auto; line-height: 1.7; margin: 16px 0;
-  }
-  .code-block .cmt { color: #555; }
-  .code-block .kw { color: var(--accent); }
-  .code-block .val { color: var(--accent3); }
+  /* Typography */
+  --um-font-sans: "Inter", "Noto Sans SC", "PingFang SC", system-ui, -apple-system, sans-serif;
+  --um-font-mono: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
 
-  /* Pipeline */
-  .pipeline {
-    display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0; justify-content: center;
-    font-family: 'SF Mono','Fira Code',monospace; font-size: 12px;
-  }
-  .pipeline .step {
-    background: var(--card); border: 1px solid var(--border); padding: 10px 18px;
-    border-radius: 8px; color: var(--text2); white-space: nowrap;
-  }
-  .pipeline .arrow { display: flex; align-items: center; color: var(--text3); font-size: 16px; }
+  /* Layout tokens */
+  --um-shadow-1: 0 1px 2px rgba(0,0,0,0.08), 0 1px 1px rgba(0,0,0,0.04);
+  --um-shadow-2: 0 8px 24px -8px rgba(0,0,0,0.25);
+  --um-shadow-3: 0 24px 60px -20px rgba(0,0,0,0.40);
+}
 
-  /* CTA */
-  .cta {
-    text-align: center; padding: 64px 24px; border-radius: 16px;
-    background: linear-gradient(135deg, rgba(79,143,255,0.06), rgba(124,92,231,0.06));
-    border: 1px solid rgba(124,92,231,0.15); margin: 40px 0;
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--um-background);
+    --color-foreground: var(--um-foreground);
+    --color-card: var(--um-card);
+    --color-card-foreground: var(--um-card-foreground);
+    --color-popover: var(--um-popover);
+    --color-popover-foreground: var(--um-popover-foreground);
+    --color-primary: var(--um-primary);
+    --color-primary-foreground: var(--um-primary-foreground);
+    --color-muted: var(--um-muted);
+    --color-muted-foreground: var(--um-muted-foreground);
+    --color-border: var(--um-border);
+    --color-input: var(--um-input);
+    --color-ring: var(--um-ring);
+    --radius-sm: var(--um-radius-sm);
+    --radius-md: var(--um-radius-md);
+    --radius-lg: var(--um-radius-lg);
   }
-  .cta h2 { font-size: 26px; margin-bottom: 8px; }
-  .cta p { color: var(--text2); margin-bottom: 24px; }
-  .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-
-  /* Footer */
-  .footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; }
-  .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
-  .footer-links a { color: var(--text2); font-size: 14px; }
-  .footer-copy { color: var(--text3); font-size: 12px; }
-  .footer-copy a { color: var(--text3); }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .hero { padding: 100px 0 56px; }
-    .hero h1 { font-size: 28px; }
-    .nav-links { display: none; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .section { padding: 48px 0; }
+  @layer base {
+    body { background: var(--um-background); color: var(--um-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
   }
-</style>
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--um-background); }
+      .text-background { color: var(--um-background); }
+      .border-background { border-color: var(--um-background); }
+      .ring-background { --tw-ring-color: var(--um-background); }
+      .bg-foreground { background-color: var(--um-foreground); }
+      .text-foreground { color: var(--um-foreground); }
+      .border-foreground { border-color: var(--um-foreground); }
+      .ring-foreground { --tw-ring-color: var(--um-foreground); }
+      .bg-card { background-color: var(--um-card); }
+      .text-card { color: var(--um-card); }
+      .border-card { border-color: var(--um-card); }
+      .ring-card { --tw-ring-color: var(--um-card); }
+      .bg-card-foreground { background-color: var(--um-card-foreground); }
+      .text-card-foreground { color: var(--um-card-foreground); }
+      .border-card-foreground { border-color: var(--um-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--um-card-foreground); }
+      .bg-popover { background-color: var(--um-popover); }
+      .text-popover { color: var(--um-popover); }
+      .border-popover { border-color: var(--um-popover); }
+      .ring-popover { --tw-ring-color: var(--um-popover); }
+      .bg-popover-foreground { background-color: var(--um-popover-foreground); }
+      .text-popover-foreground { color: var(--um-popover-foreground); }
+      .border-popover-foreground { border-color: var(--um-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--um-popover-foreground); }
+      .bg-primary { background-color: var(--um-primary); }
+      .text-primary { color: var(--um-primary); }
+      .border-primary { border-color: var(--um-primary); }
+      .ring-primary { --tw-ring-color: var(--um-primary); }
+      .bg-primary-foreground { background-color: var(--um-primary-foreground); }
+      .text-primary-foreground { color: var(--um-primary-foreground); }
+      .border-primary-foreground { border-color: var(--um-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--um-primary-foreground); }
+      .bg-muted { background-color: var(--um-muted); }
+      .text-muted { color: var(--um-muted); }
+      .border-muted { border-color: var(--um-muted); }
+      .ring-muted { --tw-ring-color: var(--um-muted); }
+      .bg-muted-foreground { background-color: var(--um-muted-foreground); }
+      .text-muted-foreground { color: var(--um-muted-foreground); }
+      .border-muted-foreground { border-color: var(--um-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--um-muted-foreground); }
+      .bg-border { background-color: var(--um-border); }
+      .text-border { color: var(--um-border); }
+      .border-border { border-color: var(--um-border); }
+      .ring-border { --tw-ring-color: var(--um-border); }
+      .bg-input { background-color: var(--um-input); }
+      .text-input { color: var(--um-input); }
+      .border-input { border-color: var(--um-input); }
+      .ring-input { --tw-ring-color: var(--um-input); }
+      .bg-ring { background-color: var(--um-ring); }
+      .text-ring { color: var(--um-ring); }
+      .border-ring { border-color: var(--um-ring); }
+      .ring-ring { --tw-ring-color: var(--um-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
 </head>
-<body>
+<body class="min-h-screen font-sans antialiased">
+    <style id="critical-layout">
+      *, *::before, *::after { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background-color: var(--um-background);
+        color: var(--um-foreground);
+        font-family: var(--um-font-sans);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
 
-<!-- Navigation -->
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="#" class="nav-logo"><span class="dot"></span>NYC Mobility AI</a>
-    <div class="nav-links">
-      <a href="#platform">Platform</a>
-      <a href="#results">Results</a>
-      <a href="#quickstart">Quick Start</a>
-      <a href="docs/">Docs</a>
-      <a href="web/">Demo</a>
-      <a href="https://github.com/caizefan34/urban-mobility-ai" class="btn-github">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 00-2.53 15.59c.4.07.55-.17.55-.38v-1.34c-2.22.48-2.69-1.07-2.69-1.07-.36-.92-.89-1.16-.89-1.16-.73-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.64 7.64 0 014 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.74.54 1.49v2.2c0 .21.15.46.55.38A8.01 8.01 0 008 0z"/></svg>
-        GitHub
-      </a>
-    </div>
-  </div>
-</nav>
+      /* ===== Layout container ===== */
+      .um-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
 
-<!-- Hero -->
-<section class="hero" id="top">
-  <div class="hero-content container">
-    <div class="hero-badge">
-      <span class="pulse"></span> v3.0.0 · Research Platform · MIT License
-    </div>
-    <h1>Urban Mobility<br>Decision Intelligence</h1>
-    <p class="subtitle">
-      An open-source research platform for AI-driven fleet repositioning.
-      Demand forecasting, multi-agent simulation, offline reinforcement learning,
-      and reproducible policy evaluation — all in one system.
-    </p>
-    <div class="hero-buttons">
-      <a href="web/" class="btn btn-primary">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
-        Launch Demo
-      </a>
-      <a href="https://github.com/caizefan34/urban-mobility-ai" class="btn btn-outline">
-        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 00-2.53 15.59c.4.07.55-.17.55-.38v-1.34c-2.22.48-2.69-1.07-2.69-1.07-.36-.92-.89-1.16-.89-1.16-.73-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.71 1.22 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.64 7.64 0 014 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.74.54 1.49v2.2c0 .21.15.46.55.38A8.01 8.01 0 008 0z"/></svg>
-        Star on GitHub
-      </a>
-      <a href="docs/" class="btn btn-accent">Documentation</a>
-      <a href="docs/research_paper_draft.md" class="btn btn-outline">Paper Draft</a>
-    </div>
-  </div>
-</section>
+      /* ===== Navigation ===== */
+      .um-nav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        padding: 0.85rem 1.75rem;
+        background-color: rgba(10, 10, 20, 0.72);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--um-border);
+      }
+      .um-nav-brand {
+        display: flex; align-items: center; gap: 0.55rem;
+        font-weight: 600; font-size: 1rem; letter-spacing: -0.01em;
+        color: var(--um-foreground); text-decoration: none;
+      }
+      .um-brand-dot {
+        width: 9px; height: 9px; border-radius: 50%;
+        background-color: var(--um-primary);
+        box-shadow: 0 0 0 3px rgba(79, 143, 255, 0.18);
+      }
+      .um-nav-links {
+        display: flex; align-items: center; gap: 1.9rem;
+      }
+      .um-nav-links a {
+        color: var(--um-muted-foreground);
+        font-size: 0.9rem; font-weight: 450;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .um-nav-links a:hover { color: var(--um-foreground); }
+      .um-nav-actions { display: flex; align-items: center; gap: 0.6rem; }
 
-<!-- Stats Bar -->
-<section class="stats-bar">
-  <div class="container stats-grid">
-    <div>
-      <div class="stat-value blue">0.9565</div>
-      <div class="stat-label">NDCG@3 (Two-Step)</div>
-      <div class="stat-note">3,360 queries</div>
-    </div>
-    <div>
-      <div class="stat-value green">+$139.40</div>
-      <div class="stat-label">Daily Revenue Lift</div>
-      <div class="stat-note">vs Hot Zone baseline</div>
-    </div>
-    <div>
-      <div class="stat-value purple">+$53.74</div>
-      <div class="stat-label">DQN Advantage</div>
-      <div class="stat-note">per driver / day</div>
-    </div>
-    <div>
-      <div class="stat-value amber">402</div>
-      <div class="stat-label">Tests Passing</div>
-      <div class="stat-note">CI verified</div>
-    </div>
-    <div>
-      <div class="stat-value blue">263</div>
-      <div class="stat-label">NYC Taxi Zones</div>
-      <div class="stat-note">full coverage</div>
-    </div>
-  </div>
-</section>
+      /* ===== Buttons ===== */
+      .um-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        font-family: var(--um-font-sans);
+        font-size: 0.9rem; font-weight: 550;
+        padding: 0.6rem 1.15rem;
+        border-radius: var(--um-radius-md);
+        border: 1px solid transparent;
+        cursor: pointer; text-decoration: none;
+        line-height: 1;
+        transition: transform 0.18s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+      }
+      .um-btn svg { width: 16px; height: 16px; }
+      .um-btn-primary {
+        background-color: var(--um-primary);
+        color: var(--um-primary-foreground);
+      }
+      .um-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 28px -10px rgba(79, 143, 255, 0.55);
+      }
+      .um-btn-outline {
+        background-color: transparent;
+        color: var(--um-foreground);
+        border-color: var(--um-border);
+      }
+      .um-btn-outline:hover {
+        border-color: var(--um-primary);
+        color: var(--um-primary);
+        transform: translateY(-1px);
+      }
+      .um-btn-muted {
+        background-color: transparent;
+        color: var(--um-muted-foreground);
+        padding-left: 0.4rem; padding-right: 0.4rem;
+      }
+      .um-btn-muted:hover { color: var(--um-foreground); }
 
-<!-- Platform -->
-<section class="section" id="platform">
-  <div class="container">
-    <div class="section-label">Platform Capabilities</div>
-    <h2>What This Platform Does</h2>
-    <p class="desc">A complete decision intelligence pipeline — from raw trip data to deployable policies with rigorous evaluation.</p>
-    <div class="pipeline">
-      <span class="step">NYC TLC Data</span>
-      <span class="arrow">→</span>
-      <span class="step">Demand Forecasting</span>
-      <span class="arrow">→</span>
-      <span class="step">Supply-Demand Model</span>
-      <span class="arrow">→</span>
-      <span class="step">Multi-Agent Sim</span>
-      <span class="arrow">→</span>
-      <span class="step">Policy Optimization</span>
-      <span class="arrow">→</span>
-      <span class="step">Evaluation (OPE)</span>
-      <span class="arrow">→</span>
-      <span class="step">API / Dashboard</span>
-    </div>
-    <div class="cards" style="margin-top:24px">
-      <div class="card">
-        <div class="card-icon">&#128200;</div>
-        <h3>Demand Forecasting</h3>
-        <p>Leakage-safe LightGBM + XGBoost ensemble with GraphSAGE/GAT spatial features. Strictly-prior temporal splits. MAE 1.49.</p>
-        <div style="margin-top:10px"><span class="tag tag-blue">LightGBM</span><span class="tag tag-purple">XGBoost</span><span class="tag tag-green">GraphSAGE</span></div>
-      </div>
-      <div class="card">
-        <div class="card-icon">&#127750;</div>
-        <h3>Multi-Agent Simulation</h3>
-        <p>Configurable fleet with finite demand, explicit competition, shift constraints, and calibrated travel times. Tests policies under market pressure.</p>
-        <div style="margin-top:10px"><span class="tag tag-blue">v2 Engine</span><span class="tag tag-green">50+ drivers</span></div>
-      </div>
-      <div class="card">
-        <div class="card-icon">&#129504;</div>
-        <h3>Reinforcement Learning</h3>
-        <p>DQN, Double DQN, and IQL with Gymnasium environment. Masked actions, offline replay buffers, and trajectory-aware training.</p>
-        <div style="margin-top:10px"><span class="tag tag-blue">DQN</span><span class="tag tag-purple">Double DQN</span><span class="tag tag-green">IQL</span></div>
-      </div>
-      <div class="card">
-        <div class="card-icon">&#128300;</div>
-        <h3>Offline Policy Evaluation</h3>
-        <p>Trajectory-level Weighted Importance Sampling and sequential Doubly Robust estimation with bootstrap confidence intervals.</p>
-        <div style="margin-top:10px"><span class="tag tag-blue">WIS</span><span class="tag tag-purple">Doubly Robust</span><span class="tag tag-green">Bootstrap CI</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+      /* ===== Hero ===== */
+      .um-hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex; align-items: center; justify-content: center;
+        text-align: center;
+        padding: 9rem 1.5rem 5rem;
+        overflow: hidden;
+        isolation: isolate;
+      }
+      .um-hero-grid {
+        position: absolute; inset: -2px;
+        background-image:
+          linear-gradient(to right, var(--um-border) 1px, transparent 1px),
+          linear-gradient(to bottom, var(--um-border) 1px, transparent 1px);
+        background-size: 52px 52px;
+        opacity: 0.6;
+        -webkit-mask-image: radial-gradient(ellipse 78% 68% at 50% 44%, #000 28%, transparent 76%);
+        mask-image: radial-gradient(ellipse 78% 68% at 50% 44%, #000 28%, transparent 76%);
+        animation: um-grid-drift 28s linear infinite;
+        z-index: -2;
+      }
+      .um-hero-glow {
+        position: absolute; z-index: -1;
+        width: 62vw; height: 62vw; max-width: 780px; max-height: 780px;
+        top: 46%; left: 50%; transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(79, 143, 255, 0.16) 0%, rgba(79, 143, 255, 0.04) 42%, transparent 70%);
+        pointer-events: none;
+      }
+      @keyframes um-grid-drift {
+        0% { background-position: 0 0, 0 0; }
+        100% { background-position: 52px 52px, 52px 52px; }
+      }
+      .um-hero-inner {
+        max-width: 880px; margin: 0 auto;
+        display: flex; flex-direction: column; align-items: center; gap: 1.6rem;
+      }
+      .um-badge {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        padding: 0.4rem 0.9rem;
+        border: 1px solid var(--um-border);
+        background-color: rgba(17, 17, 30, 0.7);
+        border-radius: 999px;
+        font-size: 0.8rem; color: var(--um-muted-foreground);
+        font-family: var(--um-font-mono);
+      }
+      .um-pulse-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background-color: var(--um-state-success);
+        animation: um-pulse 2.2s ease-in-out infinite;
+      }
+      @keyframes um-pulse {
+        0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 211, 160, 0.5); }
+        50% { opacity: 0.45; box-shadow: 0 0 0 5px rgba(34, 211, 160, 0); }
+      }
+      .um-hero-title {
+        font-size: clamp(2.4rem, 6vw, 4.4rem);
+        line-height: 1.06; letter-spacing: -0.03em; font-weight: 700;
+        margin: 0;
+        background: linear-gradient(180deg, var(--um-foreground) 0%, var(--um-primary) 100%);
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent; color: transparent;
+      }
+      .um-hero-sub {
+        max-width: 660px;
+        font-size: clamp(1rem, 1.4vw, 1.15rem);
+        line-height: 1.65; color: var(--um-muted-foreground);
+        margin: 0;
+      }
+      .um-hero-actions {
+        display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;
+        margin-top: 0.4rem;
+      }
 
-<!-- Results -->
-<section class="section section-alt" id="results">
-  <div class="container">
-    <div class="section-label">Key Results</div>
-    <h2>Reproducible Benchmarks</h2>
-    <p class="desc">All metrics are reproducible via <code>make all</code>. See <a href="https://github.com/caizefan34/urban-mobility-ai#scientific-limitations">Scientific Limitations</a>.</p>
+      /* ===== Stats ===== */
+      .um-stats { padding: 0 1.5rem; margin-top: -3.5rem; position: relative; z-index: 5; }
+      .um-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1px;
+        background-color: var(--um-border);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-lg);
+        overflow: hidden;
+        max-width: 1200px; margin: 0 auto;
+        box-shadow: var(--um-shadow-2);
+      }
+      .um-stat {
+        padding: 1.5rem 1.25rem;
+        background-color: var(--um-card);
+      }
+      .um-stat-value {
+        font-size: 1.7rem; font-weight: 700;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.1;
+      }
+      .um-stat-label {
+        margin-top: 0.55rem;
+        font-size: 0.82rem;
+        color: var(--um-foreground);
+        font-weight: 500;
+      }
+      .um-stat-sub {
+        margin-top: 0.2rem;
+        font-size: 0.76rem;
+        color: var(--um-muted-foreground);
+        font-family: var(--um-font-mono);
+      }
+      .um-text-success { color: var(--um-state-success); }
+      .um-text-warning { color: var(--um-state-warning); }
 
-    <h3>Static Diagnostic (3,360 queries)</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Strategy</th><th>NDCG@3</th><th>Hit@3</th><th>Utility@1</th></tr></thead>
-        <tbody>
-          <tr><td>Hot Zone (baseline)</td><td>0.7846</td><td>0.5842</td><td>19.43</td></tr>
-          <tr><td>Single-Step</td><td>0.9024</td><td>0.8804</td><td>25.06</td></tr>
-          <tr><td class="best">Two-Step Horizon</td><td class="best">0.9565</td><td class="best">0.9714</td><td class="best">27.59</td></tr>
-        </tbody>
-      </table>
-    </div>
+      /* ===== Sections ===== */
+      .um-section { padding: 5.5rem 1.5rem; }
+      .um-section-head { max-width: 760px; margin: 0 auto 3rem; text-align: center; }
+      .um-eyebrow {
+        font-family: var(--um-font-mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--um-primary);
+        margin: 0 0 0.9rem;
+      }
+      .um-section-title {
+        font-size: clamp(1.7rem, 3vw, 2.3rem);
+        font-weight: 700; letter-spacing: -0.02em;
+        margin: 0 0 0.85rem; line-height: 1.2;
+        color: var(--um-foreground);
+      }
+      .um-section-desc {
+        font-size: 1rem; line-height: 1.65;
+        color: var(--um-muted-foreground); margin: 0;
+      }
 
-    <h3>100-Seed Simulator Rollout (7 days)</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Strategy</th><th>Mean Daily Fare</th><th>vs Hot Zone</th></tr></thead>
-        <tbody>
-          <tr><td>Hot Zone</td><td>$431.21</td><td>&mdash;</td></tr>
-          <tr><td>Single-Step</td><td>$548.77</td><td>+$117.56</td></tr>
-          <tr><td class="best">Two-Step Horizon</td><td class="best">$570.61</td><td class="best">+$139.40</td></tr>
-        </tbody>
-      </table>
-    </div>
+      /* ===== Pipeline ===== */
+      .um-pipeline {
+        display: flex; align-items: center; gap: 0.4rem;
+        overflow-x: auto;
+        padding: 0.5rem 0 1rem;
+        font-family: var(--um-font-mono);
+        max-width: 1200px; margin: 0 auto 3.25rem;
+        white-space: nowrap;
+      }
+      .um-pipe-step {
+        flex: 0 0 auto;
+        padding: 0.6rem 0.95rem;
+        background-color: var(--um-card);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-md);
+        font-size: 0.82rem;
+        color: var(--um-foreground);
+        transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+      }
+      .um-pipe-step:hover {
+        border-color: var(--um-primary);
+        color: var(--um-primary);
+        background-color: var(--um-muted);
+      }
+      .um-pipe-arrow {
+        flex: 0 0 auto;
+        color: var(--um-muted-foreground);
+        font-size: 0.85rem;
+      }
 
-    <h3>Deep RL vs Single-Step</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Algorithm</th><th>Revenue Delta</th><th>95% CI</th></tr></thead>
-        <tbody>
-          <tr><td class="best">DQN</td><td class="best">+$53.74</td><td>[+46.21, +61.57]</td></tr>
-          <tr><td>Double DQN</td><td>-$25.27</td><td>[-32.77, -17.97]</td></tr>
-        </tbody>
-      </table>
-    </div>
+      /* ===== Cards ===== */
+      .um-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        max-width: 1200px; margin: 0 auto;
+      }
+      .um-card {
+        position: relative;
+        background-color: var(--um-card);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-md);
+        padding: 1.6rem 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
+      }
+      .um-card::before {
+        content: "";
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 2px;
+        background-color: var(--um-primary);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.25s;
+      }
+      .um-card:hover {
+        transform: translateY(-2px);
+        background-color: var(--um-muted);
+        border-color: var(--um-primary);
+      }
+      .um-card:hover::before { transform: scaleX(1); }
+      .um-card-icon {
+        display: inline-flex; align-items: center; justify-content: center;
+        color: var(--um-primary);
+        margin-bottom: 1.1rem;
+      }
+      .um-card-icon svg { width: 24px; height: 24px; }
+      .um-card-title {
+        font-size: 1.1rem; font-weight: 600; margin: 0 0 0.6rem;
+        color: var(--um-foreground); letter-spacing: -0.01em;
+      }
+      .um-card-text {
+        font-size: 0.92rem; line-height: 1.6;
+        color: var(--um-muted-foreground); margin: 0 0 1.1rem;
+      }
+      .um-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+      .um-tag {
+        font-family: var(--um-font-mono);
+        font-size: 0.72rem;
+        padding: 0.25rem 0.55rem;
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-sm);
+        color: var(--um-muted-foreground);
+        background-color: var(--um-background);
+      }
 
-    <h3>Offline Policy Evaluation (Trajectory-Level)</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Policy</th><th>WIS Estimate</th><th>Sequential DR</th></tr></thead>
-        <tbody>
-          <tr><td>Stay (on-policy)</td><td>$438.55</td><td>$431.74</td></tr>
-          <tr><td>IQL (off-policy)</td><td>$0.00 *</td><td>$12.44</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p style="font-size:12px;color:var(--text3);margin-top:8px">
-      * IQL deterministic target + uniform exploration → support overlap failure. See <a href="docs/offline_rl_protocol.md">Offline RL Protocol</a>.
-    </p>
-  </div>
-</section>
+      /* ===== Benchmark table ===== */
+      .um-table-wrap {
+        max-width: 1100px; margin: 0 auto;
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-lg);
+        overflow: hidden;
+        background-color: var(--um-card);
+      }
+      .um-table-scroll { overflow-x: auto; }
+      .um-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+        min-width: 640px;
+      }
+      .um-table th {
+        text-align: left;
+        padding: 0.9rem 1.15rem;
+        color: var(--um-muted-foreground);
+        font-weight: 500;
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--um-border);
+        background-color: var(--um-muted);
+        white-space: nowrap;
+      }
+      .um-table td {
+        padding: 1rem 1.15rem;
+        border-bottom: 1px solid var(--um-border);
+        color: var(--um-foreground);
+        font-variant-numeric: tabular-nums;
+      }
+      .um-table tbody tr:last-child td { border-bottom: none; }
+      .um-table tbody tr { transition: background-color 0.18s; }
+      .um-table tbody tr:hover { background-color: var(--um-muted); }
+      .um-table td.um-num { font-family: var(--um-font-mono); }
+      .um-table tr.um-best-row td { color: var(--um-state-success); }
+      .um-best-tag {
+        display: inline-flex; align-items: center; gap: 0.3rem;
+        font-family: var(--um-font-mono); font-size: 0.7rem;
+        padding: 0.15rem 0.5rem; border-radius: var(--um-radius-sm);
+        background-color: rgba(34, 211, 160, 0.12);
+        color: var(--um-state-success);
+        border: 1px solid rgba(34, 211, 160, 0.3);
+        margin-left: 0.5rem;
+      }
+      .um-table-note {
+        max-width: 1100px; margin: 1rem auto 0;
+        font-size: 0.8rem; color: var(--um-muted-foreground);
+        font-family: var(--um-font-mono);
+      }
 
-<!-- Quick Start -->
-<section class="section" id="quickstart">
-  <div class="container">
-    <div class="section-label">Quick Start</div>
-    <h2>Run It Locally</h2>
-    <p class="desc">One command to start the full platform with API and interactive demo.</p>
-    <div class="code-block">
-      <span class="cmt"># Clone and start (API + Demo)</span><br>
-      <span class="kw">git clone</span> https://github.com/caizefan34/urban-mobility-ai.git<br>
-      <span class="kw">cd</span> urban-mobility-ai<br>
-      <span class="kw">docker compose up</span><br>
-      <br>
-      <span class="cmt"># API → http://localhost:8000/docs</span><br>
-      <span class="cmt"># Demo → http://localhost:8501</span>
-    </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
-      <a href="https://github.com/caizefan34/urban-mobility-ai" class="btn btn-primary">Star on GitHub</a>
-      <a href="https://github.com/caizefan34/urban-mobility-ai/fork" class="btn btn-outline">Fork Repository</a>
-      <a href="https://github.com/caizefan34/urban-mobility-ai/blob/master/CITATION.cff" class="btn btn-accent">Cite This Work</a>
-    </div>
-  </div>
-</section>
+      /* ===== Quick start ===== */
+      .um-quickstart-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        max-width: 1200px; margin: 0 auto;
+      }
+      .um-code-block {
+        background-color: var(--um-card);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-md);
+        overflow: hidden;
+        display: flex; flex-direction: column;
+      }
+      .um-code-head {
+        display: flex; align-items: center; gap: 0.5rem;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid var(--um-border);
+        background-color: var(--um-muted);
+        font-family: var(--um-font-mono);
+        font-size: 0.78rem;
+        color: var(--um-muted-foreground);
+      }
+      .um-code-head .um-cd {
+        width: 9px; height: 9px; border-radius: 50%;
+        background-color: var(--um-border);
+      }
+      .um-code-head .um-cd.lead { background-color: var(--um-primary); }
+      .um-code pre {
+        margin: 0;
+        padding: 1.15rem 1.2rem;
+        overflow-x: auto;
+        font-family: var(--um-font-mono);
+        font-size: 0.84rem;
+        line-height: 1.75;
+        color: var(--um-foreground);
+      }
+      .um-code .cmt { color: var(--um-muted-foreground); }
+      .um-code .kw { color: var(--um-primary); }
+      .um-code .val { color: var(--um-state-success); }
 
-<!-- Engineering -->
-<section class="section section-alt">
-  <div class="container">
-    <div class="section-label">Engineering</div>
-    <h2>Production-Ready Infrastructure</h2>
-    <p class="desc">Beyond research: REST API, Docker, CI/CD, and observability built in.</p>
-    <div class="cards">
-      <div class="card">
-        <div class="card-icon">&#128295;</div>
-        <h3>REST API (FastAPI)</h3>
-        <p><code>/health</code>, <code>/ready</code>, <code>/v1/recommendations</code>, <code>/v1/demand/forecast</code> with auto-generated OpenAPI docs.</p>
-        <span class="tag tag-blue">FastAPI</span><span class="tag tag-green">Pydantic v2</span>
-      </div>
-      <div class="card">
-        <div class="card-icon">&#128230;</div>
-        <h3>Docker & Compose</h3>
-        <p>Multi-stage builds with health checks. One-command <code>docker compose up</code> for API + Demo.</p>
-        <span class="tag tag-blue">Docker</span><span class="tag tag-green">Compose</span>
-      </div>
-      <div class="card">
-        <div class="card-icon">&#128260;</div>
-        <h3>CI/CD (GitHub Actions)</h3>
-        <p>Python 3.10/3.12 matrix, lint, full test suite + coverage, Docker smoke test on every push.</p>
-        <span class="tag tag-blue">CI</span><span class="tag tag-purple">Codecov</span>
-      </div>
-      <div class="card">
-        <div class="card-icon">&#128221;</div>
-        <h3>Observability & Registry</h3>
-        <p>Structured logging, request latency tracking, model versioning, metrics snapshots, shadow evaluation.</p>
-        <span class="tag tag-blue">Logging</span><span class="tag tag-purple">Registry</span>
-      </div>
-    </div>
-  </div>
-</section>
+      /* ===== CTA ===== */
+      .um-cta-wrap { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+      .um-cta {
+        position: relative;
+        text-align: center;
+        padding: 4.5rem 1.5rem;
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-lg);
+        background:
+          radial-gradient(ellipse 60% 90% at 50% 0%, rgba(79, 143, 255, 0.10), transparent 70%),
+          var(--um-card);
+        overflow: hidden;
+      }
+      .um-cta h2 {
+        font-size: clamp(1.7rem, 3vw, 2.3rem);
+        font-weight: 700; letter-spacing: -0.02em;
+        margin: 0 0 0.85rem; color: var(--um-foreground);
+      }
+      .um-cta p {
+        font-size: 1rem; line-height: 1.65;
+        color: var(--um-muted-foreground); margin: 0 0 1.8rem;
+        max-width: 520px; margin-left: auto; margin-right: auto;
+      }
+      .um-cta-actions {
+        display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;
+      }
 
-<!-- CTA -->
-<section class="section">
-  <div class="container">
-    <div class="cta">
-      <h2>Collaborate With Us</h2>
-      <p>Researchers, engineers, and domain experts — contribute to the platform,<br>add your city, benchmark your policy, or co-author the paper.</p>
-      <div class="cta-btns">
-        <a href="https://github.com/caizefan34/urban-mobility-ai/discussions" class="btn btn-primary">Join Discussions</a>
-        <a href="https://github.com/caizefan34/urban-mobility-ai/blob/master/CONTRIBUTING.md" class="btn btn-outline">Contribute</a>
-        <a href="docs/research_paper_draft.md" class="btn btn-accent">Read Paper Draft</a>
-      </div>
-    </div>
-  </div>
-</section>
+      /* ===== Footer ===== */
+      .um-footer {
+        border-top: 1px solid var(--um-border);
+        padding: 2.5rem 1.5rem;
+        margin-top: 4rem;
+      }
+      .um-footer-inner {
+        max-width: 1200px; margin: 0 auto;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 1.5rem; flex-wrap: wrap;
+      }
+      .um-footer-links { display: flex; gap: 1.6rem; flex-wrap: wrap; }
+      .um-footer-links a {
+        color: var(--um-muted-foreground); font-size: 0.86rem; text-decoration: none;
+        transition: color 0.2s;
+      }
+      .um-footer-links a:hover { color: var(--um-foreground); }
+      .um-footer-copy {
+        font-size: 0.82rem; color: var(--um-muted-foreground);
+        font-family: var(--um-font-mono);
+      }
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-links">
-      <a href="https://github.com/caizefan34/urban-mobility-ai">GitHub</a>
-      <a href="docs/">Documentation</a>
-      <a href="web/">Web Demo</a>
-      <a href="https://github.com/caizefan34/urban-mobility-ai/blob/master/CITATION.cff">Cite</a>
-      <a href="https://github.com/caizefan34/urban-mobility-ai/blob/master/ROADMAP.md">Roadmap</a>
-      <a href="https://github.com/caizefan34/urban-mobility-ai/discussions">Discussions</a>
-    </div>
-    <p class="footer-copy">
-      MIT License · Built for reproducible research at <a href="https://www.sjtu.edu.cn/">Shanghai Jiao Tong University</a> · v3.0.0<br>
-      <a href="https://github.com/caizefan34/urban-mobility-ai">caizefan34/urban-mobility-ai</a>
-    </p>
-  </div>
-</footer>
+      /* ===== Responsive ===== */
+      @media (max-width: 1024px) {
+        .um-cards-grid { grid-template-columns: repeat(2, 1fr); }
+        .um-quickstart-grid { grid-template-columns: 1fr; }
+        .um-stats-grid { grid-template-columns: repeat(3, 1fr); }
+      }
+      @media (max-width: 768px) {
+        .um-nav-links, .um-nav-actions { display: none; }
+        .um-stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .um-cards-grid { grid-template-columns: 1fr; }
+        .um-hero { min-height: auto; padding: 7.5rem 1.5rem 4.5rem; }
+        .um-section { padding: 4rem 1.5rem; }
+        .um-footer-inner { flex-direction: column; text-align: center; }
+      }
+    </style>
+    <main>
+      <!-- ===== Navigation ===== -->
+      <nav class="um-nav">
+        <a class="um-nav-brand" href="#">
+          <span class="um-brand-dot"></span>
+          NYC Mobility AI
+        </a>
+        <div class="um-nav-links">
+          <a href="#platform">Platform</a>
+          <a href="#results">Results</a>
+          <a href="#quickstart">Quick Start</a>
+          <a href="#docs">Docs</a>
+          <a href="#demo">Demo</a>
+        </div>
+        <div class="um-nav-actions">
+          <a class="um-btn um-btn-outline" href="https://github.com" target="_blank" rel="noopener">
+            <i data-lucide="github"></i>
+            GitHub
+          </a>
+        </div>
+      </nav>
 
+      <!-- ===== Hero ===== -->
+      <section class="um-hero">
+        <div class="um-hero-grid" aria-hidden="true"></div>
+        <div class="um-hero-glow" aria-hidden="true"></div>
+        <div class="um-hero-inner">
+          <span class="um-badge">
+            <span class="um-pulse-dot"></span>
+            v3.0.0 · Research Platform · MIT License
+          </span>
+          <h1 class="um-hero-title">Urban Mobility Decision Intelligence</h1>
+          <p class="um-hero-sub">
+            An open-source research platform for AI-driven fleet repositioning. Demand forecasting,
+            multi-agent simulation, offline reinforcement learning, and reproducible policy evaluation
+            — all in one system.
+          </p>
+          <div class="um-hero-actions">
+            <a class="um-btn um-btn-primary" href="#demo">
+              <i data-lucide="play"></i>
+              Launch Demo
+            </a>
+            <a class="um-btn um-btn-outline" href="https://github.com" target="_blank" rel="noopener">
+              <i data-lucide="star"></i>
+              Star on GitHub
+            </a>
+            <a class="um-btn um-btn-muted" href="#docs">Documentation</a>
+            <a class="um-btn um-btn-outline" href="#paper">
+              <i data-lucide="file-text"></i>
+              Paper Draft
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Stats Bar ===== -->
+      <section class="um-stats">
+        <div class="um-stats-grid">
+          <div class="um-stat">
+            <div class="um-stat-value">0.9565</div>
+            <div class="um-stat-label">NDCG@3 (Two-Step)</div>
+            <div class="um-stat-sub">3,360 queries</div>
+          </div>
+          <div class="um-stat">
+            <div class="um-stat-value um-text-success">+$139.40</div>
+            <div class="um-stat-label">Daily Revenue Lift</div>
+            <div class="um-stat-sub">vs Hot Zone baseline</div>
+          </div>
+          <div class="um-stat">
+            <div class="um-stat-value um-text-success">+$53.74</div>
+            <div class="um-stat-label">DQN Advantage</div>
+            <div class="um-stat-sub">per driver / day</div>
+          </div>
+          <div class="um-stat">
+            <div class="um-stat-value um-text-warning">402</div>
+            <div class="um-stat-label">Tests Passing</div>
+            <div class="um-stat-sub">CI verified</div>
+          </div>
+          <div class="um-stat">
+            <div class="um-stat-value">263</div>
+            <div class="um-stat-label">NYC Taxi Zones</div>
+            <div class="um-stat-sub">full coverage</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Platform Capabilities ===== -->
+      <section class="um-section" id="platform">
+        <div class="um-section-head">
+          <p class="um-eyebrow">Platform Capabilities</p>
+          <h2 class="um-section-title">What This Platform Does</h2>
+          <p class="um-section-desc">
+            A complete decision intelligence pipeline — from raw trip data to deployable policies
+            with rigorous evaluation.
+          </p>
+        </div>
+
+        <div class="um-pipeline">
+          <span class="um-pipe-step">NYC TLC Data</span>
+          <span class="um-pipe-arrow">&rarr;</span>
+          <span class="um-pipe-step">Demand Forecasting</span>
+          <span class="um-pipe-arrow">&rarr;</span>
+          <span class="um-pipe-step">Supply-Demand Model</span>
+          <span class="um-pipe-arrow">&rarr;</span>
+          <span class="um-pipe-step">Multi-Agent Sim</span>
+          <span class="um-pipe-arrow">&rarr;</span>
+          <span class="um-pipe-step">Policy Optimization</span>
+          <span class="um-pipe-arrow">&rarr;</span>
+          <span class="um-pipe-step">Evaluation (OPE)</span>
+          <span class="um-pipe-arrow">&rarr;</span>
+          <span class="um-pipe-step">API / Dashboard</span>
+        </div>
+
+        <div class="um-cards-grid">
+          <article class="um-card">
+            <span class="um-card-icon"><i data-lucide="trending-up"></i></span>
+            <h3 class="um-card-title">Demand Forecasting</h3>
+            <p class="um-card-text">
+              GraphSAGE + temporal attention predicts per-zone demand at 15-min granularity. Two-step
+              retrieval achieves 0.9565 NDCG@3 across 3,360 queries.
+            </p>
+            <div class="um-tags">
+              <span class="um-tag">GraphSAGE</span>
+              <span class="um-tag">NDCG@3</span>
+            </div>
+          </article>
+
+          <article class="um-card">
+            <span class="um-card-icon"><i data-lucide="network"></i></span>
+            <h3 class="um-card-title">Multi-Agent Simulation</h3>
+            <p class="um-card-text">
+              263 NYC taxi zones modeled as a supply-demand network. Drivers reposition based on
+              learned policies; revenue and idle time tracked per episode.
+            </p>
+            <div class="um-tags">
+              <span class="um-tag">263 Zones</span>
+              <span class="um-tag">Episode-based</span>
+            </div>
+          </article>
+
+          <article class="um-card">
+            <span class="um-card-icon"><i data-lucide="brain"></i></span>
+            <h3 class="um-card-title">Offline Reinforcement Learning</h3>
+            <p class="um-card-text">
+              IQL and DQN trained on historical trajectories. Doubly-robust OPE validates policies
+              without online deployment risk.
+            </p>
+            <div class="um-tags">
+              <span class="um-tag">IQL</span>
+              <span class="um-tag">DQN</span>
+              <span class="um-tag">OPE</span>
+            </div>
+          </article>
+
+          <article class="um-card">
+            <span class="um-card-icon"><i data-lucide="check-circle"></i></span>
+            <h3 class="um-card-title">Reproducible Evaluation</h3>
+            <p class="um-card-text">
+              402 passing tests, deterministic seeds, and published benchmarks. Every result is
+              reproducible from raw TLC data to final metrics.
+            </p>
+            <div class="um-tags">
+              <span class="um-tag">402 Tests</span>
+              <span class="um-tag">CI/CD</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===== Benchmark Results ===== -->
+      <section class="um-section" id="results" style="background-color: var(--um-muted);">
+        <div class="um-section-head">
+          <p class="um-eyebrow">Benchmark Results</p>
+          <h2 class="um-section-title">Policy Performance Comparison</h2>
+          <p class="um-section-desc">
+            DQN achieves the highest daily revenue lift per driver while maintaining competitive
+            service rate.
+          </p>
+        </div>
+
+        <div class="um-table-wrap">
+          <div class="um-table-scroll">
+            <table class="um-table">
+              <thead>
+                <tr>
+                  <th>Policy</th>
+                  <th>Daily Revenue/Driver</th>
+                  <th>Service Rate</th>
+                  <th>Idle Time</th>
+                  <th>Advantage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Hot Zone (baseline)</td>
+                  <td class="um-num">$247.30</td>
+                  <td class="um-num">68.2%</td>
+                  <td class="um-num">41m</td>
+                  <td class="um-num">—</td>
+                </tr>
+                <tr>
+                  <td>Random Reposition</td>
+                  <td class="um-num">$198.40</td>
+                  <td class="um-num">55.1%</td>
+                  <td class="um-num">58m</td>
+                  <td class="um-num" style="color: var(--um-state-error);">-$48.90</td>
+                </tr>
+                <tr>
+                  <td>IQL</td>
+                  <td class="um-num">$281.50</td>
+                  <td class="um-num">74.6%</td>
+                  <td class="um-num">32m</td>
+                  <td class="um-num um-text-success">+$34.20</td>
+                </tr>
+                <tr class="um-best-row">
+                  <td>DQN <span class="um-best-tag">BEST</span></td>
+                  <td class="um-num">$301.04</td>
+                  <td class="um-num">76.8%</td>
+                  <td class="um-num">28m</td>
+                  <td class="um-num">+$53.74</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="um-table-note">
+          Results averaged over 30-day simulation on NYC TLC data (Jan 2024). Revenue in USD per
+          driver per day.
+        </p>
+      </section>
+
+      <!-- ===== Quick Start ===== -->
+      <section class="um-section" id="quickstart">
+        <div class="um-section-head">
+          <p class="um-eyebrow">Quick Start</p>
+          <h2 class="um-section-title">Get Running in 60 Seconds</h2>
+          <p class="um-section-desc">
+            Install, configure, and launch your first simulation.
+          </p>
+        </div>
+
+        <div class="um-quickstart-grid">
+          <div class="um-code-block">
+            <div class="um-code-head">
+              <span class="um-cd lead"></span>
+              <span class="um-cd"></span>
+              <span class="um-cd"></span>
+              install.sh
+            </div>
+            <div class="um-code">
+<pre><span class="cmt"># Install the platform</span>
+pip install <span class="val">urban-mobility-ai</span></pre>
+            </div>
+          </div>
+
+          <div class="um-code-block">
+            <div class="um-code-head">
+              <span class="um-cd lead"></span>
+              <span class="um-cd"></span>
+              <span class="um-cd"></span>
+              config.py
+            </div>
+            <div class="um-code">
+<pre><span class="kw">from</span> mobility_ai <span class="kw">import</span> Config
+
+<span class="cmt"># Point to your local NYC TLC trip data</span>
+config = Config(
+    data_path=<span class="val">"data/nyc_tlc/"</span>,
+    api_key=<span class="val">"YOUR_API_KEY"</span>,
+    zones=<span class="val">263</span>,
+    horizon=<span class="val">"15min"</span>,
+)
+
+config.save(<span class="val">"config.yaml"</span>)</pre>
+            </div>
+          </div>
+
+          <div class="um-code-block">
+            <div class="um-code-head">
+              <span class="um-cd lead"></span>
+              <span class="um-cd"></span>
+              <span class="um-cd"></span>
+              run.sh
+            </div>
+            <div class="um-code">
+<pre><span class="cmt"># Launch a 30-day DQN simulation</span>
+python -m mobility_ai simulate \
+  <span class="kw">--policy</span> <span class="val">dqn</span> \
+  <span class="kw">--days</span> <span class="val">30</span></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CTA ===== -->
+      <section class="um-section" id="demo" style="padding-top: 2rem;">
+        <div class="um-cta-wrap">
+          <div class="um-cta">
+            <h2>Start Building Smarter Mobility</h2>
+            <p>Clone the repository, run the demo, and join the research community.</p>
+            <div class="um-cta-actions">
+              <a class="um-btn um-btn-primary" href="#demo">
+                <i data-lucide="play"></i>
+                Launch Demo
+              </a>
+              <a class="um-btn um-btn-outline" href="#docs">
+                <i data-lucide="book-open"></i>
+                Read the Docs
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Footer ===== -->
+      <footer class="um-footer">
+        <div class="um-footer-inner">
+          <div class="um-footer-links">
+            <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+            <a href="#docs">Documentation</a>
+            <a href="#paper">Paper Draft</a>
+            <a href="#roadmap">Roadmap</a>
+            <a href="#changelog">CHANGELOG</a>
+          </div>
+          <div class="um-footer-copy">MIT License · Built for reproducible mobility research</div>
+        </div>
+      </footer>
+    </main>
+    <script>lucide.createIcons();</script>
 </body>
 </html>

@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Mobility Decision Intelligence — Research Platform</title>
+    <style id="theme-vars">
+/* Urban Mobility AI — Brand Design Tokens */
+/* Free-explore mode: single brand hue (electric blue) */
+
+:root {
+  /* Page surfaces */
+  --um-background: #0a0a14;
+  --um-foreground: #e8e8f5;
+
+  /* Card surfaces */
+  --um-card: #11111e;
+  --um-card-foreground: #e8e8f5;
+
+  /* Popover / floating layers */
+  --um-popover: #161628;
+  --um-popover-foreground: #e8e8f5;
+
+  /* Brand primary — electric blue */
+  --um-primary: #4f8fff;
+  --um-primary-foreground: #ffffff;
+
+  /* Muted / secondary */
+  --um-muted: #1a1a2e;
+  --um-muted-foreground: #9595b0;
+
+  /* Border & input */
+  --um-border: #1e1e35;
+  --um-input: #1e1e35;
+  --um-ring: #4f8fff;
+
+  /* Semantic state colors (not brand hues) */
+  --um-state-success: #22d3a0;
+  --um-state-warning: #fbbf24;
+  --um-state-error: #f87171;
+  --um-state-info: #4f8fff;
+
+  /* Radius scale */
+  --um-radius-sm: 4px;
+  --um-radius-md: 8px;
+  --um-radius-lg: 16px;
+
+  /* Typography */
+  --um-font-sans: "Inter", "Noto Sans SC", "PingFang SC", system-ui, -apple-system, sans-serif;
+  --um-font-mono: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+
+  /* Layout tokens */
+  --um-shadow-1: 0 1px 2px rgba(0,0,0,0.08), 0 1px 1px rgba(0,0,0,0.04);
+  --um-shadow-2: 0 8px 24px -8px rgba(0,0,0,0.25);
+  --um-shadow-3: 0 24px 60px -20px rgba(0,0,0,0.40);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--um-background);
+    --color-foreground: var(--um-foreground);
+    --color-card: var(--um-card);
+    --color-card-foreground: var(--um-card-foreground);
+    --color-popover: var(--um-popover);
+    --color-popover-foreground: var(--um-popover-foreground);
+    --color-primary: var(--um-primary);
+    --color-primary-foreground: var(--um-primary-foreground);
+    --color-muted: var(--um-muted);
+    --color-muted-foreground: var(--um-muted-foreground);
+    --color-border: var(--um-border);
+    --color-input: var(--um-input);
+    --color-ring: var(--um-ring);
+    --radius-sm: var(--um-radius-sm);
+    --radius-md: var(--um-radius-md);
+    --radius-lg: var(--um-radius-lg);
+  }
+  @layer base {
+    body { background: var(--um-background); color: var(--um-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--um-background); }
+      .text-background { color: var(--um-background); }
+      .border-background { border-color: var(--um-background); }
+      .ring-background { --tw-ring-color: var(--um-background); }
+      .bg-foreground { background-color: var(--um-foreground); }
+      .text-foreground { color: var(--um-foreground); }
+      .border-foreground { border-color: var(--um-foreground); }
+      .ring-foreground { --tw-ring-color: var(--um-foreground); }
+      .bg-card { background-color: var(--um-card); }
+      .text-card { color: var(--um-card); }
+      .border-card { border-color: var(--um-card); }
+      .ring-card { --tw-ring-color: var(--um-card); }
+      .bg-card-foreground { background-color: var(--um-card-foreground); }
+      .text-card-foreground { color: var(--um-card-foreground); }
+      .border-card-foreground { border-color: var(--um-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--um-card-foreground); }
+      .bg-popover { background-color: var(--um-popover); }
+      .text-popover { color: var(--um-popover); }
+      .border-popover { border-color: var(--um-popover); }
+      .ring-popover { --tw-ring-color: var(--um-popover); }
+      .bg-popover-foreground { background-color: var(--um-popover-foreground); }
+      .text-popover-foreground { color: var(--um-popover-foreground); }
+      .border-popover-foreground { border-color: var(--um-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--um-popover-foreground); }
+      .bg-primary { background-color: var(--um-primary); }
+      .text-primary { color: var(--um-primary); }
+      .border-primary { border-color: var(--um-primary); }
+      .ring-primary { --tw-ring-color: var(--um-primary); }
+      .bg-primary-foreground { background-color: var(--um-primary-foreground); }
+      .text-primary-foreground { color: var(--um-primary-foreground); }
+      .border-primary-foreground { border-color: var(--um-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--um-primary-foreground); }
+      .bg-muted { background-color: var(--um-muted); }
+      .text-muted { color: var(--um-muted); }
+      .border-muted { border-color: var(--um-muted); }
+      .ring-muted { --tw-ring-color: var(--um-muted); }
+      .bg-muted-foreground { background-color: var(--um-muted-foreground); }
+      .text-muted-foreground { color: var(--um-muted-foreground); }
+      .border-muted-foreground { border-color: var(--um-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--um-muted-foreground); }
+      .bg-border { background-color: var(--um-border); }
+      .text-border { color: var(--um-border); }
+      .border-border { border-color: var(--um-border); }
+      .ring-border { --tw-ring-color: var(--um-border); }
+      .bg-input { background-color: var(--um-input); }
+      .text-input { color: var(--um-input); }
+      .border-input { border-color: var(--um-input); }
+      .ring-input { --tw-ring-color: var(--um-input); }
+      .bg-ring { background-color: var(--um-ring); }
+      .text-ring { color: var(--um-ring); }
+      .border-ring { border-color: var(--um-ring); }
+      .ring-ring { --tw-ring-color: var(--um-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <style id="critical-layout">
+      *, *::before, *::after { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background-color: var(--um-background);
+        color: var(--um-foreground);
+        font-family: var(--um-font-sans);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      /* ===== Layout container ===== */
+      .um-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      /* ===== Navigation ===== */
+      .um-nav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        padding: 0.85rem 1.75rem;
+        background-color: rgba(10, 10, 20, 0.72);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--um-border);
+      }
+      .um-nav::after {
+        content: "";
+        position: absolute;
+        bottom: -1px; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 10%, var(--um-primary) 50%, transparent 90%);
+        opacity: 0.4;
+        transform-origin: center;
+        animation: um-nav-scan 5s ease-in-out infinite;
+      }
+      @keyframes um-nav-scan {
+        0%, 100% { opacity: 0.2; transform: scaleX(0.6); }
+        50% { opacity: 0.55; transform: scaleX(1); }
+      }
+      .um-nav-brand {
+        display: flex; align-items: center; gap: 0.55rem;
+        font-weight: 600; font-size: 1rem; letter-spacing: -0.01em;
+        color: var(--um-foreground); text-decoration: none;
+      }
+      .um-brand-dot {
+        width: 9px; height: 9px; border-radius: 50%;
+        background-color: var(--um-primary);
+        box-shadow: 0 0 0 3px rgba(79, 143, 255, 0.18);
+        animation: um-brand-pulse 2.5s ease-in-out infinite;
+      }
+      @keyframes um-brand-pulse {
+        0%, 100% { box-shadow: 0 0 0 3px rgba(79, 143, 255, 0.18); }
+        50% { box-shadow: 0 0 0 5px rgba(79, 143, 255, 0.08); }
+      }
+      .um-nav-links {
+        display: flex; align-items: center; gap: 1.9rem;
+      }
+      .um-nav-links a {
+        color: var(--um-muted-foreground);
+        font-size: 0.9rem; font-weight: 450;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .um-nav-links a:hover { color: var(--um-foreground); }
+      .um-nav-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+      /* ===== Buttons ===== */
+      .um-btn {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        font-family: var(--um-font-sans);
+        font-size: 0.9rem; font-weight: 550;
+        padding: 0.6rem 1.15rem;
+        border-radius: var(--um-radius-md);
+        border: 1px solid transparent;
+        cursor: pointer; text-decoration: none;
+        line-height: 1;
+        transition: transform 0.18s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+      }
+      .um-btn svg { width: 16px; height: 16px; }
+      .um-btn-primary {
+        background-color: var(--um-primary);
+        color: var(--um-primary-foreground);
+      }
+      .um-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 28px -10px rgba(79, 143, 255, 0.55);
+      }
+      .um-btn-outline {
+        background-color: transparent;
+        color: var(--um-foreground);
+        border-color: var(--um-border);
+      }
+      .um-btn-outline:hover {
+        border-color: var(--um-primary);
+        color: var(--um-primary);
+        transform: translateY(-1px);
+      }
+      .um-btn-muted {
+        background-color: transparent;
+        color: var(--um-muted-foreground);
+        padding-left: 0.4rem; padding-right: 0.4rem;
+      }
+      .um-btn-muted:hover { color: var(--um-foreground); }
+
+      /* ===== Hero ===== */
+      .um-hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex; align-items: center; justify-content: center;
+        text-align: center;
+        padding: 9rem 1.5rem 5rem;
+        overflow: hidden;
+        isolation: isolate;
+      }
+      .um-hero-net {
+        position: absolute;
+        inset: 0;
+        width: 100%; height: 100%;
+        z-index: -2;
+        opacity: 0.75;
+      }
+      .um-hero-grid {
+        position: absolute; inset: -2px;
+        background-image:
+          linear-gradient(to right, var(--um-border) 1px, transparent 1px),
+          linear-gradient(to bottom, var(--um-border) 1px, transparent 1px);
+        background-size: 52px 52px;
+        opacity: 0.5;
+        -webkit-mask-image: radial-gradient(ellipse 78% 68% at 50% 44%, #000 28%, transparent 76%);
+        mask-image: radial-gradient(ellipse 78% 68% at 50% 44%, #000 28%, transparent 76%);
+        animation: um-grid-drift 40s linear infinite;
+        z-index: -3;
+      }
+      .um-hero-glow {
+        position: absolute; z-index: -1;
+        width: 62vw; height: 62vw; max-width: 780px; max-height: 780px;
+        top: 46%; left: 50%; transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(79, 143, 255, 0.16) 0%, rgba(79, 143, 255, 0.04) 42%, transparent 70%);
+        pointer-events: none;
+      }
+      @keyframes um-grid-drift {
+        0% { background-position: 0 0, 0 0; }
+        100% { background-position: 52px 52px, 52px 52px; }
+      }
+      .um-net-node {
+        fill: var(--um-primary);
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: um-net-pulse 3s ease-in-out infinite;
+      }
+      .um-net-node.d1 { animation-delay: 0.5s; }
+      .um-net-node.d2 { animation-delay: 1s; }
+      .um-net-node.d3 { animation-delay: 1.5s; }
+      .um-net-line {
+        stroke: var(--um-primary);
+        stroke-width: 1;
+        opacity: 0.12;
+        animation: um-net-fade 4s ease-in-out infinite;
+      }
+      .um-net-line.d1 { animation-delay: 0.8s; }
+      .um-net-line.d2 { animation-delay: 1.6s; }
+      @keyframes um-net-pulse {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.4); }
+      }
+      @keyframes um-net-fade {
+        0%, 100% { opacity: 0.06; }
+        50% { opacity: 0.18; }
+      }
+      .um-hero-inner {
+        max-width: 880px; margin: 0 auto;
+        display: flex; flex-direction: column; align-items: center; gap: 1.6rem;
+        position: relative; z-index: 1;
+      }
+      .um-badge {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        padding: 0.4rem 0.9rem;
+        border: 1px solid var(--um-border);
+        background-color: rgba(17, 17, 30, 0.7);
+        border-radius: 999px;
+        font-size: 0.8rem; color: var(--um-muted-foreground);
+        font-family: var(--um-font-mono);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .um-pulse-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background-color: var(--um-state-success);
+        animation: um-pulse 2.2s ease-in-out infinite;
+      }
+      @keyframes um-pulse {
+        0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 211, 160, 0.5); }
+        50% { opacity: 0.45; box-shadow: 0 0 0 5px rgba(34, 211, 160, 0); }
+      }
+      .um-hero-title {
+        font-size: clamp(2.4rem, 6vw, 4.4rem);
+        line-height: 1.06; letter-spacing: -0.03em; font-weight: 700;
+        margin: 0;
+        background: linear-gradient(180deg, var(--um-foreground) 0%, var(--um-primary) 100%);
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent; color: transparent;
+      }
+      .um-hero-sub {
+        max-width: 660px;
+        font-size: clamp(1rem, 1.4vw, 1.15rem);
+        line-height: 1.65; color: var(--um-muted-foreground);
+        margin: 0;
+      }
+      .um-hero-actions {
+        display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;
+        margin-top: 0.4rem;
+      }
+      .um-scroll-indicator {
+        position: absolute;
+        bottom: 2rem; left: 50%;
+        transform: translateX(-50%);
+        color: var(--um-muted-foreground);
+        animation: um-scroll-bounce 2s ease-in-out infinite;
+        z-index: 1;
+      }
+      .um-scroll-indicator svg { width: 22px; height: 22px; }
+      @keyframes um-scroll-bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.4; }
+        50% { transform: translateX(-50%) translateY(8px); opacity: 0.9; }
+      }
+
+      /* ===== Stats ===== */
+      .um-stats { padding: 0 1.5rem; margin-top: -3.5rem; position: relative; z-index: 5; }
+      .um-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1px;
+        background-color: var(--um-border);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-lg);
+        overflow: hidden;
+        max-width: 1200px; margin: 0 auto;
+        box-shadow: var(--um-shadow-2);
+      }
+      .um-stat {
+        padding: 1.5rem 1.25rem;
+        background-color: var(--um-card);
+        position: relative;
+        transition: background-color 0.2s, box-shadow 0.2s;
+      }
+      .um-stat:hover {
+        background-color: var(--um-muted);
+        box-shadow: inset 0 0 0 1px rgba(79, 143, 255, 0.25), 0 0 20px rgba(79, 143, 255, 0.04);
+        z-index: 1;
+      }
+      .um-stat-value {
+        font-size: 1.7rem; font-weight: 700;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.1;
+      }
+      .um-stat-label {
+        margin-top: 0.55rem;
+        font-size: 0.82rem;
+        color: var(--um-foreground);
+        font-weight: 500;
+      }
+      .um-stat-sub {
+        margin-top: 0.2rem;
+        font-size: 0.76rem;
+        color: var(--um-muted-foreground);
+        font-family: var(--um-font-mono);
+      }
+      .um-stat-spark {
+        margin-top: 0.7rem;
+        opacity: 0.8;
+      }
+      .um-stat-spark svg { display: block; }
+      .um-stat-spark polyline {
+        fill: none;
+        stroke: var(--um-primary);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 200;
+        stroke-dashoffset: 200;
+        animation: um-spark-draw 2s ease-out 0.3s forwards;
+      }
+      @keyframes um-spark-draw {
+        to { stroke-dashoffset: 0; }
+      }
+      .um-stat-bar {
+        height: 2px;
+        background-color: var(--um-border);
+        border-radius: 1px;
+        margin-top: 0.7rem;
+        overflow: hidden;
+      }
+      .um-stat-bar::after {
+        content: "";
+        display: block;
+        height: 100%;
+        width: 0;
+        background-color: var(--um-primary);
+        border-radius: 1px;
+        animation: um-bar-fill 2s ease-out 0.3s forwards;
+      }
+      @keyframes um-bar-fill {
+        to { width: var(--bar-w, 100%); }
+      }
+      .um-text-success { color: var(--um-state-success); }
+      .um-text-warning { color: var(--um-state-warning); }
+
+      /* ===== Sections ===== */
+      .um-section { padding: 5.5rem 1.5rem; }
+      .um-section-head { max-width: 760px; margin: 0 auto 3rem; text-align: center; }
+      .um-eyebrow {
+        font-family: var(--um-font-mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--um-primary);
+        margin: 0 0 0.9rem;
+      }
+      .um-section-title {
+        font-size: clamp(1.7rem, 3vw, 2.3rem);
+        font-weight: 700; letter-spacing: -0.02em;
+        margin: 0 0 0.85rem; line-height: 1.2;
+        color: var(--um-foreground);
+      }
+      .um-section-desc {
+        font-size: 1rem; line-height: 1.65;
+        color: var(--um-muted-foreground); margin: 0;
+      }
+
+      /* ===== Live System Monitor (Dashboard) ===== */
+      .um-dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+        max-width: 1200px; margin: 0 auto;
+      }
+      .um-panel {
+        position: relative;
+        background-color: var(--um-card);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-md);
+        padding: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .um-panel:hover {
+        border-color: rgba(79, 143, 255, 0.3);
+        box-shadow: 0 0 20px rgba(79, 143, 255, 0.04);
+      }
+      .um-panel-grid-bg {
+        position: absolute; inset: 0;
+        background-image:
+          linear-gradient(rgba(79, 143, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(79, 143, 255, 0.025) 1px, transparent 1px);
+        background-size: 24px 24px;
+        pointer-events: none;
+      }
+      .um-panel-head {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 1.25rem;
+        position: relative;
+      }
+      .um-panel-title {
+        font-family: var(--um-font-mono);
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--um-muted-foreground);
+      }
+      .um-panel-status {
+        display: inline-flex; align-items: center; gap: 0.35rem;
+        font-family: var(--um-font-mono);
+        font-size: 0.7rem;
+        color: var(--um-state-success);
+      }
+      .um-panel-status .dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background-color: var(--um-state-success);
+        animation: um-pulse 2s ease-in-out infinite;
+      }
+      .um-panel-body { position: relative; }
+
+      /* Terminal feed */
+      .um-terminal {
+        height: 180px;
+        overflow: hidden;
+        font-family: var(--um-font-mono);
+        font-size: 0.76rem;
+        line-height: 1.85;
+        position: relative;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%);
+        mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%);
+      }
+      .um-terminal-feed {
+        animation: um-terminal-scroll 14s linear infinite;
+      }
+      @keyframes um-terminal-scroll {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-50%); }
+      }
+      .um-terminal-line {
+        color: var(--um-muted-foreground);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .um-terminal-line .ts { color: var(--um-primary); }
+      .um-terminal-line .ok { color: var(--um-state-success); }
+      .um-terminal-line .warn { color: var(--um-state-warning); }
+      .um-terminal-line .act { color: var(--um-foreground); }
+
+      /* Gauge */
+      .um-gauge-wrap {
+        display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+        padding: 0.5rem 0;
+      }
+      .um-gauge-svg { width: 130px; height: 130px; }
+      .um-gauge-arc {
+        stroke-dasharray: 0 314.16;
+        animation: um-gauge-fill 2s ease-out 0.3s forwards;
+      }
+      @keyframes um-gauge-fill {
+        to { stroke-dasharray: 245.4 314.16; }
+      }
+      .um-gauge-label {
+        font-family: var(--um-font-mono);
+        font-size: 0.78rem;
+        color: var(--um-muted-foreground);
+      }
+
+      /* Throughput chart */
+      .um-throughput-svg { width: 100%; height: 120px; display: block; }
+      .um-throughput-line {
+        fill: none;
+        stroke: var(--um-primary);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 800;
+        stroke-dashoffset: 800;
+        animation: um-throughput-draw 2.5s ease-out 0.3s forwards;
+      }
+      @keyframes um-throughput-draw {
+        to { stroke-dashoffset: 0; }
+      }
+      .um-throughput-area {
+        opacity: 0;
+        animation: um-fade-in 2s ease-out 1s forwards;
+      }
+      @keyframes um-fade-in {
+        to { opacity: 1; }
+      }
+      .um-chart-meta {
+        display: flex; justify-content: space-between;
+        font-family: var(--um-font-mono);
+        font-size: 0.7rem;
+        color: var(--um-muted-foreground);
+        margin-top: 0.5rem;
+      }
+
+      /* Confidence bars */
+      .um-conf-list { display: flex; flex-direction: column; gap: 1rem; }
+      .um-conf-row {
+        display: grid;
+        grid-template-columns: 70px 1fr 40px;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .um-conf-label {
+        font-family: var(--um-font-mono);
+        font-size: 0.76rem;
+        color: var(--um-foreground);
+      }
+      .um-conf-track {
+        height: 8px;
+        background-color: var(--um-muted);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .um-conf-fill {
+        width: 0;
+        height: 100%;
+        background-color: var(--um-primary);
+        border-radius: 2px;
+        animation: um-conf-fill 1.5s ease-out 0.3s forwards;
+      }
+      @keyframes um-conf-fill {
+        to { width: var(--w); }
+      }
+      .um-conf-val {
+        font-family: var(--um-font-mono);
+        font-size: 0.76rem;
+        color: var(--um-muted-foreground);
+        text-align: right;
+      }
+
+      /* ===== Pipeline ===== */
+      .um-pipeline-wrap {
+        position: relative;
+        max-width: 1200px; margin: 0 auto 3.25rem;
+      }
+      .um-pipeline {
+        display: flex; align-items: center; gap: 0.4rem;
+        overflow-x: auto;
+        padding: 0.5rem 0 1rem;
+        font-family: var(--um-font-mono);
+        white-space: nowrap;
+        position: relative;
+        z-index: 1;
+      }
+      .um-pipe-step {
+        flex: 0 0 auto;
+        padding: 0.6rem 0.95rem;
+        background-color: var(--um-card);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-md);
+        font-size: 0.82rem;
+        color: var(--um-foreground);
+        transition: border-color 0.2s, color 0.2s, background-color 0.2s, box-shadow 0.2s;
+      }
+      .um-pipe-step:hover {
+        border-color: var(--um-primary);
+        color: var(--um-primary);
+        background-color: var(--um-muted);
+        box-shadow: 0 0 16px rgba(79, 143, 255, 0.06);
+      }
+      .um-pipe-arrow {
+        flex: 0 0 auto;
+        color: var(--um-muted-foreground);
+        font-size: 0.85rem;
+      }
+      .um-packet {
+        position: absolute;
+        top: calc(50% - 0.5rem);
+        left: 0;
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background-color: var(--um-primary);
+        box-shadow: 0 0 12px rgba(79, 143, 255, 0.7), 0 0 4px rgba(79, 143, 255, 0.9);
+        animation: um-packet-move 5s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 2;
+      }
+      @keyframes um-packet-move {
+        0% { left: 0; opacity: 0; }
+        8% { opacity: 1; }
+        92% { opacity: 1; }
+        100% { left: 100%; opacity: 0; }
+      }
+
+      /* ===== Cards ===== */
+      .um-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        max-width: 1200px; margin: 0 auto;
+      }
+      .um-card {
+        position: relative;
+        background-color: var(--um-card);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-md);
+        padding: 1.6rem 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s, border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+      }
+      .um-card::before {
+        content: "";
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 2px;
+        background-color: var(--um-primary);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.25s;
+      }
+      .um-card:hover {
+        transform: translateY(-2px);
+        background-color: var(--um-muted);
+        border-color: var(--um-primary);
+        box-shadow: 0 8px 24px -8px rgba(79, 143, 255, 0.05);
+      }
+      .um-card:hover::before { transform: scaleX(1); }
+      .um-card-corner {
+        position: absolute;
+        top: 0; right: 0;
+        width: 14px; height: 14px;
+        border-top: 2px solid var(--um-primary);
+        border-right: 2px solid var(--um-primary);
+        border-top-right-radius: var(--um-radius-md);
+        opacity: 0.35;
+        transition: opacity 0.2s;
+      }
+      .um-card:hover .um-card-corner { opacity: 1; }
+      .um-card-icon {
+        position: relative;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: var(--um-primary);
+        margin-bottom: 1.1rem;
+      }
+      .um-card-icon::before {
+        content: "";
+        position: absolute; inset: -10px;
+        background: radial-gradient(circle, rgba(79, 143, 255, 0.12), transparent 70%);
+        border-radius: 50%;
+        opacity: 0;
+        transition: opacity 0.25s;
+      }
+      .um-card:hover .um-card-icon::before { opacity: 1; }
+      .um-card-icon svg { width: 24px; height: 24px; position: relative; z-index: 1; }
+      .um-card-title {
+        font-size: 1.1rem; font-weight: 600; margin: 0 0 0.6rem;
+        color: var(--um-foreground); letter-spacing: -0.01em;
+      }
+      .um-card-text {
+        font-size: 0.92rem; line-height: 1.6;
+        color: var(--um-muted-foreground); margin: 0 0 1.1rem;
+      }
+      .um-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+      .um-tag {
+        font-family: var(--um-font-mono);
+        font-size: 0.72rem;
+        padding: 0.25rem 0.55rem;
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-sm);
+        color: var(--um-muted-foreground);
+        background-color: var(--um-background);
+      }
+
+      /* ===== Neural Network Architecture ===== */
+      .um-arch-wrap {
+        max-width: 1100px; margin: 0 auto;
+        background-color: var(--um-card);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-lg);
+        padding: 2rem 1.5rem 1.5rem;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+      .um-arch-grid-bg {
+        position: absolute; inset: 0;
+        background-image:
+          linear-gradient(rgba(79, 143, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(79, 143, 255, 0.03) 1px, transparent 1px);
+        background-size: 28px 28px;
+        pointer-events: none;
+      }
+      .um-arch-svg {
+        width: 100%; height: auto; display: block;
+        position: relative; z-index: 1;
+        max-height: 420px;
+      }
+      .um-nn-line {
+        stroke: var(--um-primary);
+        stroke-width: 1;
+        opacity: 0.1;
+      }
+      .um-nn-node {
+        fill: var(--um-primary);
+        stroke: var(--um-primary);
+        stroke-width: 1;
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: um-nn-pulse 3s ease-in-out infinite;
+      }
+      .um-nn-node.d1 { animation-delay: 0.4s; }
+      .um-nn-node.d2 { animation-delay: 0.8s; }
+      .um-nn-node.d3 { animation-delay: 1.2s; }
+      .um-nn-node.d4 { animation-delay: 1.6s; }
+      @keyframes um-nn-pulse {
+        0%, 100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.2); }
+      }
+      .um-nn-signal {
+        fill: var(--um-primary);
+        animation: um-signal-flow 2.5s ease-in-out infinite;
+      }
+      .um-nn-signal.s1 { animation-delay: 0.3s; }
+      .um-nn-signal.s2 { animation-delay: 0.8s; }
+      .um-nn-signal.s3 { animation-delay: 1.3s; }
+      .um-nn-signal.s4 { animation-delay: 1.8s; }
+      @keyframes um-signal-flow {
+        0% { transform: translateX(0); opacity: 0; }
+        15% { opacity: 1; }
+        85% { opacity: 1; }
+        100% { transform: translateX(320px); opacity: 0; }
+      }
+      .um-nn-labels {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        margin-top: 1rem;
+        position: relative; z-index: 1;
+      }
+      .um-nn-label {
+        text-align: center;
+        font-family: var(--um-font-mono);
+        font-size: 0.74rem;
+        color: var(--um-muted-foreground);
+      }
+      .um-arch-caption {
+        text-align: center;
+        font-family: var(--um-font-mono);
+        font-size: 0.78rem;
+        color: var(--um-muted-foreground);
+        margin-top: 1.25rem;
+        position: relative; z-index: 1;
+      }
+
+      /* ===== Benchmark ===== */
+      .um-bench-chart {
+        max-width: 1100px; margin: 0 auto 1.5rem;
+        display: flex; flex-direction: column; gap: 0.75rem;
+      }
+      .um-bench-row {
+        display: grid;
+        grid-template-columns: 150px 1fr 80px;
+        align-items: center;
+        gap: 1rem;
+      }
+      .um-bench-name {
+        font-family: var(--um-font-mono);
+        font-size: 0.8rem;
+        color: var(--um-foreground);
+      }
+      .um-bench-track {
+        height: 24px;
+        background-color: var(--um-muted);
+        border-radius: var(--um-radius-sm);
+        overflow: hidden;
+        border: 1px solid var(--um-border);
+      }
+      .um-bench-fill {
+        width: 0;
+        height: 100%;
+        background-color: var(--um-primary);
+        border-radius: var(--um-radius-sm);
+        animation: um-bench-fill 1.5s ease-out 0.3s forwards;
+        opacity: 0.8;
+      }
+      .um-bench-fill.um-best {
+        background-color: var(--um-state-success);
+        opacity: 0.85;
+      }
+      @keyframes um-bench-fill {
+        to { width: var(--w); }
+      }
+      .um-bench-val {
+        font-family: var(--um-font-mono);
+        font-size: 0.82rem;
+        color: var(--um-muted-foreground);
+        text-align: right;
+      }
+      .um-bench-val.um-best-val { color: var(--um-state-success); }
+      .um-table-wrap {
+        max-width: 1100px; margin: 0 auto;
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-lg);
+        overflow: hidden;
+        background-color: var(--um-card);
+      }
+      .um-table-scroll { overflow-x: auto; }
+      .um-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+        min-width: 640px;
+      }
+      .um-table th {
+        text-align: left;
+        padding: 0.9rem 1.15rem;
+        color: var(--um-muted-foreground);
+        font-weight: 500;
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--um-border);
+        background-color: var(--um-muted);
+        white-space: nowrap;
+      }
+      .um-table td {
+        padding: 1rem 1.15rem;
+        border-bottom: 1px solid var(--um-border);
+        color: var(--um-foreground);
+        font-variant-numeric: tabular-nums;
+      }
+      .um-table tbody tr:last-child td { border-bottom: none; }
+      .um-table tbody tr { transition: background-color 0.18s; }
+      .um-table tbody tr:hover { background-color: var(--um-muted); }
+      .um-table td.um-num { font-family: var(--um-font-mono); }
+      .um-table tr.um-best-row td { color: var(--um-state-success); background-color: rgba(34, 211, 160, 0.04); }
+      .um-best-tag {
+        display: inline-flex; align-items: center; gap: 0.3rem;
+        font-family: var(--um-font-mono); font-size: 0.7rem;
+        padding: 0.15rem 0.5rem; border-radius: var(--um-radius-sm);
+        background-color: rgba(34, 211, 160, 0.12);
+        color: var(--um-state-success);
+        border: 1px solid rgba(34, 211, 160, 0.3);
+        margin-left: 0.5rem;
+      }
+      .um-table-note {
+        max-width: 1100px; margin: 1rem auto 0;
+        font-size: 0.8rem; color: var(--um-muted-foreground);
+        font-family: var(--um-font-mono);
+      }
+
+      /* ===== Quick start ===== */
+      .um-quickstart-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        max-width: 1200px; margin: 0 auto;
+      }
+      .um-code-block {
+        background-color: var(--um-card);
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-md);
+        overflow: hidden;
+        display: flex; flex-direction: column;
+      }
+      .um-code-head {
+        display: flex; align-items: center; gap: 0.5rem;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid var(--um-border);
+        background-color: var(--um-muted);
+        font-family: var(--um-font-mono);
+        font-size: 0.78rem;
+        color: var(--um-muted-foreground);
+      }
+      .um-code-head .um-cd {
+        width: 9px; height: 9px; border-radius: 50%;
+        background-color: var(--um-border);
+      }
+      .um-code-head .um-cd.lead { background-color: var(--um-primary); }
+      .um-code-body {
+        display: flex;
+        position: relative;
+        overflow: hidden;
+      }
+      .um-code-body::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0;
+        height: 2px;
+        top: 0;
+        background: linear-gradient(90deg, transparent, rgba(79, 143, 255, 0.06), transparent);
+        animation: um-scanline 5s linear infinite;
+        pointer-events: none;
+        z-index: 2;
+      }
+      @keyframes um-scanline {
+        0% { top: -2px; }
+        100% { top: 100%; }
+      }
+      .um-code-gutter {
+        display: flex;
+        flex-direction: column;
+        padding: 1.15rem 0.6rem 1.15rem 1.2rem;
+        font-family: var(--um-font-mono);
+        font-size: 0.84rem;
+        line-height: 1.75;
+        color: var(--um-border);
+        text-align: right;
+        user-select: none;
+        border-right: 1px solid var(--um-border);
+        flex-shrink: 0;
+      }
+      .um-code-gutter span { display: block; }
+      .um-code-pre {
+        margin: 0;
+        padding: 1.15rem 1.2rem;
+        overflow-x: auto;
+        font-family: var(--um-font-mono);
+        font-size: 0.84rem;
+        line-height: 1.75;
+        color: var(--um-foreground);
+        flex: 1;
+      }
+      .um-code .cmt { color: var(--um-muted-foreground); }
+      .um-code .kw { color: var(--um-primary); }
+      .um-code .val { color: var(--um-state-success); }
+      .um-cursor {
+        display: inline-block;
+        width: 7px;
+        height: 1.1em;
+        background-color: var(--um-primary);
+        vertical-align: text-bottom;
+        margin-left: 2px;
+        animation: um-blink 1s step-end infinite;
+      }
+      @keyframes um-blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+      }
+
+      /* ===== CTA ===== */
+      .um-cta-wrap { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+      .um-cta {
+        position: relative;
+        text-align: center;
+        padding: 4.5rem 1.5rem;
+        border: 1px solid var(--um-border);
+        border-radius: var(--um-radius-lg);
+        background:
+          radial-gradient(ellipse 60% 90% at 50% 0%, rgba(79, 143, 255, 0.10), transparent 70%),
+          var(--um-card);
+        overflow: hidden;
+      }
+      .um-cta::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: var(--um-radius-lg);
+        padding: 1px;
+        background: linear-gradient(135deg, var(--um-primary), transparent 40%, transparent 60%, var(--um-primary));
+        background-size: 200% 200%;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: um-cta-glow 6s ease-in-out infinite;
+        pointer-events: none;
+      }
+      .um-cta::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(circle, var(--um-border) 1px, transparent 1px);
+        background-size: 24px 24px;
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      @keyframes um-cta-glow {
+        0%, 100% { background-position: 0% 50%; opacity: 0.3; }
+        50% { background-position: 100% 50%; opacity: 0.7; }
+      }
+      .um-cta-content { position: relative; z-index: 1; }
+      .um-cta h2 {
+        font-size: clamp(1.7rem, 3vw, 2.3rem);
+        font-weight: 700; letter-spacing: -0.02em;
+        margin: 0 0 0.85rem; color: var(--um-foreground);
+      }
+      .um-cta p {
+        font-size: 1rem; line-height: 1.65;
+        color: var(--um-muted-foreground); margin: 0 0 1.8rem;
+        max-width: 520px; margin-left: auto; margin-right: auto;
+      }
+      .um-cta-actions {
+        display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;
+      }
+
+      /* ===== Footer ===== */
+      .um-footer {
+        position: relative;
+        border-top: 1px solid var(--um-border);
+        padding: 2.5rem 1.5rem;
+        margin-top: 4rem;
+      }
+      .um-footer::before {
+        content: "";
+        position: absolute;
+        top: -1px; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 10%, var(--um-primary) 50%, transparent 90%);
+        opacity: 0.35;
+      }
+      .um-footer-inner {
+        max-width: 1200px; margin: 0 auto;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 1.5rem; flex-wrap: wrap;
+      }
+      .um-footer-links { display: flex; gap: 1.6rem; flex-wrap: wrap; }
+      .um-footer-links a {
+        color: var(--um-muted-foreground); font-size: 0.86rem; text-decoration: none;
+        transition: color 0.2s;
+      }
+      .um-footer-links a:hover { color: var(--um-foreground); }
+      .um-footer-copy {
+        font-size: 0.82rem; color: var(--um-muted-foreground);
+        font-family: var(--um-font-mono);
+      }
+
+      /* ===== Responsive ===== */
+      @media (max-width: 1024px) {
+        .um-cards-grid { grid-template-columns: repeat(2, 1fr); }
+        .um-quickstart-grid { grid-template-columns: 1fr; }
+        .um-stats-grid { grid-template-columns: repeat(3, 1fr); }
+        .um-dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 768px) {
+        .um-nav-links, .um-nav-actions { display: none; }
+        .um-stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .um-cards-grid { grid-template-columns: 1fr; }
+        .um-dashboard-grid { grid-template-columns: 1fr; }
+        .um-hero { min-height: auto; padding: 7.5rem 1.5rem 4.5rem; }
+        .um-section { padding: 4rem 1.5rem; }
+        .um-footer-inner { flex-direction: column; text-align: center; }
+        .um-bench-row { grid-template-columns: 100px 1fr 70px; gap: 0.5rem; }
+        .um-nn-labels { grid-template-columns: repeat(2, 1fr); }
+      }
+
+      /* ===== Reduced motion ===== */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+    <main>
+      <!-- ===== Navigation ===== -->
+      <nav class="um-nav">
+        <a class="um-nav-brand" href="#">
+          <span class="um-brand-dot"></span>
+          NYC Mobility AI
+        </a>
+        <div class="um-nav-links">
+          <a href="#platform">Platform</a>
+          <a href="#results">Results</a>
+          <a href="#quickstart">Quick Start</a>
+          <a href="#docs">Docs</a>
+          <a href="#demo">Demo</a>
+        </div>
+        <div class="um-nav-actions">
+          <a class="um-btn um-btn-outline" href="https://github.com" target="_blank" rel="noopener">
+            <i data-lucide="github"></i>
+            GitHub
+          </a>
+        </div>
+      </nav>
+
+      <!-- ===== Hero ===== -->
+      <section class="um-hero">
+        <div class="um-hero-grid" aria-hidden="true"></div>
+        <svg class="um-hero-net" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <radialGradient id="um-net-mask-grad" cx="50%" cy="45%" r="55%">
+              <stop offset="0%" stop-color="white" stop-opacity="1"/>
+              <stop offset="55%" stop-color="white" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="white" stop-opacity="0"/>
+            </radialGradient>
+            <mask id="um-net-mask"><rect width="1200" height="700" fill="url(#um-net-mask-grad)"/></mask>
+          </defs>
+          <g mask="url(#um-net-mask)">
+            <g>
+              <line class="um-net-line" x1="120" y1="130" x2="250" y2="90"/>
+              <line class="um-net-line d1" x1="120" y1="130" x2="200" y2="250"/>
+              <line class="um-net-line" x1="120" y1="130" x2="360" y2="170"/>
+              <line class="um-net-line d2" x1="250" y1="90" x2="360" y2="170"/>
+              <line class="um-net-line" x1="250" y1="90" x2="480" y2="100"/>
+              <line class="um-net-line d1" x1="200" y1="250" x2="360" y2="170"/>
+              <line class="um-net-line" x1="200" y1="250" x2="330" y2="330"/>
+              <line class="um-net-line d2" x1="200" y1="250" x2="280" y2="450"/>
+              <line class="um-net-line" x1="360" y1="170" x2="480" y2="100"/>
+              <line class="um-net-line d1" x1="360" y1="170" x2="460" y2="270"/>
+              <line class="um-net-line" x1="330" y1="330" x2="460" y2="270"/>
+              <line class="um-net-line d2" x1="330" y1="330" x2="420" y2="430"/>
+              <line class="um-net-line" x1="330" y1="330" x2="280" y2="450"/>
+              <line class="um-net-line" x1="480" y1="100" x2="600" y2="190"/>
+              <line class="um-net-line d1" x1="480" y1="100" x2="720" y2="110"/>
+              <line class="um-net-line" x1="460" y1="270" x2="600" y2="190"/>
+              <line class="um-net-line d2" x1="460" y1="270" x2="620" y2="360"/>
+              <line class="um-net-line" x1="420" y1="430" x2="620" y2="360"/>
+              <line class="um-net-line" x1="420" y1="430" x2="280" y2="450"/>
+              <line class="um-net-line d1" x1="600" y1="190" x2="720" y2="110"/>
+              <line class="um-net-line" x1="600" y1="190" x2="750" y2="280"/>
+              <line class="um-net-line d2" x1="620" y1="360" x2="750" y2="280"/>
+              <line class="um-net-line" x1="620" y1="360" x2="820" y2="420"/>
+              <line class="um-net-line" x1="720" y1="110" x2="880" y2="200"/>
+              <line class="um-net-line d1" x1="750" y1="280" x2="880" y2="200"/>
+              <line class="um-net-line" x1="750" y1="280" x2="950" y2="330"/>
+              <line class="um-net-line d2" x1="820" y1="420" x2="950" y2="330"/>
+              <line class="um-net-line" x1="820" y1="420" x2="1060" y2="410"/>
+              <line class="um-net-line" x1="880" y1="200" x2="1020" y2="130"/>
+              <line class="um-net-line d1" x1="950" y1="330" x2="1020" y2="130"/>
+              <line class="um-net-line" x1="950" y1="330" x2="1060" y2="410"/>
+              <line class="um-net-line d2" x1="1020" y1="130" x2="1060" y2="410"/>
+              <line class="um-net-line" x1="600" y1="190" x2="880" y2="200"/>
+              <line class="um-net-line d1" x1="620" y1="360" x2="950" y2="330"/>
+            </g>
+            <g>
+              <circle class="um-net-node" cx="120" cy="130" r="4"/>
+              <circle class="um-net-node d1" cx="250" cy="90" r="4"/>
+              <circle class="um-net-node d2" cx="200" cy="250" r="4"/>
+              <circle class="um-net-node d3" cx="360" cy="170" r="4"/>
+              <circle class="um-net-node" cx="330" cy="330" r="4"/>
+              <circle class="um-net-node d1" cx="480" cy="100" r="4"/>
+              <circle class="um-net-node d2" cx="460" cy="270" r="4"/>
+              <circle class="um-net-node d3" cx="420" cy="430" r="4"/>
+              <circle class="um-net-node" cx="600" cy="190" r="4"/>
+              <circle class="um-net-node d1" cx="620" cy="360" r="4"/>
+              <circle class="um-net-node d2" cx="720" cy="110" r="4"/>
+              <circle class="um-net-node d3" cx="750" cy="280" r="4"/>
+              <circle class="um-net-node" cx="820" cy="420" r="4"/>
+              <circle class="um-net-node d1" cx="880" cy="200" r="4"/>
+              <circle class="um-net-node d2" cx="950" cy="330" r="4"/>
+              <circle class="um-net-node d3" cx="1020" cy="130" r="4"/>
+              <circle class="um-net-node" cx="1060" cy="410" r="4"/>
+              <circle class="um-net-node d1" cx="280" cy="450" r="4"/>
+            </g>
+          </g>
+        </svg>
+        <div class="um-hero-glow" aria-hidden="true"></div>
+        <div class="um-hero-inner">
+          <span class="um-badge">
+            <span class="um-pulse-dot"></span>
+            v3.0.0 · Research Platform · MIT License
+          </span>
+          <h1 class="um-hero-title">Urban Mobility Decision Intelligence</h1>
+          <p class="um-hero-sub">
+            An open-source research platform for AI-driven fleet repositioning. Demand forecasting,
+            multi-agent simulation, offline reinforcement learning, and reproducible policy evaluation
+            — all in one system.
+          </p>
+          <div class="um-hero-actions">
+            <a class="um-btn um-btn-primary" href="#demo">
+              <i data-lucide="play"></i>
+              Launch Demo
+            </a>
+            <a class="um-btn um-btn-outline" href="https://github.com" target="_blank" rel="noopener">
+              <i data-lucide="star"></i>
+              Star on GitHub
+            </a>
+            <a class="um-btn um-btn-muted" href="#docs">Documentation</a>
+            <a class="um-btn um-btn-outline" href="#paper">
+              <i data-lucide="file-text"></i>
+              Paper Draft
+            </a>
+          </div>
+        </div>
+        <div class="um-scroll-indicator" aria-hidden="true">
+          <i data-lucide="chevron-down"></i>
+        </div>
+      </section>
+
+      <!-- ===== Stats Bar ===== -->
+      <section class="um-stats">
+        <div class="um-stats-grid">
+          <div class="um-stat">
+            <div class="um-stat-value">0.9565</div>
+            <div class="um-stat-label">NDCG@3 (Two-Step)</div>
+            <div class="um-stat-sub">3,360 queries</div>
+            <div class="um-stat-spark">
+              <svg viewBox="0 0 80 24" width="80" height="24"><polyline points="0,20 16,16 32,12 48,10 64,7 80,5"/></svg>
+            </div>
+            <div class="um-stat-bar" style="--bar-w: 95%;"></div>
+          </div>
+          <div class="um-stat">
+            <div class="um-stat-value um-text-success">+$139.40</div>
+            <div class="um-stat-label">Daily Revenue Lift</div>
+            <div class="um-stat-sub">vs Hot Zone baseline</div>
+            <div class="um-stat-spark">
+              <svg viewBox="0 0 80 24" width="80" height="24"><polyline points="0,20 16,17 32,13 48,9 64,7 80,6"/></svg>
+            </div>
+            <div class="um-stat-bar" style="--bar-w: 88%;"></div>
+          </div>
+          <div class="um-stat">
+            <div class="um-stat-value um-text-success">+$53.74</div>
+            <div class="um-stat-label">DQN Advantage</div>
+            <div class="um-stat-sub">per driver / day</div>
+            <div class="um-stat-spark">
+              <svg viewBox="0 0 80 24" width="80" height="24"><polyline points="0,19 16,18 32,14 48,11 64,8 80,5"/></svg>
+            </div>
+            <div class="um-stat-bar" style="--bar-w: 78%;"></div>
+          </div>
+          <div class="um-stat">
+            <div class="um-stat-value um-text-warning">402</div>
+            <div class="um-stat-label">Tests Passing</div>
+            <div class="um-stat-sub">CI verified</div>
+            <div class="um-stat-spark">
+              <svg viewBox="0 0 80 24" width="80" height="24"><polyline points="0,20 16,20 32,14 48,14 64,8 80,5"/></svg>
+            </div>
+            <div class="um-stat-bar" style="--bar-w: 92%;"></div>
+          </div>
+          <div class="um-stat">
+            <div class="um-stat-value">263</div>
+            <div class="um-stat-label">NYC Taxi Zones</div>
+            <div class="um-stat-sub">full coverage</div>
+            <div class="um-stat-spark">
+              <svg viewBox="0 0 80 24" width="80" height="24"><polyline points="0,12 16,11 32,12 48,11 64,12 80,11"/></svg>
+            </div>
+            <div class="um-stat-bar" style="--bar-w: 100%;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Live System Monitor ===== -->
+      <section class="um-section" id="monitor">
+        <div class="um-section-head">
+          <p class="um-eyebrow">Real-Time Monitoring</p>
+          <h2 class="um-section-title">Live System Telemetry</h2>
+          <p class="um-section-desc">
+            Active fleet operations, network utilization, throughput, and policy confidence —
+            streaming from the simulation engine.
+          </p>
+        </div>
+        <div class="um-dashboard-grid">
+          <!-- Panel A: Active Fleet Status -->
+          <div class="um-panel">
+            <div class="um-panel-grid-bg"></div>
+            <div class="um-panel-head">
+              <span class="um-panel-title">Active Fleet Status</span>
+              <span class="um-panel-status"><span class="dot"></span>LIVE</span>
+            </div>
+            <div class="um-panel-body">
+              <div class="um-terminal">
+                <div class="um-terminal-feed">
+                  <div class="um-terminal-line"><span class="ts">[14:32:01]</span> Zone 42 &rarr; Zone 87 | <span class="act">driver #1024</span> repositioned</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:03]</span> <span class="warn">Demand spike detected:</span> Zone 156</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:07]</span> Policy update: DQN confidence <span class="ok">0.92</span></div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:12]</span> Zone 203 &rarr; Zone 41 | <span class="act">driver #2871</span> repositioned</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:15]</span> Revenue tick: <span class="ok">+$12.40</span> (Zone 87)</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:19]</span> Idle reduction: Zone 156 <span class="ok">-23%</span></div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:24]</span> Zone 87 &rarr; Zone 42 | <span class="act">driver #1024</span> repositioned</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:28]</span> Episode step <span class="ok">4096/4320</span> complete</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:01]</span> Zone 42 &rarr; Zone 87 | <span class="act">driver #1024</span> repositioned</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:03]</span> <span class="warn">Demand spike detected:</span> Zone 156</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:07]</span> Policy update: DQN confidence <span class="ok">0.92</span></div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:12]</span> Zone 203 &rarr; Zone 41 | <span class="act">driver #2871</span> repositioned</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:15]</span> Revenue tick: <span class="ok">+$12.40</span> (Zone 87)</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:19]</span> Idle reduction: Zone 156 <span class="ok">-23%</span></div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:24]</span> Zone 87 &rarr; Zone 42 | <span class="act">driver #1024</span> repositioned</div>
+                  <div class="um-terminal-line"><span class="ts">[14:32:28]</span> Episode step <span class="ok">4096/4320</span> complete</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Panel B: Network Load Gauge -->
+          <div class="um-panel">
+            <div class="um-panel-grid-bg"></div>
+            <div class="um-panel-head">
+              <span class="um-panel-title">Network Utilization</span>
+              <span class="um-panel-status"><span class="dot"></span>OPTIMAL</span>
+            </div>
+            <div class="um-panel-body">
+              <div class="um-gauge-wrap">
+                <svg class="um-gauge-svg" viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="var(--um-border)" stroke-width="8"/>
+                  <circle class="um-gauge-arc" cx="60" cy="60" r="50" fill="none" stroke="var(--um-primary)" stroke-width="8" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                  <text x="60" y="58" text-anchor="middle" font-family="var(--um-font-mono)" font-size="24" font-weight="700" fill="var(--um-foreground)">78%</text>
+                  <text x="60" y="78" text-anchor="middle" font-family="var(--um-font-mono)" font-size="9" fill="var(--um-muted-foreground)">263 zones active</text>
+                </svg>
+                <span class="um-gauge-label">Network Utilization</span>
+              </div>
+            </div>
+          </div>
+          <!-- Panel C: Throughput Chart -->
+          <div class="um-panel">
+            <div class="um-panel-grid-bg"></div>
+            <div class="um-panel-head">
+              <span class="um-panel-title">Trips Per Minute</span>
+              <span class="um-panel-status"><span class="dot"></span>STREAMING</span>
+            </div>
+            <div class="um-panel-body">
+              <svg class="um-throughput-svg" viewBox="0 0 320 120" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="um-tp-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--um-primary)" stop-opacity="0.2"/>
+                    <stop offset="100%" stop-color="var(--um-primary)" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path class="um-throughput-area" d="M0,60 L29,45 L58,70 L87,35 L116,55 L145,25 L174,50 L203,30 L232,65 L261,40 L290,55 L320,30 L320,120 L0,120 Z" fill="url(#um-tp-grad)"/>
+                <path class="um-throughput-line" d="M0,60 L29,45 L58,70 L87,35 L116,55 L145,25 L174,50 L203,30 L232,65 L261,40 L290,55 L320,30"/>
+              </svg>
+              <div class="um-chart-meta">
+                <span>14:30</span>
+                <span>avg 47 trips/min</span>
+                <span>14:32</span>
+              </div>
+            </div>
+          </div>
+          <!-- Panel D: Policy Confidence -->
+          <div class="um-panel">
+            <div class="um-panel-grid-bg"></div>
+            <div class="um-panel-head">
+              <span class="um-panel-title">Policy Confidence</span>
+              <span class="um-panel-status"><span class="dot"></span>EVALUATED</span>
+            </div>
+            <div class="um-panel-body">
+              <div class="um-conf-list">
+                <div class="um-conf-row">
+                  <span class="um-conf-label">DQN</span>
+                  <div class="um-conf-track"><div class="um-conf-fill" style="--w: 92%;"></div></div>
+                  <span class="um-conf-val">92%</span>
+                </div>
+                <div class="um-conf-row">
+                  <span class="um-conf-label">IQL</span>
+                  <div class="um-conf-track"><div class="um-conf-fill" style="--w: 84%;"></div></div>
+                  <span class="um-conf-val">84%</span>
+                </div>
+                <div class="um-conf-row">
+                  <span class="um-conf-label">Hot Zone</span>
+                  <div class="um-conf-track"><div class="um-conf-fill" style="--w: 61%;"></div></div>
+                  <span class="um-conf-val">61%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Platform Capabilities ===== -->
+      <section class="um-section" id="platform">
+        <div class="um-section-head">
+          <p class="um-eyebrow">Platform Capabilities</p>
+          <h2 class="um-section-title">What This Platform Does</h2>
+          <p class="um-section-desc">
+            A complete decision intelligence pipeline — from raw trip data to deployable policies
+            with rigorous evaluation.
+          </p>
+        </div>
+        <div class="um-pipeline-wrap">
+          <div class="um-pipeline">
+            <span class="um-pipe-step">NYC TLC Data</span>
+            <span class="um-pipe-arrow">&rarr;</span>
+            <span class="um-pipe-step">Demand Forecasting</span>
+            <span class="um-pipe-arrow">&rarr;</span>
+            <span class="um-pipe-step">Supply-Demand Model</span>
+            <span class="um-pipe-arrow">&rarr;</span>
+            <span class="um-pipe-step">Multi-Agent Sim</span>
+            <span class="um-pipe-arrow">&rarr;</span>
+            <span class="um-pipe-step">Policy Optimization</span>
+            <span class="um-pipe-arrow">&rarr;</span>
+            <span class="um-pipe-step">Evaluation (OPE)</span>
+            <span class="um-pipe-arrow">&rarr;</span>
+            <span class="um-pipe-step">API / Dashboard</span>
+          </div>
+          <span class="um-packet" aria-hidden="true"></span>
+        </div>
+        <div class="um-cards-grid">
+          <article class="um-card">
+            <span class="um-card-corner" aria-hidden="true"></span>
+            <span class="um-card-icon"><i data-lucide="trending-up"></i></span>
+            <h3 class="um-card-title">Demand Forecasting</h3>
+            <p class="um-card-text">GraphSAGE + temporal attention predicts per-zone demand at 15-min granularity. Two-step retrieval achieves 0.9565 NDCG@3 across 3,360 queries.</p>
+            <div class="um-tags"><span class="um-tag">GraphSAGE</span><span class="um-tag">NDCG@3</span></div>
+          </article>
+          <article class="um-card">
+            <span class="um-card-corner" aria-hidden="true"></span>
+            <span class="um-card-icon"><i data-lucide="network"></i></span>
+            <h3 class="um-card-title">Multi-Agent Simulation</h3>
+            <p class="um-card-text">263 NYC taxi zones modeled as a supply-demand network. Drivers reposition based on learned policies; revenue and idle time tracked per episode.</p>
+            <div class="um-tags"><span class="um-tag">263 Zones</span><span class="um-tag">Episode-based</span></div>
+          </article>
+          <article class="um-card">
+            <span class="um-card-corner" aria-hidden="true"></span>
+            <span class="um-card-icon"><i data-lucide="brain"></i></span>
+            <h3 class="um-card-title">Offline Reinforcement Learning</h3>
+            <p class="um-card-text">IQL and DQN trained on historical trajectories. Doubly-robust OPE validates policies without online deployment risk.</p>
+            <div class="um-tags"><span class="um-tag">IQL</span><span class="um-tag">DQN</span><span class="um-tag">OPE</span></div>
+          </article>
+          <article class="um-card">
+            <span class="um-card-corner" aria-hidden="true"></span>
+            <span class="um-card-icon"><i data-lucide="check-circle"></i></span>
+            <h3 class="um-card-title">Reproducible Evaluation</h3>
+            <p class="um-card-text">402 passing tests, deterministic seeds, and published benchmarks. Every result is reproducible from raw TLC data to final metrics.</p>
+            <div class="um-tags"><span class="um-tag">402 Tests</span><span class="um-tag">CI/CD</span></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===== Neural Network Architecture ===== -->
+      <section class="um-section" id="architecture" style="background-color: var(--um-muted);">
+        <div class="um-section-head">
+          <p class="um-eyebrow">Model Topology</p>
+          <h2 class="um-section-title">Decision Intelligence Architecture</h2>
+          <p class="um-section-desc">
+            GraphSAGE encoder with temporal attention feeds a DQN policy network for real-time
+            fleet repositioning decisions.
+          </p>
+        </div>
+        <div class="um-arch-wrap">
+          <div class="um-arch-grid-bg"></div>
+          <svg class="um-arch-svg" viewBox="0 0 1160 500" preserveAspectRatio="xMidYMid meet">
+            <!-- Connections: Input(5) -> Hidden1(7) -->
+            <line class="um-nn-line" x1="100" y1="110" x2="420" y2="70"/><line class="um-nn-line" x1="100" y1="110" x2="420" y2="130"/><line class="um-nn-line" x1="100" y1="110" x2="420" y2="190"/>
+            <line class="um-nn-line" x1="100" y1="180" x2="420" y2="130"/><line class="um-nn-line" x1="100" y1="180" x2="420" y2="190"/><line class="um-nn-line" x1="100" y1="180" x2="420" y2="250"/>
+            <line class="um-nn-line" x1="100" y1="250" x2="420" y2="190"/><line class="um-nn-line" x1="100" y1="250" x2="420" y2="250"/><line class="um-nn-line" x1="100" y1="250" x2="420" y2="310"/>
+            <line class="um-nn-line" x1="100" y1="320" x2="420" y2="250"/><line class="um-nn-line" x1="100" y1="320" x2="420" y2="310"/><line class="um-nn-line" x1="100" y1="320" x2="420" y2="370"/>
+            <line class="um-nn-line" x1="100" y1="390" x2="420" y2="310"/><line class="um-nn-line" x1="100" y1="390" x2="420" y2="370"/><line class="um-nn-line" x1="100" y1="390" x2="420" y2="430"/>
+            <!-- Connections: Hidden1(7) -> Hidden2(7) -->
+            <line class="um-nn-line" x1="420" y1="70" x2="740" y2="70"/><line class="um-nn-line" x1="420" y1="70" x2="740" y2="130"/><line class="um-nn-line" x1="420" y1="70" x2="740" y2="190"/>
+            <line class="um-nn-line" x1="420" y1="130" x2="740" y2="70"/><line class="um-nn-line" x1="420" y1="130" x2="740" y2="130"/><line class="um-nn-line" x1="420" y1="130" x2="740" y2="190"/>
+            <line class="um-nn-line" x1="420" y1="190" x2="740" y2="130"/><line class="um-nn-line" x1="420" y1="190" x2="740" y2="190"/><line class="um-nn-line" x1="420" y1="190" x2="740" y2="250"/>
+            <line class="um-nn-line" x1="420" y1="250" x2="740" y2="190"/><line class="um-nn-line" x1="420" y1="250" x2="740" y2="250"/><line class="um-nn-line" x1="420" y1="250" x2="740" y2="310"/>
+            <line class="um-nn-line" x1="420" y1="310" x2="740" y2="250"/><line class="um-nn-line" x1="420" y1="310" x2="740" y2="310"/><line class="um-nn-line" x1="420" y1="310" x2="740" y2="370"/>
+            <line class="um-nn-line" x1="420" y1="370" x2="740" y2="310"/><line class="um-nn-line" x1="420" y1="370" x2="740" y2="370"/><line class="um-nn-line" x1="420" y1="370" x2="740" y2="430"/>
+            <line class="um-nn-line" x1="420" y1="430" x2="740" y2="310"/><line class="um-nn-line" x1="420" y1="430" x2="740" y2="370"/><line class="um-nn-line" x1="420" y1="430" x2="740" y2="430"/>
+            <!-- Connections: Hidden2(7) -> Output(4) -->
+            <line class="um-nn-line" x1="740" y1="70" x2="1060" y2="115"/><line class="um-nn-line" x1="740" y1="70" x2="1060" y2="205"/>
+            <line class="um-nn-line" x1="740" y1="130" x2="1060" y2="115"/><line class="um-nn-line" x1="740" y1="130" x2="1060" y2="205"/>
+            <line class="um-nn-line" x1="740" y1="190" x2="1060" y2="115"/><line class="um-nn-line" x1="740" y1="190" x2="1060" y2="205"/><line class="um-nn-line" x1="740" y1="190" x2="1060" y2="295"/>
+            <line class="um-nn-line" x1="740" y1="250" x2="1060" y2="205"/><line class="um-nn-line" x1="740" y1="250" x2="1060" y2="295"/>
+            <line class="um-nn-line" x1="740" y1="310" x2="1060" y2="205"/><line class="um-nn-line" x1="740" y1="310" x2="1060" y2="295"/><line class="um-nn-line" x1="740" y1="310" x2="1060" y2="385"/>
+            <line class="um-nn-line" x1="740" y1="370" x2="1060" y2="295"/><line class="um-nn-line" x1="740" y1="370" x2="1060" y2="385"/>
+            <line class="um-nn-line" x1="740" y1="430" x2="1060" y2="295"/><line class="um-nn-line" x1="740" y1="430" x2="1060" y2="385"/>
+            <!-- Signal dots: Gap 1 (Input -> Hidden1) -->
+            <g class="um-nn-signal s1"><circle cx="100" cy="180" r="3"/></g>
+            <g class="um-nn-signal s2"><circle cx="100" cy="250" r="3"/></g>
+            <g class="um-nn-signal s3"><circle cx="100" cy="320" r="3"/></g>
+            <g class="um-nn-signal s4"><circle cx="100" cy="110" r="3"/></g>
+            <!-- Signal dots: Gap 2 (Hidden1 -> Hidden2) -->
+            <g class="um-nn-signal s1"><circle cx="420" cy="130" r="3"/></g>
+            <g class="um-nn-signal s2"><circle cx="420" cy="250" r="3"/></g>
+            <g class="um-nn-signal s3"><circle cx="420" cy="370" r="3"/></g>
+            <g class="um-nn-signal s4"><circle cx="420" cy="190" r="3"/></g>
+            <!-- Signal dots: Gap 3 (Hidden2 -> Output) -->
+            <g class="um-nn-signal s1"><circle cx="740" cy="115" r="3"/></g>
+            <g class="um-nn-signal s2"><circle cx="740" cy="205" r="3"/></g>
+            <g class="um-nn-signal s3"><circle cx="740" cy="295" r="3"/></g>
+            <g class="um-nn-signal s4"><circle cx="740" cy="385" r="3"/></g>
+            <!-- Nodes: Input layer (5) -->
+            <circle class="um-nn-node" cx="100" cy="110" r="7"/><circle class="um-nn-node d1" cx="100" cy="180" r="7"/><circle class="um-nn-node d2" cx="100" cy="250" r="7"/><circle class="um-nn-node d3" cx="100" cy="320" r="7"/><circle class="um-nn-node d4" cx="100" cy="390" r="7"/>
+            <!-- Nodes: Hidden1 layer (7) -->
+            <circle class="um-nn-node d1" cx="420" cy="70" r="7"/><circle class="um-nn-node d2" cx="420" cy="130" r="7"/><circle class="um-nn-node d3" cx="420" cy="190" r="7"/><circle class="um-nn-node d4" cx="420" cy="250" r="7"/><circle class="um-nn-node" cx="420" cy="310" r="7"/><circle class="um-nn-node d1" cx="420" cy="370" r="7"/><circle class="um-nn-node d2" cx="420" cy="430" r="7"/>
+            <!-- Nodes: Hidden2 layer (7) -->
+            <circle class="um-nn-node d2" cx="740" cy="70" r="7"/><circle class="um-nn-node d3" cx="740" cy="130" r="7"/><circle class="um-nn-node d4" cx="740" cy="190" r="7"/><circle class="um-nn-node" cx="740" cy="250" r="7"/><circle class="um-nn-node d1" cx="740" cy="310" r="7"/><circle class="um-nn-node d2" cx="740" cy="370" r="7"/><circle class="um-nn-node d3" cx="740" cy="430" r="7"/>
+            <!-- Nodes: Output layer (4) -->
+            <circle class="um-nn-node d3" cx="1060" cy="115" r="7"/><circle class="um-nn-node d4" cx="1060" cy="205" r="7"/><circle class="um-nn-node" cx="1060" cy="295" r="7"/><circle class="um-nn-node d1" cx="1060" cy="385" r="7"/>
+          </svg>
+          <div class="um-nn-labels">
+            <span class="um-nn-label">Zone Features</span>
+            <span class="um-nn-label">GraphSAGE Encoder</span>
+            <span class="um-nn-label">Temporal Attention</span>
+            <span class="um-nn-label">Policy Output</span>
+          </div>
+          <p class="um-arch-caption">GraphSAGE + temporal attention &rarr; DQN policy network. 263 input zones, 4 reposition actions.</p>
+        </div>
+      </section>
+
+      <!-- ===== Benchmark Results ===== -->
+      <section class="um-section" id="results">
+        <div class="um-section-head">
+          <p class="um-eyebrow">Benchmark Results</p>
+          <h2 class="um-section-title">Policy Performance Comparison</h2>
+          <p class="um-section-desc">
+            DQN achieves the highest daily revenue lift per driver while maintaining competitive
+            service rate.
+          </p>
+        </div>
+
+        <div class="um-bench-chart">
+          <div class="um-bench-row">
+            <span class="um-bench-name">Hot Zone</span>
+            <div class="um-bench-track"><div class="um-bench-fill" style="--w: 79.8%;"></div></div>
+            <span class="um-bench-val">$247.30</span>
+          </div>
+          <div class="um-bench-row">
+            <span class="um-bench-name">Random Reposition</span>
+            <div class="um-bench-track"><div class="um-bench-fill" style="--w: 64.0%;"></div></div>
+            <span class="um-bench-val">$198.40</span>
+          </div>
+          <div class="um-bench-row">
+            <span class="um-bench-name">IQL</span>
+            <div class="um-bench-track"><div class="um-bench-fill" style="--w: 90.8%;"></div></div>
+            <span class="um-bench-val">$281.50</span>
+          </div>
+          <div class="um-bench-row">
+            <span class="um-bench-name">DQN (BEST)</span>
+            <div class="um-bench-track"><div class="um-bench-fill um-best" style="--w: 97.1%;"></div></div>
+            <span class="um-bench-val um-best-val">$301.04</span>
+          </div>
+        </div>
+
+        <div class="um-table-wrap">
+          <div class="um-table-scroll">
+            <table class="um-table">
+              <thead>
+                <tr>
+                  <th>Policy</th>
+                  <th>Daily Revenue/Driver</th>
+                  <th>Service Rate</th>
+                  <th>Idle Time</th>
+                  <th>Advantage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Hot Zone (baseline)</td>
+                  <td class="um-num">$247.30</td>
+                  <td class="um-num">68.2%</td>
+                  <td class="um-num">41m</td>
+                  <td class="um-num">—</td>
+                </tr>
+                <tr>
+                  <td>Random Reposition</td>
+                  <td class="um-num">$198.40</td>
+                  <td class="um-num">55.1%</td>
+                  <td class="um-num">58m</td>
+                  <td class="um-num" style="color: var(--um-state-error);">-$48.90</td>
+                </tr>
+                <tr>
+                  <td>IQL</td>
+                  <td class="um-num">$281.50</td>
+                  <td class="um-num">74.6%</td>
+                  <td class="um-num">32m</td>
+                  <td class="um-num um-text-success">+$34.20</td>
+                </tr>
+                <tr class="um-best-row">
+                  <td>DQN <span class="um-best-tag">BEST</span></td>
+                  <td class="um-num">$301.04</td>
+                  <td class="um-num">76.8%</td>
+                  <td class="um-num">28m</td>
+                  <td class="um-num">+$53.74</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="um-table-note">
+          Results averaged over 30-day simulation on NYC TLC data (Jan 2024). Revenue in USD per
+          driver per day.
+        </p>
+      </section>
+
+      <!-- ===== Quick Start ===== -->
+      <section class="um-section" id="quickstart">
+        <div class="um-section-head">
+          <p class="um-eyebrow">Quick Start</p>
+          <h2 class="um-section-title">Get Running in 60 Seconds</h2>
+          <p class="um-section-desc">
+            Install, configure, and launch your first simulation.
+          </p>
+        </div>
+
+        <div class="um-quickstart-grid">
+          <div class="um-code-block">
+            <div class="um-code-head">
+              <span class="um-cd lead"></span><span class="um-cd"></span><span class="um-cd"></span>
+              install.sh
+            </div>
+            <div class="um-code um-code-body">
+              <div class="um-code-gutter"><span>1</span><span>2</span></div>
+              <pre class="um-code-pre"><span class="cmt"># Install the platform</span>
+pip install <span class="val">urban-mobility-ai</span><span class="um-cursor"></span></pre>
+            </div>
+          </div>
+
+          <div class="um-code-block">
+            <div class="um-code-head">
+              <span class="um-cd lead"></span><span class="um-cd"></span><span class="um-cd"></span>
+              config.py
+            </div>
+            <div class="um-code um-code-body">
+              <div class="um-code-gutter"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+              <pre class="um-code-pre"><span class="kw">from</span> mobility_ai <span class="kw">import</span> Config
+
+<span class="cmt"># Point to your local NYC TLC trip data</span>
+config = Config(
+    data_path=<span class="val">"data/nyc_tlc/"</span>,
+    api_key=<span class="val">"YOUR_API_KEY"</span>,
+    zones=<span class="val">263</span>,
+    horizon=<span class="val">"15min"</span>,
+)
+
+config.save(<span class="val">"config.yaml"</span>)<span class="um-cursor"></span></pre>
+            </div>
+          </div>
+
+          <div class="um-code-block">
+            <div class="um-code-head">
+              <span class="um-cd lead"></span><span class="um-cd"></span><span class="um-cd"></span>
+              run.sh
+            </div>
+            <div class="um-code um-code-body">
+              <div class="um-code-gutter"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+              <pre class="um-code-pre"><span class="cmt"># Launch a 30-day DQN simulation</span>
+python -m mobility_ai simulate \
+  <span class="kw">--policy</span> <span class="val">dqn</span> \
+  <span class="kw">--days</span> <span class="val">30</span><span class="um-cursor"></span></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CTA ===== -->
+      <section class="um-section" id="demo" style="padding-top: 2rem;">
+        <div class="um-cta-wrap">
+          <div class="um-cta">
+            <div class="um-cta-content">
+              <h2>Start Building Smarter Mobility</h2>
+              <p>Clone the repository, run the demo, and join the research community.</p>
+              <div class="um-cta-actions">
+                <a class="um-btn um-btn-primary" href="#demo">
+                  <i data-lucide="play"></i>
+                  Launch Demo
+                </a>
+                <a class="um-btn um-btn-outline" href="#docs">
+                  <i data-lucide="book-open"></i>
+                  Read the Docs
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Footer ===== -->
+      <footer class="um-footer">
+        <div class="um-footer-inner">
+          <div class="um-footer-links">
+            <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+            <a href="#docs">Documentation</a>
+            <a href="#paper">Paper Draft</a>
+            <a href="#roadmap">Roadmap</a>
+            <a href="#changelog">CHANGELOG</a>
+          </div>
+          <div class="um-footer-copy">MIT License · Built for reproducible mobility research</div>
+        </div>
+      </footer>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
