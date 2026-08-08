@@ -87,7 +87,7 @@ docker compose up
 ```bash
 git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
 cd nyc-taxi-zone-recommendation
-pip install -e ".[dev]"
+pip install -e ".[dev,api,demo]"
 
 # API
 uvicorn src.api.main:app --host 0.0.0.0 --port 8000
@@ -253,7 +253,7 @@ src/
   2_recommendation_algorithm/  Original strategies (preserved)
   3_extension_task/      Original extensions (preserved)
 scripts/                 Experiment runners and utilities
-tests/                   322 tests passing
+tests/                   Method and regression test suite (see CI for current status)
 configs/                 Configuration profiles
 docs/                    Documentation and audit reports
 ```
@@ -320,7 +320,10 @@ make static
 make all
 
 # Tests
-pytest tests -q  # 322 tests
+pytest tests -q
+
+# Simulator-only trajectory-aware OPE benchmark
+python -m scripts.run_ope_comparison --seed 42
 ```
 
 See [docs/reproduction.md](docs/reproduction.md) for detailed instructions.

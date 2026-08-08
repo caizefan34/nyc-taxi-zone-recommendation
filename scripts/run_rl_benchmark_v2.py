@@ -17,6 +17,7 @@ from datetime import datetime
 from pathlib import Path
 
 import numpy as np
+import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -70,8 +71,11 @@ def _run_iql(*, drivers: int = 50, seed: int = 42) -> dict:
     buffer = OfflineBuffer(capacity=10000, state_dim=state_dim, seed=seed)
     sim = DynamicSimulator(SimulatorConfig(driver_count=drivers, seed=seed))
 
+    rng = np.random.default_rng(seed)
+    torch.manual_seed(seed)
+
     def _exploration_policy(dt, loc, state):
-        return int(np.random.randint(1, 264))  # zones 1..263
+        return int(rng.integers(1, action_dim + 1)), 1.0 / action_dim
 
     buffer.collect_trajectories_from_v2(sim, episodes=10, strategy=_exploration_policy)
 
@@ -80,9 +84,27 @@ def _run_iql(*, drivers: int = 50, seed: int = 42) -> dict:
     from src.rl.offline.iql import train_iql
     metrics = train_iql(agent, buffer, steps=500, log_interval=100)
 
-    # Offline Policy Evaluation (FQE + bootstrapped DR)
+    # Trajectory-aware OPE for the deterministic greedy IQL target policy.
+    data = buffer.as_ordered_dict()
+    states = torch.as_tensor(data["states"], dtype=torch.float32)
+    next_states = torch.as_tensor(data["next_states"], dtype=torch.float32)
+    logged_actions = torch.as_tensor(data["actions"], dtype=torch.float32).unsqueeze(-1)
+    with torch.no_grad():
+        q_values = agent.get_q_values(states, logged_actions).cpu().numpy().ravel()
+        state_values = agent.get_value(states).cpu().numpy().ravel()
+        next_state_values = agent.get_value(next_states).cpu().numpy().ravel()
+    candidates = np.arange(1, action_dim + 1)
+    selected_actions = np.array(
+        [candidates[np.argmax(agent.score_actions(state, candidates))] for state in data["states"]]
+    )
+    target_probs = (selected_actions == data["actions"]).astype(np.float32)
     evaluator = OfflineEvaluator(agent, buffer)
-    ope_result = evaluator.evaluate()
+    ope_result = evaluator.evaluate(
+        target_probs=target_probs,
+        q_values=q_values,
+        state_values=state_values,
+        next_state_values=next_state_values,
+    )
 
     return {
         "avg_reward_per_driver": ope_result.fqe_estimate,

@@ -26,6 +26,7 @@ class Trajectory:
     next_states: np.ndarray  # (T, state_dim)
     trajectory_id: int = 0   # Unique trajectory identifier
     timestamps: np.ndarray | None = None  # (T,) optional timestamps
+    behavior_probs: np.ndarray | None = None  # (T,) logged action propensities
 
 
 class OfflineBuffer:
@@ -89,11 +90,18 @@ class OfflineBuffer:
             timestamp: Simulation timestamp (Unix time or relative).
             behavior_prob: Probability of this action under behavior policy.
         """
+        if not 0.0 < behavior_prob <= 1.0:
+            raise ValueError("behavior_prob must be in (0, 1]")
+        state_array = np.asarray(state, dtype=np.float32).ravel()
+        next_state_array = np.asarray(next_state, dtype=np.float32).ravel()
+        if state_array.shape != (self.state_dim,) or next_state_array.shape != (self.state_dim,):
+            raise ValueError(f"state vectors must have shape ({self.state_dim},)")
+
         idx = self._index % self.capacity
-        self.states[idx] = np.asarray(state, dtype=np.float32).ravel()
+        self.states[idx] = state_array
         self.actions[idx] = int(action)
         self.rewards[idx] = float(reward)
-        self.next_states[idx] = np.asarray(next_state, dtype=np.float32).ravel()
+        self.next_states[idx] = next_state_array
         self.dones[idx] = float(done)
 
         # Enhanced fields
@@ -108,13 +116,35 @@ class OfflineBuffer:
         """Add all transitions from a trajectory."""
         for i in range(len(traj.rewards)):
             ts = float(traj.timestamps[i]) if traj.timestamps is not None else None
+            behavior_prob = float(traj.behavior_probs[i]) if traj.behavior_probs is not None else 1.0
             self.add(
                 traj.states[i], int(traj.actions[i]), float(traj.rewards[i]),
                 traj.next_states[i], bool(traj.dones[i]),
                 trajectory_id=traj.trajectory_id,
                 timestamp=ts,
-                behavior_prob=1.0,
+                behavior_prob=behavior_prob,
             )
+
+    def _ordered_indices(self) -> np.ndarray:
+        """Return stored transitions from oldest to newest."""
+        if self._size < self.capacity:
+            return np.arange(self._size)
+        start = self._index % self.capacity
+        return np.concatenate((np.arange(start, self.capacity), np.arange(0, start)))
+
+    def as_ordered_dict(self) -> dict[str, np.ndarray]:
+        """Return all transitions in logical insertion order."""
+        indices = self._ordered_indices()
+        return {
+            "states": self.states[indices].copy(),
+            "actions": self.actions[indices].copy(),
+            "rewards": self.rewards[indices].copy(),
+            "next_states": self.next_states[indices].copy(),
+            "dones": self.dones[indices].copy(),
+            "trajectory_ids": self.trajectory_ids[indices].copy(),
+            "timestamps": self.timestamps[indices].copy(),
+            "behavior_probs": self.behavior_probs[indices].copy(),
+        }
 
     def sample(self, batch_size: int) -> dict[str, np.ndarray]:
         """Sample a random batch of transitions.
@@ -207,13 +237,15 @@ class OfflineBuffer:
 
         ZONE_COUNT = 263
 
-        def _extract_state(env, driver_id):
+        def _extract_state(env, driver_id, *, zone_id=None, current_time=None):
             d = env.drivers[driver_id]
-            z = env.zones[d.location_zone]
-            supply = env.driver_count_in_zone(d.location_zone)
+            zone_id = d.location_zone if zone_id is None else zone_id
+            current_time = d.current_time if current_time is None else current_time
+            z = env.zones[zone_id]
+            supply = env.driver_count_in_zone(zone_id)
             return np.array([
-                d.location_zone / ZONE_COUNT,
-                (d.current_time.hour * 60 + d.current_time.minute) / 1440.0,
+                zone_id / ZONE_COUNT,
+                (current_time.hour * 60 + current_time.minute) / 1440.0,
                 supply / max(1, env.total_taxis),
                 min(z.effective_demand / 200.0, 1.0),
                 z.pickup_probability,
@@ -222,24 +254,45 @@ class OfflineBuffer:
             ], dtype=np.float32)
 
         for ep in range(episodes):
-            collected = []
+            collected: dict[int, list[tuple[np.ndarray, int, float, np.ndarray, bool, float, float]]] = {}
 
-            def _transition_cb(driver_id, action_zone, reward, next_zone, done):
+            def _transition_cb(
+                driver_id,
+                action_zone,
+                reward,
+                next_zone,
+                done,
+                decision_time,
+                origin_zone,
+                behavior_prob,
+                next_time,
+            ):
                 env = simulator.state
                 if env is None:
                     return
-                state = _extract_state(env, driver_id)
-                ts = env.current_time.timestamp()
-                next_state = np.array([
-                    next_zone / ZONE_COUNT,
-                    (env.current_time.hour * 60 + env.current_time.minute) / 1440.0,
-                    env.driver_count_in_zone(next_zone) / max(1, env.total_taxis),
-                    min(env.zones[next_zone].effective_demand / 200.0, 1.0),
-                    env.zones[next_zone].pickup_probability,
-                    env.driver_count_in_zone(next_zone) / max(1, env.zones[next_zone].trips_remaining),
-                    env.zones[next_zone].traffic_multiplier / 2.0,
-                ], dtype=np.float32)
-                collected.append((state, action_zone, reward, next_state, done, ts))
+                state = _extract_state(
+                    env,
+                    driver_id,
+                    zone_id=origin_zone,
+                    current_time=decision_time,
+                )
+                next_state = _extract_state(
+                    env,
+                    driver_id,
+                    zone_id=next_zone,
+                    current_time=next_time,
+                )
+                collected.setdefault(driver_id, []).append(
+                    (
+                        state,
+                        action_zone,
+                        reward,
+                        next_state,
+                        done,
+                        decision_time.timestamp(),
+                        behavior_prob,
+                    )
+                )
 
             simulator.run(
                 datetime(2023, 1, 25),
@@ -248,6 +301,21 @@ class OfflineBuffer:
                 on_transition=_transition_cb,
             )
 
-            for state, action, reward, next_state, done, ts in collected:
-                self.add(state, action, reward, next_state, done,
-                         trajectory_id=ep, timestamp=ts, behavior_prob=1.0)
+            driver_count = simulator.config.driver_count
+            for driver_id in sorted(collected):
+                transitions = collected[driver_id]
+                trajectory_id = ep * driver_count + driver_id
+                for index, (state, action, reward, next_state, done, ts, behavior_prob) in enumerate(
+                    transitions
+                ):
+                    is_terminal = done or index == len(transitions) - 1
+                    self.add(
+                        state,
+                        action,
+                        reward,
+                        next_state,
+                        is_terminal,
+                        trajectory_id=trajectory_id,
+                        timestamp=ts,
+                        behavior_prob=behavior_prob,
+                    )

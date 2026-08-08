@@ -213,3 +213,25 @@ class TestDynamicSimulator:
             datetime(2023, 1, 1, 0, 0), datetime(2023, 1, 1, 2, 0)
         )
         assert abs(r1.average_driver_revenue - r2.average_driver_revenue) < 1e-4
+
+    def test_transition_callback_receives_decision_context(self):
+        sim = DynamicSimulator(SimulatorConfig(driver_count=1, seed=5))
+        transitions = []
+
+        def policy(_time, zone, _state):
+            return zone, 0.4
+
+        sim.run(
+            datetime(2023, 1, 1, 0, 0),
+            datetime(2023, 1, 1, 1, 0),
+            strategy=policy,
+            on_transition=lambda *transition: transitions.append(transition),
+        )
+
+        assert transitions
+        first = transitions[0]
+        assert len(first) == 9
+        assert first[1] == first[6]
+        assert first[5] == datetime(2023, 1, 1, 0, 0)
+        assert first[7] == pytest.approx(0.4)
+        assert first[8] > first[5]

@@ -19,7 +19,7 @@ from .state import DriverState, EnvironmentState, ZoneState
 
 SLOT_MINUTES = 30
 ZONE_COUNT = 263
-Strategy = Callable[[datetime, int, EnvironmentState], int]
+Strategy = Callable[[datetime, int, EnvironmentState], int | tuple[int, float]]
 
 
 @dataclass(frozen=True)
@@ -119,7 +119,9 @@ class DynamicSimulator:
         travel_times: np.ndarray | None = None,
         base_demand: np.ndarray | None = None,
         demand_predictions: np.ndarray | None = None,
-        on_transition: Callable[[int, int, float, int, bool], None] | None = None,
+        on_transition: Callable[
+            [int, int, float, int, bool, datetime, int, float, datetime], None
+        ] | None = None,
     ) -> SimulatorResult:
         """Run a full simulation from start to end.
 
@@ -130,8 +132,9 @@ class DynamicSimulator:
             travel_times: (zone_count, zone_count) matrix in minutes.
             base_demand: (zone_count,) array of base demand per zone.
             demand_predictions: (n_timesteps, zone_count) forecast array.
-            on_transition: Optional callback(driver_id, action_zone, net_reward, next_zone, done)
-                          called after each attempt with the real net reward and resulting zone.
+            on_transition: Optional callback(driver_id, action_zone, net_reward,
+                next_zone, done, decision_time, origin_zone, behavior_prob,
+                next_time) called after each attempt with the real transition context.
 
         Returns:
             SimulatorResult with aggregate metrics.
@@ -163,7 +166,7 @@ class DynamicSimulator:
         saturated_zone_slots = 0
         saturated_attempts = 0
         total_attempts = 0
-        _pending_actions: dict[int, int] = {}
+        _pending_actions: dict[int, tuple[int, datetime, int, float]] = {}
 
         while event_heap:
             current_time, event_type, driver_id = heapq.heappop(event_heap)
@@ -183,10 +186,25 @@ class DynamicSimulator:
 
                 # Get strategy recommendation
                 if strategy is not None:
-                    top_zone = strategy(current_time, zone, state)
+                    recommendation = strategy(current_time, zone, state)
+                    if isinstance(recommendation, tuple):
+                        top_zone, behavior_prob = recommendation
+                    else:
+                        top_zone, behavior_prob = recommendation, 1.0
                 else:
-                    top_zone = zone  # stay
-                _pending_actions[driver_id] = top_zone
+                    top_zone, behavior_prob = zone, 1.0  # stay
+                top_zone = int(top_zone)
+                behavior_prob = float(behavior_prob)
+                if not 1 <= top_zone <= ZONE_COUNT:
+                    raise ValueError(f"strategy returned invalid zone {top_zone}")
+                if not 0.0 < behavior_prob <= 1.0:
+                    raise ValueError("strategy behavior probability must be in (0, 1]")
+                _pending_actions[driver_id] = (
+                    top_zone,
+                    current_time,
+                    zone,
+                    behavior_prob,
+                )
 
                 # Move to chosen zone
                 travel_min = float(times[zone - 1, top_zone - 1])
@@ -270,8 +288,28 @@ class DynamicSimulator:
                 # Fire transition callback with real transition data
                 if on_transition is not None:
                     done = next_time >= end
-                    action_zone = _pending_actions.pop(driver_id, driver.location_zone)
-                    on_transition(driver_id, action_zone, reward, next_zone_after, done)
+                    action_zone, decision_time, origin_zone, behavior_prob = (
+                        _pending_actions.pop(
+                            driver_id,
+                            (
+                                driver.location_zone,
+                                current_time,
+                                driver.location_zone,
+                                1.0,
+                            ),
+                        )
+                    )
+                    on_transition(
+                        driver_id,
+                        action_zone,
+                        reward,
+                        next_zone_after,
+                        done,
+                        decision_time,
+                        origin_zone,
+                        behavior_prob,
+                        min(next_time, end),
+                    )
                 next_time = min(next_time, end)
                 driver.current_time = next_time
                 heapq.heappush(event_heap, (next_time, "decision", driver_id))
