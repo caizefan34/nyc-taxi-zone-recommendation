@@ -17,6 +17,8 @@ import torch
 from src.rl.offline import IQLAgent, OfflineBuffer
 from src.rl.offline.evaluation import OPEMetrics, ope_doubly_robust, ope_fqe
 from src.rl.offline.iql import _expectile_loss
+from src.simulator.v2 import DynamicSimulator
+from src.simulator.v2.engine import SimulatorConfig
 
 # ===========================================================================
 # Buffer Tests
@@ -63,6 +65,46 @@ class TestOfflineBuffer:
             buf.add(np.zeros(2), 0, 1.0, np.zeros(2), False)
         buf.clear()
         assert buf.size == 0
+
+    def test_ordered_dict_preserves_ring_insertion_order(self):
+        buf = OfflineBuffer(capacity=3, state_dim=1)
+        for i in range(5):
+            buf.add(np.array([i]), i, float(i), np.array([i + 1]), i == 4)
+
+        data = buf.as_ordered_dict()
+        assert data["actions"].tolist() == [2, 3, 4]
+        assert data["states"].ravel().tolist() == [2.0, 3.0, 4.0]
+
+    @pytest.mark.parametrize("behavior_prob", [0.0, -0.1, 1.1])
+    def test_rejects_invalid_behavior_probability(self, behavior_prob):
+        buf = OfflineBuffer(capacity=10, state_dim=2)
+        with pytest.raises(ValueError, match="behavior_prob"):
+            buf.add(
+                np.zeros(2),
+                0,
+                0.0,
+                np.zeros(2),
+                False,
+                behavior_prob=behavior_prob,
+            )
+
+    def test_v2_collection_records_driver_trajectories_and_propensities(self):
+        simulator = DynamicSimulator(SimulatorConfig(driver_count=2, seed=7))
+        buf = OfflineBuffer(capacity=500, state_dim=7)
+
+        def stay_policy(_time, zone, _state):
+            return zone, 0.75
+
+        buf.collect_trajectories_from_v2(simulator, episodes=1, strategy=stay_policy)
+        data = buf.as_ordered_dict()
+
+        assert buf.size > 0
+        assert set(data["trajectory_ids"].tolist()) == {0, 1}
+        assert np.all(data["behavior_probs"] == pytest.approx(0.75))
+        for trajectory_id in (0, 1):
+            indices = np.flatnonzero(data["trajectory_ids"] == trajectory_id)
+            assert bool(data["dones"][indices[-1]])
+        assert np.any(data["states"][:, 1] != data["next_states"][:, 1])
 
 
 # ===========================================================================
@@ -182,8 +224,24 @@ class TestOPE:
         rewards = np.random.rand(n).astype(np.float32)
         next_states = np.random.rand(n, 4).astype(np.float32)
         dones = np.zeros(n, dtype=np.float32)
+        dones[9::10] = 1.0
+        trajectory_ids = np.repeat(np.arange(20), 10)
+        zeros = np.zeros(n, dtype=np.float32)
 
-        result = ope_doubly_robust(states, actions, rewards, next_states, dones, bootstrap_samples=10)
+        result = ope_doubly_robust(
+            states,
+            actions,
+            rewards,
+            next_states,
+            dones,
+            trajectory_ids=trajectory_ids,
+            behavior_probs=np.ones(n),
+            target_probs=np.ones(n),
+            q_values=zeros,
+            state_values=zeros,
+            next_state_values=zeros,
+            bootstrap_samples=10,
+        )
         assert isinstance(result, OPEMetrics)
         assert np.isfinite(result.fqe_estimate)
         assert np.isfinite(result.dr_estimate)

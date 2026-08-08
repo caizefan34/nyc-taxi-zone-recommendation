@@ -6,12 +6,15 @@ services:
     image: nyc-taxi-api:latest
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
-      - /app/__pycache__
     environment:
-      - PYTHONPATH=/app
-      - DEMO_MODE=sample
+      PYTHONPATH: /app
+      DEMO_MODE: sample
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     restart: unless-stopped
 
   demo:
@@ -21,14 +24,18 @@ services:
     image: nyc-taxi-demo:latest
     ports:
       - "8501:8501"
-    volumes:
-      - .:/app
-      - /app/__pycache__
     environment:
-      - PYTHONPATH=/app
-      - DEMO_MODE=sample
+      PYTHONPATH: /app
+      DEMO_MODE: sample
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     restart: unless-stopped
 
   test:
@@ -36,9 +43,5 @@ services:
       context: .
       target: test
     image: nyc-taxi-test:latest
-    volumes:
-      - .:/app
-      - /app/__pycache__
     environment:
-      - PYTHONPATH=/app
-    command: ["pytest", "tests/", "-q", "--tb=short", "-o", "addopts="]
+      PYTHONPATH: /app

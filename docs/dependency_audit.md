@@ -1,6 +1,11 @@
 # Dependency and Reference Audit
 
-> Generated: 2026-07-26 | Phase: 15
+> Updated: 2026-08-08
+>
+> Runtime dependency declarations are authoritative in `pyproject.toml`. `requirements.txt`
+> and `requirements-demo.txt` are compatibility entry points that install project extras.
+> Docker targets install `api`, `demo`, or full test extras explicitly; CI tests Python 3.10
+> and 3.12 and builds all service targets.
 
 ## Import Map
 
