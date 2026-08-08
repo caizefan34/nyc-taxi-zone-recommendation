@@ -25,14 +25,20 @@
 - [x] Issue templates for external contributors
 - [x] Enhanced CONTRIBUTING.md
 
-## v3.0 — Decision Intelligence Platform 🔄
+## v3.0 — Decision Intelligence Platform ✓
 - [x] Unified decision engine with rich metadata schema
 - [x] REST API (FastAPI): /health, /ready, /v1/recommendations
-- [x] Docker Compose one-click deployment (API + Demo)
+- [x] Docker Compose one-click deployment (API + Demo) with health checks
+- [x] Multi-stage Dockerfile (api, demo, test targets)
 - [x] Enterprise config system (default, api, research, production)
 - [x] Constraint-aware policy layer
 - [x] Model registry / versioning
 - [x] Structured observability (logging, metrics)
+- [x] CI with Python 3.10/3.12 matrix + Docker build smoke
+- [x] Trajectory-aware offline policy evaluation (WIS, sequential DR)
+- [x] Implicit Q-Learning (IQL) offline RL baseline
+- [x] Reproducible OPE benchmark with fixed-seed bootstrap
+- [x] Per-driver/episode trajectory collection with behavior propensities
 - [ ] Fleet operations dashboard enhancements
 - [ ] Open benchmark leaderboard
 - [ ] Cross-city data pipeline prototypes
@@ -67,6 +73,7 @@
 3. **Market equilibrium**: Can recommendation systems become self-defeating through market impact?
 4. **Fairness-constrained optimization**: Balancing revenue, utilization, and service coverage across zones
 5. **Multi-city transfer**: Can models trained on NYC generalize to other cities?
+6. **Real logged propensities**: Deploy a stochastic logging policy to collect behavior probabilities for identifiable OPE
 
 ## How to contribute
 

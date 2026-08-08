@@ -180,7 +180,16 @@ At fixed fleet size, raising the demand/supply ratio from 0.5 to 2.0 increases S
 
 DQN minus Single-Step is +53.74 per driver. These intervals cover evaluation-market seeds for one trained network per algorithm, not training uncertainty or real deployment effects. The default recommender remains unchanged. See [outputs/rl_benchmark.md](outputs/rl_benchmark.md).
 
-> **Important:** These are simulator outcomes, not production revenue estimates. See [Scientific Limitations](#scientific-limitations) below.
+### Offline RL / OPE (trajectory-level)
+
+| Policy | WIS | Sequential DR |
+|---|---|---|
+| Stay (on-policy, prob=1.0) | $438.55 | $431.74 |
+| IQL (off-policy, uniform behavior) | $0.00 | $12.44 |
+
+Trajectory-level Weighted Importance Sampling and sequential Doubly Robust with 100-draw complete-trajectory bootstrap. IQL uses uniform exploration behavior (prob=1/263) with a deterministic greedy target — the zero WIS estimate reflects support overlap failure, not a bug. FQE is labeled as a diagnostic. See [docs/offline_rl_protocol.md](docs/offline_rl_protocol.md) and [outputs/policy_evaluation_report.md](outputs/policy_evaluation_report.md).
+
+> **Important:** These are simulator outcomes, not production revenue estimates. OPE is a methodological benchmark, not evidence of real-world causal lift. See [Scientific Limitations](#scientific-limitations) below.
 
 ---
 
@@ -245,17 +254,19 @@ src/
   forecasting/           LightGBM, XGBoost, feature pipeline
   graph/                 GraphSAGE, GAT, OD graph
   simulator/             Multi-agent v1 + v2, calibration
-  rl/                    Gymnasium env, DQN/DoubleDQN, offline RL
+  rl/                    Gymnasium env, DQN/DoubleDQN, offline RL (IQL, OPE)
   mdp/                   Model-based value iteration
   common/                Config, data loader, logging
   interfaces/            ABCs, adapters, model registry
   1_data_clean/          Original data pipeline (preserved)
   2_recommendation_algorithm/  Original strategies (preserved)
   3_extension_task/      Original extensions (preserved)
-scripts/                 Experiment runners and utilities
+scripts/                 Experiment runners and benchmarks
 tests/                   Method and regression test suite (see CI for current status)
 configs/                 Configuration profiles
-docs/                    Documentation and audit reports
+docs/                    Documentation, audit reports, blog post draft
+pages/                   Landing page (deployed to GitHub Pages)
+web/                     Interactive Leaflet map demo
 ```
 
 ---
@@ -277,7 +288,7 @@ The multi-agent simulator improves on single-driver rollouts with a configurable
 
 ### Counterfactual boundary
 
-NYC TLC trips do not contain logged reposition recommendations, logging-policy propensities, or driver acceptance. Valid IPS, SNIPS, or doubly robust evaluation is therefore not identifiable from these records alone.
+NYC TLC trips do not contain logged reposition recommendations, logging-policy propensities, or driver acceptance. Valid IPS, SNIPS, or doubly robust evaluation is therefore not identifiable from these records alone. Simulator-generated OPE benchmarks are a methodological check, not evidence of real-world causal lift. Real-world OPE requires a deployed stochastic logging policy that records recommendations, accepted actions, propensities, timestamps, outcomes, and episode boundaries.
 
 ### Forecast-decision gap
 
@@ -330,6 +341,29 @@ See [docs/reproduction.md](docs/reproduction.md) for detailed instructions.
 
 ---
 
+## Research Platform Capabilities
+
+### Implemented and verified
+
+| Capability | Status |
+|---|---|
+| Leakage-safe demand forecasting (LightGBM, XGBoost, ensemble) | Verified: MAE 1.49 |
+| OD graph features (GraphSAGE, GAT) | Verified: CI crosses zero |
+| Multi-agent finite-demand simulator (v2) | Verified: 50-driver benchmarks |
+| MDP policies (Hot Zone, Single-Step, Two-Step) | Verified: 100-seed paired tests |
+| DQN / Double DQN (Gymnasium env) | Verified: +$53.74 DQN lift |
+| Implicit Q-Learning (IQL) offline RL | Verified: trained, OPE-tested |
+| Trajectory-level WIS and sequential DR OPE | Verified: seed-42 reproducible |
+| Trajectory bootstrap CIs (complete episodes) | Verified: separate WIS/DR intervals |
+| Per-driver trajectory collection with propensities | Verified: terminal markers, ring order |
+| Counterfactual / fairness / exposure audit | Verified: exposure Gini 0.982 |
+| Shadow evaluation mode | Verified: record, don't execute |
+| REST API (FastAPI) | Verified: /health, /ready, /v1/recommendations |
+| Docker Compose (API + Demo) | Verified: health checks, multi-stage build |
+| CI (Python 3.10/3.12 + Docker smoke) | Verified: 402 tests, coverage upload |
+
+---
+
 ## Citation
 
 ```bibtex
@@ -369,4 +403,4 @@ MIT License. See [LICENSE](LICENSE).
 
 ## Status
 
-This is an educational/research prototype with production-style engineering foundations, not a production dispatch system. See [ROADMAP.md](ROADMAP.md) for future directions.
+This is an educational/research prototype with production-style engineering foundations, not a production dispatch system. Platform version: **v3.0.0**. See [ROADMAP.md](ROADMAP.md) for future directions.

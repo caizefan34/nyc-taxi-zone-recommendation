@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "Dynamic Urban Mobility Decision System: An Open-Source Benchmark Platform for Urban Mobility Decision Optimization"
+title: "Urban Mobility Decision Intelligence: An Open-Source Platform for AI-Driven Fleet Repositioning"
 authors:
   - family-names: Cai
     given-names: Zefan
@@ -8,16 +8,18 @@ authors:
     affiliation: Shanghai Jiao Tong University
 repository-code: "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
 url: "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
-abstract: "A reproducible, research-grade benchmark platform for AI-driven taxi repositioning. Combines spatiotemporal demand forecasting, multi-agent simulation, offline reinforcement learning, and counterfactual evaluation on NYC TLC trip data."
+abstract: "A reproducible, research-grade decision intelligence platform for AI-driven fleet repositioning. Combines spatiotemporal demand forecasting, multi-agent simulation, offline reinforcement learning with trajectory-aware doubly robust policy evaluation, and production-style API/Docker deployment on NYC TLC trip data."
 keywords:
   - urban mobility
   - taxi recommendation
   - reinforcement learning
+  - offline policy evaluation
+  - doubly robust estimation
   - simulation
   - benchmark
   - demand forecasting
   - graph neural networks
   - reproducibility
 license: MIT
-version: "2.1.0"
-date-released: "2025-07-26"
+version: "3.0.0"
+date-released: "2026-08-08"

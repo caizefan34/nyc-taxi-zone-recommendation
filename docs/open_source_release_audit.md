@@ -38,13 +38,15 @@
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Tests | ✅ 274 passed, 15 skipped | pytest tests/ |
+| Tests | ✅ 402 passed, 2 warnings | pytest tests/ |
 | Lint | ✅ All checks pass | ruff check src/ tests/ scripts/ |
-| CI Pipeline | ✅ Configured | .github/workflows/ci.yml |
-| Issue Templates | ✅ Complete | bug, feature, experiment reports |
+| CI Pipeline | ✅ Configured | .github/workflows/ci.yml (3.10/3.12 matrix + Docker smoke) |
+| Issue Templates | ✅ Complete | bug, feature, experiment, model, documentation |
 | PR Template | ✅ Complete | .github/pull_request_template.md |
 | License | ✅ MIT | LICENSE file present |
 | Contribution Guide | ✅ Complete | CONTRIBUTING.md |
+| Docker Build | ✅ All targets (api, demo, test) | Dockerfile multi-stage |
+| Docker Compose | ✅ Health checks on all services | docker-compose.yml |
 
 ## 4. Security & Code Quality
 
@@ -59,13 +61,12 @@
 
 Negative results are explicitly preserved:
 
-- ❗ **Demand KL divergence unchanged** after calibration (0.662)
-- ❗ **Double DQN underperforms DQN** in OPE comparison
+- ❗ **Deterministic IQL has zero WIS estimate** with uniform exploration behavior (support overlap failure)
+- ❗ **Double DQN underperforms DQN** in multi-agent comparison
 - ❗ **Temporal drift in 2024** (MAE 3.24 vs baseline 1.49)
 - ❗ **Better forecast != better policy** -- TGT best forecast but rule-based policies outperform
 - ❗ **Graph signals don't improve** forecasting (CIs cross zero)
-- ❗ **IQL and DQN use different reward scales** -- not directly comparable
-- ❗ **Simulator-generated trajectories** -- not real driver data
+- ❗ **Simulator-generated trajectories** -- not real driver data; OPE requires deployed logging policy for identifiable real-world evaluation
 
 All results are based on actual experiment outputs (outputs/*.json). No results have been modified or removed.
 
@@ -81,15 +82,16 @@ All results are based on actual experiment outputs (outputs/*.json). No results 
 
 ## 7. Recommendation
 
-**✅ Ready for v2.0.0 Release**
+**Ready for v3.0.0 Release**
 
 The repository meets professional open-source release standards:
 
-- Comprehensive documentation covering all components
+- Comprehensive documentation covering all components including offline RL/OPE protocol
 - Full reproducibility through configs, Docker, manifest, and auto-generation script
-- 274 passing tests with CI pipeline
-- Honest reporting of limitations and negative results
+- 402 passing tests with CI pipeline (Python 3.10/3.12 + Docker smoke)
+- Honest reporting of limitations and negative results including OPE support failures
 - Community contribution framework with issue templates, PR templates, and contribution guide
+- Production-style deployment: REST API, Docker Compose with health checks, multi-stage Dockerfile
 
 ### Post-release suggestions
 

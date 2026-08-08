@@ -10,19 +10,22 @@
 **For**: GitHub Discussions, project README, release notes
 
 ```
-**Dynamic Urban Mobility Decision System v2.1.0**
+**Dynamic Urban Mobility Decision System v3.0.0**
 
-We're excited to share our open-source benchmark platform for AI-driven
-urban mobility decision making.
+We're excited to share our open-source decision intelligence platform for AI-driven
+urban mobility.
 
 What it does:
 - Combines demand forecasting, multi-agent simulation, and offline RL
-- Reproducible benchmark with 328 tests and checked-in metrics
+- Trajectory-aware OPE with WIS and sequential Doubly Robust estimation
+- Reproducible benchmark with 402 tests and checked-in metrics
 - Interactive web demo (no installation required)
+- REST API + Docker Compose one-command deployment
 - External submission system for community benchmarks
 
 Key results: Two-Step Horizon planner achieves NDCG@3 of 0.9565
-with $139 daily revenue lift per driver over baseline.
+with $139 daily revenue lift per driver over baseline. DQN adds +$53.74/driver
+over Single-Step with 95% CI [+46.21, +61.57].
 
 Try it: [Live Demo URL]
 GitHub: [Repo URL]
@@ -41,7 +44,7 @@ We welcome contributions, benchmark submissions, and feedback!
 
 **Body**:
 ```
-I built an open-source benchmark platform for urban mobility AI and wanted
+I built an open-source decision intelligence platform for urban mobility AI and wanted
 to share it with the community.
 
 The problem: Taxi drivers waste 30-50% of their shift cruising. Where should
@@ -50,14 +53,18 @@ they go next? This is fundamentally a sequential decision problem.
 What the project does:
 - Leakage-safe demand forecasting (LightGBM + XGBoost + GraphSAGE/GAT)
 - Multi-agent simulator with finite demand and explicit competition
-- MDP-based planning + DQN/Double DQN policies
+- MDP-based planning + DQN/Double DQN + Implicit Q-Learning (IQL) policies
+- Trajectory-aware offline policy evaluation (WIS, sequential DR, bootstrap CI)
 - Fully reproducible benchmark with all metrics checked into the repo
+- REST API + Docker Compose deployment with health checks
 
 Key design decisions:
 - Strict chronological splits (no future leakage — random splits inflate
   accuracy by 15-25% in our tests)
 - Simulator-based evaluation with counterfactual analysis
-- 328 tests, paired statistical validation, multi-seed RL runs
+- OPE requires explicit behavior/target probabilities — no silent defaults
+- Fixed-seed reproducibility for all scripts and benchmarks
+- 402 tests, paired statistical validation, multi-seed RL runs
 
 Try the interactive demo (no install): [URL]
 GitHub: [URL]
@@ -81,16 +88,17 @@ Dear [Name],
 I came across your work on [their topic] and thought you might be
 interested in an open-source project I've been developing.
 
-The Dynamic Urban Mobility Decision System is a benchmark platform for
+The Dynamic Urban Mobility Decision System is a decision intelligence platform for
 AI-driven taxi repositioning, combining demand forecasting, multi-agent
-simulation, and offline RL. All results are reproducible with checked-in
-metrics and 328 automated tests.
+simulation, offline RL, and trajectory-aware policy evaluation. All results
+are reproducible with checked-in metrics and 402 automated tests.
 
 Key highlights:
 - Leakage-safe evaluation with strict chronological data splits
-- Multi-agent simulator with finite demand and explicit competition
+- Multi-agent simulator with finite demand, explicit competition, and recorded propensities
 - Two-Step Horizon planner achieves NDCG@3 of 0.9565
-- Interactive web demo available (no installation)
+- Trajectory-level WIS and sequential Doubly Robust OPE with bootstrap CIs
+- Interactive web demo + REST API + Docker Compose deployment
 
 The project is fully open-source (MIT license) with documentation,
 a public leaderboard, and an external submission workflow.
@@ -112,12 +120,12 @@ Zefan Cai
 
 **For**: Workshop submissions, poster abstracts, demo track
 
-**Title**: "Dynamic Urban Mobility Decision System: An Open Benchmark for Reproducible Taxi Repositioning Research"
+**Title**: "Dynamic Urban Mobility Decision System: An Open Decision Intelligence Platform for Reproducible Taxi Repositioning Research"
 
 **One-paragraph summary**:
-We present an open-source benchmark platform for AI-driven taxi repositioning that integrates leakage-safe demand forecasting, multi-agent simulation, and offline reinforcement learning into a reproducible pipeline. The platform processes over 100 million NYC taxi trips, generates demand predictions with MAE of 1.49, simulates competitive multi-driver scenarios, and evaluates policies including a Two-Step Horizon planner (NDCG@3: 0.9565, +\$139/driver daily vs baseline). All 328 tests pass, metrics are checked into the repository, and a public leaderboard accepts external submissions.
+We present an open-source decision intelligence platform for AI-driven taxi repositioning that integrates leakage-safe demand forecasting, multi-agent simulation, offline reinforcement learning, and trajectory-aware policy evaluation into a reproducible pipeline. The platform processes over 100 million NYC taxi trips, generates demand predictions with MAE of 1.49, simulates competitive multi-driver scenarios, evaluates policies including a Two-Step Horizon planner (NDCG@3: 0.9565, +\$139/driver daily vs baseline) and DQN (+$53.74/driver, 95% CI [+46.21, +61.57]), and provides trajectory-level WIS and sequential Doubly Robust OPE with bootstrap confidence intervals. All 402 tests pass, metrics are checked into the repository, and the platform ships with REST API, Docker Compose deployment, and a public leaderboard for external submissions.
 
-**Keywords**: urban mobility, benchmark, reinforcement learning, reproducibility, simulation
+**Keywords**: urban mobility, benchmark, reinforcement learning, offline policy evaluation, doubly robust estimation, simulation
 
 ---
 
