@@ -1,0 +1,25 @@
+name: Documentation
+description: Request documentation improvements or report gaps
+title: "[Docs] "
+labels: [documentation, good first issue]
+body:
+  - type: textarea
+    attributes:
+      label: What Needs Documentation?
+      description: Which module, function, or concept?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Current State
+      description: What exists now (if anything)?
+  - type: textarea
+    attributes:
+      label: Suggested Improvement
+      description: What should be added or changed?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Why Is This Important?
+      description: How does missing/bad documentation affect users or contributors?

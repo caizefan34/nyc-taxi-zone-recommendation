@@ -1,0 +1,37 @@
+name: Experiment Report
+description: Report reproduction results or benchmark contributions
+title: "[Report] "
+labels: [experiment]
+body:
+  - type: dropdown
+    attributes:
+      label: Experiment Type
+      options: [Reproduction, New Benchmark, Model Comparison, Other]
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Python version
+      placeholder: "e.g. 3.12"
+  - type: input
+    attributes:
+      label: Random seed
+      placeholder: "e.g. 42"
+  - type: dropdown
+    attributes:
+      label: Hardware
+      options: [CPU, GPU, Docker]
+  - type: textarea
+    attributes:
+      label: Results
+      description: Table or summary of results, including comparison to published baselines
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproducibility Notes
+      description: Any deviations from the original setup or unexpected behavior
+  - type: textarea
+    attributes:
+      label: Logs
+      description: Attach logs, figures, or output files if available

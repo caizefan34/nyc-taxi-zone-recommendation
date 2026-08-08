@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions
+    about: Ask questions, share ideas, and discuss research directions
+  - name: Documentation
+    url: https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/
+    about: Read the full documentation before opening an issue
+  - name: Paper Draft
+    url: https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/docs/research_paper_draft.md
+    about: Read the academic paper draft for methodology and results

@@ -1,0 +1,45 @@
+name: Bug Report
+description: Found a bug? Help us fix it
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: Clear, concise description of the bug
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: Minimal commands or code to reproduce the issue
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected vs Actual
+      placeholder: |
+        | Expected | Actual |
+        |---|---|
+        | | |
+  - type: textarea
+    attributes:
+      label: Error Log
+      description: Paste full traceback here if applicable
+      render: shell
+  - type: input
+    attributes:
+      label: Python version
+      placeholder: "e.g. 3.12"
+  - type: dropdown
+    attributes:
+      label: Operating System
+      options: [Windows, macOS, Linux, Other]
+  - type: dropdown
+    attributes:
+      label: Installation method
+      options: ["pip install -e", "Docker", "Other"]

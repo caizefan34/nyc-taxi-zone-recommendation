@@ -1,0 +1,40 @@
+name: Experiment Proposal
+description: Propose a new research experiment or benchmark
+title: "[Experiment] "
+labels: [experiment, research]
+body:
+  - type: textarea
+    attributes:
+      label: Research Question
+      description: What hypothesis are you testing?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Related Paper / Theory
+      description: Link to relevant paper or describe the theoretical basis
+  - type: textarea
+    attributes:
+      label: Method
+      description: |
+        - Dataset (which split / year)
+        - Baselines (which existing policies to compare against)
+        - New method (what are you adding?)
+        - Metrics (NDCG, revenue, MAE, etc.)
+        - Statistical tests (bootstrap CI, paired t-test, etc.)
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Reproducibility
+      options:
+        - label: Script in `scripts/`
+        - label: Config in `configs/`
+        - label: Results to `outputs/`
+        - label: Test coverage for new code
+        - label: Fixed random seeds
+        - label: Leakage-safe split
+  - type: textarea
+    attributes:
+      label: Expected Contribution
+      description: What insight does this add? Negative results are welcome.

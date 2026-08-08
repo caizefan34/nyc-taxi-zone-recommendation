@@ -1,0 +1,29 @@
+name: New Model Proposal
+description: Propose adding a new model (forecasting, policy, or RL agent)
+title: "[Model] "
+labels: [enhancement, new-model]
+body:
+  - type: textarea
+    attributes:
+      label: Model Description
+      description: What algorithm/approach? Link to paper if applicable.
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Model Type
+      options: [Demand Forecaster, Recommendation Policy, RL Agent, Graph Model, Other]
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Integration Plan
+      options:
+        - label: Implement in `src/`
+        - label: Add test in `tests/`
+        - label: Add benchmark script in `scripts/`
+        - label: Document in `docs/`
+  - type: textarea
+    attributes:
+      label: Expected Contribution
+      description: What performance improvement or insight does this model bring?

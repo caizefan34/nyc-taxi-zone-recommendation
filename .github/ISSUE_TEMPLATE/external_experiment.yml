@@ -1,0 +1,50 @@
+name: External Experiment Submission
+description: Submit your experiment results to the benchmark
+title: "[Experiment] "
+labels: [experiment, external-submission]
+body:
+  - type: input
+    attributes:
+      label: Model / Policy Name
+      placeholder: "e.g. MyCustomPolicy"
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Type
+      options: [Policy, Forecast, RL, Other]
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Contributor
+      placeholder: Your name or GitHub handle
+  - type: textarea
+    attributes:
+      label: Results
+      description: Provide results in this format
+      placeholder: |
+        | Metric | Your Result | Baseline (Two-Step) |
+        |---|---|---|
+        | NDCG@3 | [value] | 0.9565 |
+        | Hit@3 | [value] | 0.9714 |
+        | Daily Fare | [value] | $570.61 |
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction Commands
+      render: shell
+      placeholder: "python benchmark/runners/run_external_model.py --model MyCustomPolicy"
+  - type: textarea
+    attributes:
+      label: Notes
+      description: Any additional context about your experiment
+  - type: checkboxes
+    attributes:
+      label: Declaration
+      options:
+        - label: These results are reproducible
+        - label: No future information was used (no data leakage)
+        - label: I understand this is a simulator-based benchmark
+        - label: I agree to share results under MIT license

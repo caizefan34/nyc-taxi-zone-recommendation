@@ -1,0 +1,38 @@
+name: Benchmark Feedback
+description: Provide feedback on the benchmark platform
+title: "[Feedback] "
+labels: [feedback, community]
+body:
+  - type: dropdown
+    attributes:
+      label: Role
+      options: [Researcher, Engineer, Student, Other]
+  - type: dropdown
+    attributes:
+      label: ML Experience
+      options: [Beginner, Intermediate, Advanced]
+  - type: dropdown
+    attributes:
+      label: Installation Experience
+      options: [Easy, Moderate, Difficult]
+  - type: input
+    attributes:
+      label: Time to Setup
+      placeholder: "e.g. 5 minutes"
+  - type: input
+    attributes:
+      label: Tests Passed?
+      placeholder: "Yes / No / Partially"
+  - type: input
+    attributes:
+      label: Demo Worked?
+      placeholder: "Yes / No"
+  - type: textarea
+    attributes:
+      label: What Worked Well?
+  - type: textarea
+    attributes:
+      label: What Could Be Improved?
+  - type: textarea
+    attributes:
+      label: Suggestions
