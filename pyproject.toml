@@ -3,7 +3,7 @@ requires = ["setuptools>=64.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nyc-taxi-zone-recommendation"
+name = "urban-mobility-ai"
 version = "3.0.0"
 description = "Open-source decision intelligence platform for AI-driven fleet repositioning — demand forecasting, multi-agent simulation, offline RL & reproducible OPE on NYC taxi data"
 readme = "README.md"
@@ -29,11 +29,11 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://caizefan34.github.io/nyc-taxi-zone-recommendation/"
-Documentation = "https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/"
-Repository = "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
-Issues = "https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues"
-Discussions = "https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions"
+Homepage = "https://caizefan34.github.io/urban-mobility-ai/"
+Documentation = "https://caizefan34.github.io/urban-mobility-ai/docs/"
+Repository = "https://github.com/caizefan34/urban-mobility-ai"
+Issues = "https://github.com/caizefan34/urban-mobility-ai/issues"
+Discussions = "https://github.com/caizefan34/urban-mobility-ai/discussions"
 dependencies = [
     "numpy>=1.26.0",
     "pandas>=2.2.0",

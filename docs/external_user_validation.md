@@ -16,8 +16,8 @@
 ## Environment Setup
 
 ```bash
-git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
-cd nyc-taxi-zone-recommendation
+git clone https://github.com/caizefan34/urban-mobility-ai.git
+cd urban-mobility-ai
 python -m venv .venv
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 pip install -e ".[dev,data]"

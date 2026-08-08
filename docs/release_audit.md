@@ -1,7 +1,7 @@
 # Release Audit
 
 > **Date:** 2026-07-26 (Updated)
-> **Repository:** caizefan34/nyc-taxi-zone-recommendation
+> **Repository:** caizefan34/urban-mobility-ai
 > **Base:** `84849eb` (Merge pull request #7)
 > **Upgrade commits:** 5 logical commits (`304ecc9` → `e2db842`)
 

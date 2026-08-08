@@ -99,7 +99,7 @@ If you use this work, please cite:
   title = {Urban Mobility Decision Intelligence},
   year = {2026},
   publisher = {GitHub},
-  url = {https://github.com/caizefan34/nyc-taxi-zone-recommendation}
+  url = {https://github.com/caizefan34/urban-mobility-ai}
 }
 ```
 

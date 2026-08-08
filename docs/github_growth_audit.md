@@ -45,7 +45,7 @@
 
 ### Website (unified)
 ```
-caizefan34.github.io/nyc-taxi-zone-recommendation/
+caizefan34.github.io/urban-mobility-ai/
 ├── /         → Landing page (hero + stats + results + architecture)
 ├── /docs/    → Sphinx documentation
 └── /web/     → Interactive Leaflet map demo

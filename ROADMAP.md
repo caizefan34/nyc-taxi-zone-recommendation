@@ -77,4 +77,4 @@
 
 ## How to contribute
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [good first issues](https://github.com/caizefan34/nyc-taxi-zone-recommendation/labels/good%20first%20issue).
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [good first issues](https://github.com/caizefan34/urban-mobility-ai/labels/good%20first%20issue).

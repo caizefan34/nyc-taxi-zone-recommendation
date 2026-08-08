@@ -56,7 +56,7 @@ Thanks to everyone who contributed to this release!
 ### Installation
 
 ```bash
-pip install nyc-taxi-zone-recommendation==X.Y.Z
+pip install urban-mobility-ai==X.Y.Z
 # or from source
 git checkout vX.Y.Z
 pip install -e ".[dev,forecasting,graph,rl]"

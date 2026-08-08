@@ -330,8 +330,8 @@ All results are on NYC Yellow Taxi data. Geographic, temporal, and modal (green 
 ### 9.1 Reproduce All Results
 
 ```bash
-git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
-cd nyc-taxi-zone-recommendation
+git clone https://github.com/caizefan34/urban-mobility-ai.git
+cd urban-mobility-ai
 pip install -e ".[dev,forecasting,graph,rl,api,demo]"
 make all          # Full benchmark pipeline
 pytest tests -q   # 402 tests
@@ -375,6 +375,6 @@ We present an open-source decision intelligence platform for AI-driven fleet rep
 
 ---
 
-**Repository:** https://github.com/caizefan34/nyc-taxi-zone-recommendation
+**Repository:** https://github.com/caizefan34/urban-mobility-ai
 **Contact:** caizefan@sjtu.edu.cn
 **Version:** v3.0.0 (2026-08)

@@ -1,7 +1,7 @@
 # Architecture Audit Report
 
 **Generated:** 2026-08-07
-**Repository:** nyc-taxi-zone-recommendation
+**Repository:** urban-mobility-ai
 **Branch:** master (a26603f)
 
 ---

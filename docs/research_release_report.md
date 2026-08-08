@@ -4,7 +4,7 @@
 
 **Version:** 1.0.0  
 **Date:** 2026-07-26  
-**Repository:** https://github.com/caizefan34/nyc-taxi-zone-recommendation
+**Repository:** https://github.com/caizefan34/urban-mobility-ai
 
 ---
 

@@ -107,8 +107,8 @@ I would value your perspective on [specific aspect relevant to them].
 If you have time for a brief chat or feedback on the repository,
 I would greatly appreciate it.
 
-Repository: https://github.com/caizefan34/nyc-taxi-zone-recommendation
-Live Demo: https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/
+Repository: https://github.com/caizefan34/urban-mobility-ai
+Live Demo: https://caizefan34.github.io/urban-mobility-ai/web/
 
 Best regards,
 Zefan Cai

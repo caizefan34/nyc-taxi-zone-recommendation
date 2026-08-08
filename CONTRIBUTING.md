@@ -18,11 +18,11 @@ We welcome contributions from researchers, engineers, and students. Whether you 
 
 ## Quick Links
 
-- [Good first issues](https://github.com/caizefan34/nyc-taxi-zone-recommendation/labels/good%20first%20issue)
+- [Good first issues](https://github.com/caizefan34/urban-mobility-ai/labels/good%20first%20issue)
 - [Roadmap](ROADMAP.md)
 - [Paper Draft](docs/research_paper_draft.md)
-- [Discussions](https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions)
-- [Issue tracker](https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues)
+- [Discussions](https://github.com/caizefan34/urban-mobility-ai/discussions)
+- [Issue tracker](https://github.com/caizefan34/urban-mobility-ai/issues)
 
 ---
 
@@ -128,8 +128,8 @@ def main():
 ## Development setup
 
 ```bash
-git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
-cd nyc-taxi-zone-recommendation
+git clone https://github.com/caizefan34/urban-mobility-ai.git
+cd urban-mobility-ai
 pip install -e ".[dev,data,forecasting,graph,rl,api,demo]"
 
 # Or with Docker

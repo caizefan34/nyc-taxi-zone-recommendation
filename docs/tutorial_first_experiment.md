@@ -11,8 +11,8 @@
 ## Step 1: Install (5 min)
 
 ```bash
-git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
-cd nyc-taxi-zone-recommendation
+git clone https://github.com/caizefan34/urban-mobility-ai.git
+cd urban-mobility-ai
 pip install -e ".[dev]"
 ```
 

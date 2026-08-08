@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/">
+  <a href="https://caizefan34.github.io/urban-mobility-ai/web/">
     <img src="assets/social-preview.svg" width="100%" alt="Urban Mobility Decision Intelligence">
   </a>
 
@@ -16,7 +16,7 @@
   <p>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white" alt="Python"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?logo=opensourceinitiative&logoColor=white" alt="MIT"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&logo=githubactions&logoColor=white&label=tests" alt="CI"></a>
+    <a href="https://github.com/caizefan34/urban-mobility-ai/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/caizefan34/urban-mobility-ai/ci.yml?branch=master&logo=githubactions&logoColor=white&label=tests" alt="CI"></a>
     <img src="https://img.shields.io/badge/benchmark-NDCG%400.9565-success?logo=googleanalytics&logoColor=white" alt="NDCG">
     <img src="https://img.shields.io/badge/lift-%2B%24139%2Fday-brightgreen?logo=uber&logoColor=white" alt="Lift">
     <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen?logo=github" alt="Contributions"></a>
@@ -26,14 +26,14 @@
     <a href="docs/badges/benchmark.svg"><img src="docs/badges/benchmark.svg" alt="Benchmark"></a>
     <a href="docs/badges/documentation.svg"><img src="docs/badges/documentation.svg" alt="Documentation"></a>
     <a href="#quick-start"><img src="https://img.shields.io/badge/docker-ready-blue?logo=docker&logoColor=white" alt="Docker"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/stargazers"><img src="https://img.shields.io/github/stars/caizefan34/nyc-taxi-zone-recommendation?style=social" alt="Stars"></a>
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/network/members"><img src="https://img.shields.io/github/forks/caizefan34/nyc-taxi-zone-recommendation?style=social" alt="Forks"></a>
+    <a href="https://github.com/caizefan34/urban-mobility-ai/stargazers"><img src="https://img.shields.io/github/stars/caizefan34/urban-mobility-ai?style=social" alt="Stars"></a>
+    <a href="https://github.com/caizefan34/urban-mobility-ai/network/members"><img src="https://img.shields.io/github/forks/caizefan34/urban-mobility-ai?style=social" alt="Forks"></a>
   </p>
 
   <p>
-    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/">&#127760; Live Demo</a>
+    <a href="https://caizefan34.github.io/urban-mobility-ai/web/">&#127760; Live Demo</a>
     &nbsp;·&nbsp;
-    <a href="https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/">&#128214; Documentation</a>
+    <a href="https://caizefan34.github.io/urban-mobility-ai/docs/">&#128214; Documentation</a>
     &nbsp;·&nbsp;
     <a href="#-quick-start-">&#9889; Quick Start</a>
     &nbsp;·&nbsp;
@@ -43,7 +43,7 @@
     &nbsp;·&nbsp;
     <a href="ROADMAP.md">&#128640; Roadmap</a>
     &nbsp;·&nbsp;
-    <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions">&#128172; Discussions</a>
+    <a href="https://github.com/caizefan34/urban-mobility-ai/discussions">&#128172; Discussions</a>
   </p>
 </div>
 
@@ -106,7 +106,7 @@ docker compose up
 ### From source
 
 ```bash
-git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git && cd nyc-taxi-zone-recommendation
+git clone https://github.com/caizefan34/urban-mobility-ai.git && cd urban-mobility-ai
 pip install -e ".[dev,api,demo]"
 
 # Try it
@@ -245,7 +245,7 @@ notebooks/          Jupyter tutorials      examples/      Usage examples
 | **Domain Experts** | Review simulator assumptions, add city adapters, improve docs |
 | **Students** | Good first issues, tutorial improvements, Jupyter notebooks |
 
-&#128640; **Get started:** [Discussions](https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions) · [Issues](https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues) · [CONTRIBUTING.md](CONTRIBUTING.md)
+&#128640; **Get started:** [Discussions](https://github.com/caizefan34/urban-mobility-ai/discussions) · [Issues](https://github.com/caizefan34/urban-mobility-ai/issues) · [CONTRIBUTING.md](CONTRIBUTING.md)
 
 &#128231; **Contact:** Zefan Cai — caizefan@sjtu.edu.cn — [Shanghai Jiao Tong University](https://www.sjtu.edu.cn/)
 
@@ -259,7 +259,7 @@ notebooks/          Jupyter tutorials      examples/      Usage examples
   title        = {Urban Mobility Decision Intelligence: An Open-Source Platform for AI-Driven Fleet Repositioning},
   year         = {2026},
   publisher    = {GitHub},
-  url          = {https://github.com/caizefan34/nyc-taxi-zone-recommendation},
+  url          = {https://github.com/caizefan34/urban-mobility-ai},
   note         = {v3.0.0. Cite the specific commit used. Simulator outcomes, not production estimates.}
 }
 ```
@@ -268,11 +268,11 @@ notebooks/          Jupyter tutorials      examples/      Usage examples
 
 ## &#11088; Star History
 
-<a href="https://star-history.com/#caizefan34/nyc-taxi-zone-recommendation&Date">
+<a href="https://star-history.com/#caizefan34/urban-mobility-ai&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=caizefan34/nyc-taxi-zone-recommendation&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=caizefan34/nyc-taxi-zone-recommendation&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=caizefan34/nyc-taxi-zone-recommendation&type=Date" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=caizefan34/urban-mobility-ai&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=caizefan34/urban-mobility-ai&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=caizefan34/urban-mobility-ai&type=Date" />
   </picture>
 </a>
 

@@ -5,9 +5,9 @@ NYC Taxi Zone Recommendation
 .. image:: https://img.shields.io/badge/python-3.10%2B-blue
    :target: https://www.python.org/downloads/
 .. image:: https://img.shields.io/badge/license-MIT-green
-   :target: https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/LICENSE
-.. image:: https://img.shields.io/github/actions/workflow/status/caizefan34/nyc-taxi-zone-recommendation/ci.yml?branch=master&label=tests
-   :target: https://github.com/caizefan34/nyc-taxi-zone-recommendation/actions
+   :target: https://github.com/caizefan34/urban-mobility-ai/blob/master/LICENSE
+.. image:: https://img.shields.io/github/actions/workflow/status/caizefan34/urban-mobility-ai/ci.yml?branch=master&label=tests
+   :target: https://github.com/caizefan34/urban-mobility-ai/actions
 
 **An open-source benchmark platform for AI-driven urban mobility decision making**
 — combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement
@@ -16,9 +16,9 @@ learning with reproducible evaluation.
 .. raw:: html
 
    <div style="margin: 20px 0;">
-     <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" style="display:inline-block;padding:10px 20px;background:#2ea44f;color:white;border-radius:6px;text-decoration:none;margin-right:10px;">⭐ GitHub</a>
+     <a href="https://github.com/caizefan34/urban-mobility-ai" style="display:inline-block;padding:10px 20px;background:#2ea44f;color:white;border-radius:6px;text-decoration:none;margin-right:10px;">⭐ GitHub</a>
      <a href="demo_gallery.html" style="display:inline-block;padding:10px 20px;background:#3178c6;color:white;border-radius:6px;text-decoration:none;margin-right:10px;">🎬 Demo Gallery</a>
-     <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/ROADMAP.md" style="display:inline-block;padding:10px 20px;background:#6f42c1;color:white;border-radius:6px;text-decoration:none;">🗺 Roadmap</a>
+     <a href="https://github.com/caizefan34/urban-mobility-ai/blob/master/ROADMAP.md" style="display:inline-block;padding:10px 20px;background:#6f42c1;color:white;border-radius:6px;text-decoration:none;">🗺 Roadmap</a>
    </div>
 
 ----
@@ -48,7 +48,7 @@ Two-Step vs Single-Step: +$21.84/day, paired bootstrap 95% CI [$5.00, $39.53].
 Architecture
 ============
 
-.. image:: https://raw.githubusercontent.com/caizefan34/nyc-taxi-zone-recommendation/master/assets/social-preview.svg
+.. image:: https://raw.githubusercontent.com/caizefan34/urban-mobility-ai/master/assets/social-preview.svg
 
 **Pipeline:** Raw TLC trips → Data cleaning → Demand forecasting → Multi-agent simulator → Policy optimization → Benchmark evaluation
 
@@ -95,8 +95,8 @@ Run the full pipeline:
 
 .. code-block:: bash
 
-   git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
-   cd nyc-taxi-zone-recommendation
+   git clone https://github.com/caizefan34/urban-mobility-ai.git
+   cd urban-mobility-ai
    pip install -e ".[dev,forecasting,graph,rl]"
    make all
 
@@ -109,7 +109,7 @@ Citation
      author = {Zefan Cai},
      title  = {NYC Taxi Zone Recommendation: An Open-Source Benchmark Platform for AI-Driven Urban Mobility},
      year   = {2025},
-     url    = {https://github.com/caizefan34/nyc-taxi-zone-recommendation}
+     url    = {https://github.com/caizefan34/urban-mobility-ai}
    }
 
 .. toctree::

@@ -101,7 +101,7 @@ MIT License. See [LICENSE](../LICENSE).
   title = {Dynamic Urban Mobility Decision System: An Open-Source Benchmark Platform},
   year = {2025},
   publisher = {GitHub},
-  url = {https://github.com/caizefan34/nyc-taxi-zone-recommendation}
+  url = {https://github.com/caizefan34/urban-mobility-ai}
 }
 `
 
@@ -109,6 +109,6 @@ See [CITATION.cff](../CITATION.cff) for full metadata.
 
 ## Repository
 
-**URL**: https://github.com/caizefan34/nyc-taxi-zone-recommendation
-**Live Demo**: https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/
-**Documentation**: https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/
+**URL**: https://github.com/caizefan34/urban-mobility-ai
+**Live Demo**: https://caizefan34.github.io/urban-mobility-ai/web/
+**Documentation**: https://caizefan34.github.io/urban-mobility-ai/docs/

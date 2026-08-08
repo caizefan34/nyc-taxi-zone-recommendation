@@ -6,8 +6,8 @@ authors:
     given-names: Zefan
     email: caizefan@sjtu.edu.cn
     affiliation: Shanghai Jiao Tong University
-repository-code: "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
-url: "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
+repository-code: "https://github.com/caizefan34/urban-mobility-ai"
+url: "https://github.com/caizefan34/urban-mobility-ai"
 abstract: "A reproducible, research-grade decision intelligence platform for AI-driven fleet repositioning. Combines spatiotemporal demand forecasting, multi-agent simulation, offline reinforcement learning with trajectory-aware doubly robust policy evaluation, and production-style API/Docker deployment on NYC TLC trip data."
 keywords:
   - urban mobility

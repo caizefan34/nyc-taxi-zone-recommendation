@@ -17,8 +17,8 @@ The benchmark accepts three types of contributions:
 ### 1. Fork and install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/nyc-taxi-zone-recommendation.git
-cd nyc-taxi-zone-recommendation
+git clone https://github.com/YOUR_USERNAME/urban-mobility-ai.git
+cd urban-mobility-ai
 pip install -e ".[dev,forecasting,graph,rl]"
 ```
 

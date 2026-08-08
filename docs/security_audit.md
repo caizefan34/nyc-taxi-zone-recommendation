@@ -4,7 +4,7 @@
 2026-07-26
 
 ## Target
-Repository: nyc-taxi-zone-recommendation (branch: release-v2.0.0)
+Repository: urban-mobility-ai (branch: release-v2.0.0)
 
 ## Checks
 

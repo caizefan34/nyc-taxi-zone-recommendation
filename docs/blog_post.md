@@ -147,13 +147,13 @@ Planned (not yet executed):
 
 ## Try It Yourself
 
-- **Live Demo**: https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/
-- **Repository**: github.com/caizefan34/nyc-taxi-zone-recommendation
-- **Documentation**: caizefan34.github.io/nyc-taxi-zone-recommendation/docs/
+- **Live Demo**: https://caizefan34.github.io/urban-mobility-ai/web/
+- **Repository**: github.com/caizefan34/urban-mobility-ai
+- **Documentation**: caizefan34.github.io/urban-mobility-ai/docs/
 
 ```bash
-git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
-cd nyc-taxi-zone-recommendation
+git clone https://github.com/caizefan34/urban-mobility-ai.git
+cd urban-mobility-ai
 pip install -e ".[dev,data,forecasting,graph,rl,api,demo]"
 python -m scripts.run_ope_comparison --seed 42
 ```

@@ -23,15 +23,15 @@ A fully open-source pipeline:
 
 ### Try It Now
 
-- **Live Demo**: https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/
-- **Documentation**: https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/
-- **Repository**: https://github.com/caizefan34/nyc-taxi-zone-recommendation
+- **Live Demo**: https://caizefan34.github.io/urban-mobility-ai/web/
+- **Documentation**: https://caizefan34.github.io/urban-mobility-ai/docs/
+- **Repository**: https://github.com/caizefan34/urban-mobility-ai
 
 ### Reproduce Everything
 
 ```bash
-git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
-cd nyc-taxi-zone-recommendation
+git clone https://github.com/caizefan34/urban-mobility-ai.git
+cd urban-mobility-ai
 python scripts/verify_reproduction.py
 ```
 
@@ -49,7 +49,7 @@ python scripts/verify_reproduction.py
 
 ### Contact
 
-- GitHub: https://github.com/caizefan34/nyc-taxi-zone-recommendation
+- GitHub: https://github.com/caizefan34/urban-mobility-ai
 - Email: caizefan@sjtu.edu.cn
 
 ---

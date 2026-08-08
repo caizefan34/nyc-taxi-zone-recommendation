@@ -27,7 +27,7 @@ jobs:
 ```
 
 ## Domain
-- Default: `https://caizefan34.github.io/nyc-taxi-zone-recommendation/`
+- Default: `https://caizefan34.github.io/urban-mobility-ai/`
 - Custom domain: Configure in Settings - Pages (optional)
 
 ## Testing Locally

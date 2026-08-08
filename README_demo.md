@@ -3,7 +3,7 @@
 ## Quick Start
 
 ### Option 1: Live Demo (No Installation)
-Visit: https://caizefan34.github.io/nyc-taxi-zone-recommendation/web/
+Visit: https://caizefan34.github.io/urban-mobility-ai/web/
 
 ### Option 2: Run Locally
 ```bash

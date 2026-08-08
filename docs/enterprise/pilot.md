@@ -30,8 +30,8 @@ The open-source project provides the research and engineering foundation for urb
 
 1. **Clone and install**
    ```bash
-   git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
-   cd nyc-taxi-zone-recommendation
+   git clone https://github.com/caizefan34/urban-mobility-ai.git
+   cd urban-mobility-ai
    pip install -e ".[dev]"
    ```
 

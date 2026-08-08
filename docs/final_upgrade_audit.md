@@ -1,7 +1,7 @@
 # Research-grade v2 Upgrade Audit
 
 > **Date:** 2026-07-26
-> **Repository:** caizefan34/nyc-taxi-zone-recommendation
+> **Repository:** caizefan34/urban-mobility-ai
 > **Audit type:** Final acceptance — no code modified
 
 ---

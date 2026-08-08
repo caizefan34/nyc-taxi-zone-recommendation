@@ -24,12 +24,12 @@
 
 ## Interactive Demo
 
-🌐 [Live Web Demo](https://caizefan34.github.io/nyc-taxi-zone-recommendation/)  
+🌐 [Live Web Demo](https://caizefan34.github.io/urban-mobility-ai/)  
 🖥️ Local: `streamlit run app/app.py`
 
 ## Limitations
 
-⚠️ Simulator outcomes are not production revenue estimates. See [methodology](https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/methodology.html).
+⚠️ Simulator outcomes are not production revenue estimates. See [methodology](https://caizefan34.github.io/urban-mobility-ai/docs/methodology.html).
 
 ## What's Changed
 
@@ -37,4 +37,4 @@
 - Phase 15: Repository architecture cleanup
 - Phase 16: GitHub visibility and community adoption
 
-**Full Changelog**: https://github.com/caizefan34/nyc-taxi-zone-recommendation/commits/v2.0.0
+**Full Changelog**: https://github.com/caizefan34/urban-mobility-ai/commits/v2.0.0

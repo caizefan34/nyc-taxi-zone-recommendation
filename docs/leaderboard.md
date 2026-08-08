@@ -76,7 +76,7 @@ If you use these benchmark results, please cite:
   title = {Dynamic Urban Mobility Decision System},
   year = {2025},
   publisher = {GitHub},
-  url = {https://github.com/caizefan34/nyc-taxi-zone-recommendation}
+  url = {https://github.com/caizefan34/urban-mobility-ai}
 }
 ```
 
