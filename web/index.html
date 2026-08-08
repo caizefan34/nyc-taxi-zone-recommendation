@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NYC Mobility AI — Interactive Simulation Platform</title>
-<meta name="description" content="Interactive simulation platform for NYC taxi zone recommendation research.">
+<meta name="description" content="Interactive simulation platform for NYC taxi zone recommendation — AI-driven demand forecasting, multi-agent competition, and policy evaluation on 263 taxi zones.">
+<meta name="keywords" content="NYC taxi, AI simulation, reinforcement learning, demand forecasting, policy evaluation, urban mobility, decision intelligence">
+<meta property="og:title" content="NYC Mobility AI — Interactive Decision Simulation">
+<meta property="og:description" content="See AI-driven taxi zone recommendations in action: demand forecasting, multi-agent simulation, and policy comparison.">
 <style>/* required styles */
 
 
@@ -2323,14 +2326,15 @@ img {
               <div style="display:flex;justify-content:space-between;align-items:center;">
                 <div>
                   <div class="zone-name" id="recZone">Move to Midtown Center</div>
-                  <div style="font-size:0.8rem;color:var(--text-muted);">AI Policy Recommendation (Simulation)</div>
+                  <div style="font-size:0.8rem;color:var(--text-muted);">AI Decision — <span id="recStrategy" style="color:var(--accent-light);">Two-Step MDP</span></div>
                 </div>
-                <span style="font-size:0.75rem;padding:0.25rem 0.75rem;border-radius:100px;background:rgba(0,180,216,0.15);color:var(--accent-light);">DQN Policy</span>
+                <span style="font-size:0.75rem;padding:0.25rem 0.75rem;border-radius:100px;background:rgba(0,180,216,0.15);color:var(--accent-light);" id="recStrategyBadge">DQN Policy</span>
               </div>
-              <div class="metrics">
+              <div class="metrics" style="grid-template-columns:repeat(4,1fr);">
                 <div class="metric"><div class="metric-value" id="recExpectedReward">$0</div><div class="metric-label">Expected Reward</div></div>
                 <div class="metric"><div class="metric-value" id="recUtilization">0%</div><div class="metric-label">Utilization</div></div>
                 <div class="metric"><div class="metric-value" id="recConfidence">-</div><div class="metric-label">Confidence</div></div>
+                <div class="metric"><div class="metric-value" id="recStrategy">MPD</div><div class="metric-label">Strategy</div></div>
               </div>
             </div>
           </div>

@@ -1,23 +1,38 @@
 ---
 name: Bug Report
-about: Report a bug or unexpected behavior
+about: Found a bug? Help us fix it
 title: "[Bug] "
 labels: bug
 assignees: ""
 ---
 
-## Describe the bug
-A clear and concise description.
+## Description
 
-## To Reproduce
-Steps to reproduce:
-1. Run `...`
-2. See error
+<!-- Clear, concise description of the bug -->
 
-## Expected behavior
-What you expected to happen.
+## Steps to Reproduce
+
+<!-- Minimal commands or code to reproduce the issue -->
+1.
+2.
+3.
+
+## Expected vs Actual
+
+| Expected | Actual |
+|---|---|
+| | |
+
+## Error Log
+
+```
+(paste full traceback here if applicable)
+```
 
 ## Environment
-- Python version:
-- OS:
-- Package versions (`pip list | grep -E "numpy|pandas|torch|lightgbm"`):
+
+- **Python version:** `python --version`
+- **OS:** (Windows / macOS / Linux)
+- **Key packages:** `pip list | grep -iE "numpy|pandas|torch|lightgbm|fastapi"`
+- **Installation:** `pip install -e ".[dev,api]"`
+- **Docker?:** Yes / No

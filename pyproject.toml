@@ -4,23 +4,28 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nyc-taxi-zone-recommendation"
-version = "1.0.0"
-description = "Two-step finite-horizon planning for taxi driver zone recommendations using NYC TLC Yellow Taxi trip data"
+version = "3.0.0"
+description = "Open-source decision intelligence platform for AI-driven fleet repositioning — demand forecasting, multi-agent simulation, offline RL & reproducible OPE on NYC taxi data"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
     {name = "Zefan Cai", email = "caizefan@sjtu.edu.cn"}
 ]
-keywords = ["taxi", "recommendation", "planning", "reinforcement-learning", "spatial-temporal"]
+keywords = ["reinforcement-learning", "offline-rl", "off-policy-evaluation", "demand-forecasting", "decision-intelligence", "multi-agent-simulation", "urban-mobility", "smart-city", "benchmark", "reproducible-research", "spatiotemporal", "graph-neural-networks", "recommender-system"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Operating System :: OS Independent",
 ]
 dependencies = [
     "numpy>=1.26.0",

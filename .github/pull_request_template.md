@@ -1,34 +1,50 @@
-## Description
+<details>
+<summary><strong>Pull Request Guidelines</strong></summary>
 
-Briefly describe the changes in this pull request.
+Thank you for contributing! Please fill out the sections below. PRs with incomplete descriptions may be asked for revisions.
 
-## Related Issue
+</details>
 
-Fixes #(issue)
+## Summary
 
-## Type of Change
+<!-- 1-2 sentences describing the change and why -->
+
+## Type
 
 - [ ] Bug fix
 - [ ] New feature
+- [ ] New policy/algorithm/forecaster
+- [ ] New city adapter
 - [ ] Benchmark contribution
-- [ ] Documentation update
-- [ ] Reproducibility improvement
+- [ ] Documentation improvement
+- [ ] Paper/Research contribution
+- [ ] Infrastructure (CI, Docker, config)
 
-## Testing
+## Related
 
-- [ ] All existing tests pass (`pytest tests/ -q --tb=short`)
-- [ ] Lint checks pass (`ruff check src/ tests/ scripts/`)
-- [ ] New tests added for new functionality
+<!-- Link issues: Fixes #123, Related to #456 -->
+
+## Verification
+
+<!-- How did you test? What commands should a reviewer run? -->
+
+- [ ] `pytest tests/ -q --tb=short` passes
+- [ ] `ruff check src/ tests/ scripts/` passes
+- [ ] New code is tested where applicable
+- [ ] Documentation updated (README, docs/, inline)
 
 ## Reproducibility
 
-- [ ] All random seeds are fixed and documented
-- [ ] Configuration files are included or updated
-- [ ] Results are reproducible from the instructions provided
+- [ ] Random seeds are fixed and documented
+- [ ] Config files included or updated
+- [ ] Results are reproducible from instructions provided
 
-## Checklist
+## Impact
 
-- [ ] My code follows the project's code style
-- [ ] I have updated documentation as needed
-- [ ] My changes do not introduce new negative results or remove existing ones
-- [ ] I have read the CONTRIBUTING.md guide
+- [ ] Backward compatible
+- [ ] Breaking change (describe): _______________
+- [ ] New optional dependency: _______________
+
+<br>
+
+> For benchmark submissions, please include raw results in `outputs/` and relevant config in `configs/`.
