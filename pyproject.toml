@@ -27,13 +27,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Visualization",
     "Operating System :: OS Independent",
 ]
-
-[project.urls]
-Homepage = "https://caizefan34.github.io/urban-mobility-ai/"
-Documentation = "https://caizefan34.github.io/urban-mobility-ai/docs/"
-Repository = "https://github.com/caizefan34/urban-mobility-ai"
-Issues = "https://github.com/caizefan34/urban-mobility-ai/issues"
-Discussions = "https://github.com/caizefan34/urban-mobility-ai/discussions"
 dependencies = [
     "numpy>=1.26.0",
     "pandas>=2.2.0",
@@ -42,6 +35,13 @@ dependencies = [
     "matplotlib>=3.8.0",
     "pyyaml>=6.0",
 ]
+
+[project.urls]
+Homepage = "https://caizefan34.github.io/urban-mobility-ai/"
+Documentation = "https://caizefan34.github.io/urban-mobility-ai/docs/"
+Repository = "https://github.com/caizefan34/urban-mobility-ai"
+Issues = "https://github.com/caizefan34/urban-mobility-ai/issues"
+Discussions = "https://github.com/caizefan34/urban-mobility-ai/discussions"
 
 [project.optional-dependencies]
 data = [
