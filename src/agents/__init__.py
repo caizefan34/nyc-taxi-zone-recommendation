@@ -9,5 +9,6 @@ All outputs are labeled by evaluation type. Nothing here is production evidence.
 """
 
 from src.agents.llm_agent import MobilityAgent, ToolResult
+from src.agents.planners import AnthropicPlanner, OpenAICompatiblePlanner, planner_from_env
 
-__all__ = ["MobilityAgent", "ToolResult"]
+__all__ = ["MobilityAgent", "ToolResult", "AnthropicPlanner", "OpenAICompatiblePlanner", "planner_from_env"]

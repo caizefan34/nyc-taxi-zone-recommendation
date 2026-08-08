@@ -5,7 +5,7 @@
 > **Method:** `reuse > refactor > rewrite`. This repository was already a mature
 > v3.0.0 platform — 12 of 14 upgrade phases were already implemented. Rather than
 > rewriting a working system, we audited it (Phase 0), confirmed what existed,
-> and filled the 6 real gaps. Result: 436 tests pass (up from 402), no regressions.
+> and filled the 6 real gaps. Result: 448 tests pass (up from 402), no regressions.
 
 ---
 
@@ -18,7 +18,10 @@ honest-by-construction** system:
 
 - **Benchmark CLI** + result validator + auto-regenerated public leaderboard
 - **`/simulate` and `/evaluate` REST endpoints** — offline evaluation as a service
-- **LLM mobility agent scaffold** — tool-using conversational layer (echo-mode, no provider)
+- **LLM mobility agent** — tool-using conversational layer with provider-backed
+  planners (`AnthropicPlanner`, `OpenAICompatiblePlanner`); echo-mode default,
+  flip to a real LLM by setting one env var. Provider path mock-tested (no
+  live calls claimed)
 - **Fixed a real deployment blocker**: `pyproject.toml` parsed `dependencies`
   as `project.urls.dependencies`, which broke `pip install` and every Docker build
 - **Docker images now work out of the box** — data baked in, all endpoints verified live
@@ -34,7 +37,7 @@ honest-by-construction** system:
 | Installation | `pip install -e .` failed (broken `[project.urls.dependencies]`) | pyproject fixed; pip metadata + Docker build succeed |
 | Benchmarking | no CLI, manual artifact digging | `benchmark/run.py --model X --city Y --leaderboard` |
 | Evaluation API | only `/v1/recommendations` (inference) | + `/simulate` (multi-agent rollout), `/evaluate` (offline metrics) |
-| Agent interface | none | `src/agents/MobilityAgent` — recommend/forecast/simulate/evaluate tools, labeled eval types |
+| Agent interface | none | `src/agents/MobilityAgent` + `planners.py` — recommend/forecast/simulate/evaluate tools, labeled eval types, Anthropic/OpenAI-compatible planners (echo fallback) |
 | Docs | research notes un-indexed | Sphinx "Platform" + "Research Notes" toctrees; `docs/llm_agent.md`, `docs/repository_audit.md` |
 
 ## 3. Files Changed / Added
@@ -46,19 +49,19 @@ honest-by-construction** system:
 `docs/leaderboard.md` (regenerated), `src/api/routes/api.py` (+2 endpoints),
 `src/api/schemas/request_response.py` (+4 models).
 
-**Added (10):**
+**Added (12):**
 `benchmark/run.py`, `benchmark/leaderboard.py`, `benchmark/schemas/validator.py`,
-`src/api/services/simulation_service.py`, `src/agents/{__init__,llm_agent}.py`,
+`src/api/services/simulation_service.py`, `src/agents/{__init__,llm_agent,planners}.py`,
 `docs/repository_audit.md`, `docs/llm_agent.md`,
 `docs/research/multi_agent_market_effect.md`,
 `tests/test_benchmark_cli.py`, `tests/test_api_simulate_evaluate.py`,
-`tests/test_llm_agent.py`.
+`tests/test_llm_agent.py`, `tests/test_planners.py`.
 
 ## 4. Verification Status
 
 | Item | Status | Evidence |
 |---|---|---|
-| Tests | **PASS** | `436 passed, 0 failed` (was 402) |
+| Tests | **PASS** | `448 passed, 0 failed` (was 402; +12 provider-planner tests) |
 | Lint | **PASS** | `ruff check src/ tests/ benchmark/ scripts/` → clean |
 | Docker build (api) | **PASS** | `docker build --target api` exit 0 |
 | Docker build (demo) | **PASS** | `docker build --target demo` exit 0 |
@@ -66,7 +69,8 @@ honest-by-construction** system:
 | API (live container) | **PASS** | `/health` `/ready` `/v1/recommendations` `/simulate` `/evaluate` all 200 |
 | Compose config | **PASS** | `docker compose config --quiet` |
 | Benchmark CLI | **PASS** | `--list`, `--leaderboard`, validator all work |
-| Docs build | **PASS** | Sphinx `-W --keep-going` → 0 warnings, exit 0 (107 sources; was 95 warnings incl. 83 unreferenced-doc + 12 xref/highlighting/image) |
+| Docs build | **PASS** | Sphinx `-W --keep-going` → 0 warnings, exit 0 (107 sources; was 95 warnings incl. 83 unreferenced-doc + 12 xref/highlighting/image). Enforced in CI (new `docs` job) |
+| LLM agent | **PASS** | 23 tests (11 echo + 12 mocked provider); `planner_from_env` echo fallback verified without keys |
 
 ## 5. Research Impact
 
@@ -91,14 +95,19 @@ honest-by-construction** system:
   would clutter the sidebar). They still build and stay reachable by URL; the
   `-W` build ignores only `toc.not_included` and keeps failing on real defects
   (xref, highlighting, image).
-- **Multi-city adapters** beyond NYC are stubs; RL policies trained with a single seed.
-- **LLM agent** runs in echo mode; a model provider is the documented extension point.
+- **Multi-city adapters** beyond NYC have code but no real data; RL policies trained with a single seed.
+- **LLM agent providers are implemented and mock-tested** — a real API key is
+  required to exercise a live provider (echo mode is the zero-key default).
 
 ## 7. Next Steps
 
-1. Commit this change set (branch + PR).
-2. Add a CI step that runs `make all` before Docker build so fresh-clone builds work.
-3. Wire a real LLM planner into `src/agents/` (see `docs/llm_agent.md`).
+1. (Done) Commit this change set (branch + PR); CI now enforces the docs `-W` build.
+2. (Resolved) `make all` before Docker build is infeasible in CI (multi-hour
+   pipeline). Instead, data-dependent `/simulate` tests `skipif` on missing
+   data; the docker job keeps validating build + `/health`. A fresh-clone
+   deployment that needs data endpoints must run the data pipeline first.
+3. (Done) Provider-backed LLM planners are wired (`src/agents/planners.py`).
+   Exercise them against a real provider with a key when one is available.
 4. Run `make all` to regenerate `data/processed/` + `outputs/` after any data change.
 5. Curate the ~83 archived docs into the toctree (or trim the archive) if full
    sidebar navigation is ever wanted — currently they are reachable by URL only.

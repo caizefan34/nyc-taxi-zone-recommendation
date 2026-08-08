@@ -12,6 +12,8 @@ All notable changes to this project are documented here. Format based on [Keep a
 - Public leaderboard generator (`docs/leaderboard.md`)
 - `/simulate` and `/evaluate` REST endpoints (multi-agent rollout + offline metrics)
 - LLM mobility agent scaffold (`src/agents/`) — tool-using, echo-mode, no provider required
+- Provider-backed planners (`src/agents/planners.py`): `AnthropicPlanner` (`claude-sonnet-5`), `OpenAICompatiblePlanner` (any OpenAI-compatible endpoint via stdlib `urllib`), and `planner_from_env()` — flip echo → real provider by setting `ANTHROPIC_API_KEY` / `OPENAI_API_KEY`, no code change
+- `.[agent]` optional extra (`anthropic` SDK, lazily imported)
 - Repository audit (`docs/repository_audit.md`)
 - Research note: multi-agent policy-adoption saturation (`docs/research/multi_agent_market_effect.md`)
 - `POST /simulate` / `POST /evaluate` documented in `docs/index.rst` platform toctree
@@ -29,10 +31,14 @@ All notable changes to this project are documented here. Format based on [Keep a
 - LLM agent test capitalization + deprecated `datetime.utcnow()`
 
 ### Verified
-- 436 tests pass (up from 402)
+- 448 tests pass (436 + 12 new provider-planner tests)
 - `ruff check src/ tests/ benchmark/ scripts/` clean
 - Docker api + demo images build and serve all endpoints; compose config valid
 - Sphinx docs build with `-W` (warnings-as-errors) now passes: **0 warnings** (was 95 — 83 unreferenced-doc `toc.not_included` + 12 xref/highlighting/image). Orphaned archive docs are suppressed via `suppress_warnings = ["toc.not_included"]` in `docs/conf.py` and remain reachable by URL; real defects still fail the build.
+- CI now enforces the docs `-W` build (new `docs` job in `ci.yml`)
+
+### Fixed
+- CI clean-clone break: `tests/test_api_simulate_evaluate.py` `/simulate` tests required gitignored `data/processed/validation_uncleaned.parquet` and would fail in CI. They now `skipif` when the data is missing (matching `test_baseline_1.py`); `/evaluate` tests use tracked `outputs/*.json` and always run.
 
 ---
 

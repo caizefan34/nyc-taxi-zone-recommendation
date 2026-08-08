@@ -14,6 +14,11 @@ from fastapi.testclient import TestClient  # noqa: E402
 from src.api.main import app  # noqa: E402
 from src.api.services.simulation_service import evaluate_model  # noqa: E402
 
+requires_data = pytest.mark.skipif(
+    not (ROOT / "data/processed/validation_uncleaned.parquet").exists(),
+    reason="Simulator trip market data not available - run `make all` (or the data pipeline) first",
+)
+
 
 @pytest.fixture(scope="module")
 def client():
@@ -21,6 +26,7 @@ def client():
 
 
 class TestSimulateEndpoint:
+    @requires_data
     def test_simulate_returns_simulator_metrics(self, client):
         r = client.post("/simulate", json={
             "model_name": "hot_zone", "driver_count": 10, "days": 1, "seed": 1,
@@ -32,6 +38,7 @@ class TestSimulateEndpoint:
         assert data["average_driver_revenue"] >= 0
         assert data["note"] == "Simulator outcome only. Not production revenue evidence."
 
+    @requires_data
     def test_simulate_is_deterministic(self, client):
         a = client.post("/simulate", json={"model_name": "hot_zone", "driver_count": 10, "days": 1, "seed": 42})
         b = client.post("/simulate", json={"model_name": "hot_zone", "driver_count": 10, "days": 1, "seed": 42})
