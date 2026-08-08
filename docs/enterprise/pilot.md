@@ -46,7 +46,7 @@ The open-source project provides the research and engineering foundation for urb
    ```
 
 4. **Review the architecture**
-   See [docs/architecture.md](../docs/architecture.md)
+   See [architecture](../architecture.md)
 
 ## Pilot Documentation
 

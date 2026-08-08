@@ -21,6 +21,12 @@ extensions = [
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+# ~83 process/audit/release docs are intentionally not in any toctree (they
+# would clutter the sidebar). They still build and stay reachable by URL.
+# Suppress only toc.not_included so -W keeps catching real defects (xref,
+# highlighting, image) while allowing these archived docs to exist.
+suppress_warnings = ["toc.not_included"]
 html_static_path = ["_static"]
 html_extra_path = ["../assets"]
 

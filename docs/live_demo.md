@@ -40,7 +40,7 @@ result = run_inference(zone_id=237, hour=14, day_of_week=2, month=7)
 
 ## Output Format
 
-```json
+```text
 {
   "input": {"zone": 237, "time": "14:00", "hour": 14, "day_of_week": 2, "month": 7},
   "features": { ... feature dict ... },

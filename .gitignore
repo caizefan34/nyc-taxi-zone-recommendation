@@ -15,6 +15,7 @@ data/
 # Generated output artifacts (track .md reports)
 outputs/*.json
 outputs/*.csv
+outputs/benchmark/
 outputs/tmp/
 !outputs/reference_metrics.json
 !outputs/parameter_selection.json

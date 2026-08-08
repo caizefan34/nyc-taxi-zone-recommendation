@@ -39,6 +39,7 @@
 - [x] Implicit Q-Learning (IQL) offline RL baseline
 - [x] Reproducible OPE benchmark with fixed-seed bootstrap
 - [x] Per-driver/episode trajectory collection with behavior propensities
+- [x] LLM mobility agent scaffold (tool-using, echo-mode, no provider required)
 - [ ] Fleet operations dashboard enhancements
 - [ ] Open benchmark leaderboard
 - [ ] Cross-city data pipeline prototypes

@@ -75,4 +75,4 @@ See [external contribution guide](external_contribution.md) to add your result t
 - Run the full benchmark: `make all`
 - Try the web demo: `streamlit run app/app.py`
 - Read the [methodology](methodology.md)
-- Explore the [API reference](api/data_loader.html)
+- Explore the [API reference](api/data_loader)

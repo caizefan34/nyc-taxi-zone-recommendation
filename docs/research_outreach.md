@@ -11,7 +11,7 @@
 | [r/MachineLearning](https://reddit.com/r/MachineLearning) | ML research community | Suggested |
 | [r/urbanplanning](https://reddit.com/r/urbanplanning) | Domain audience | Suggested |
 | [arXiv](https://arxiv.org) | Preprint hosting | Draft available |
-| [Twitter/X #RL #SmartCity]() | Visibility | Suggested |
+| [Twitter/X #RL #SmartCity](https://twitter.com) | Visibility | Suggested |
 
 ## Suggested post template
 

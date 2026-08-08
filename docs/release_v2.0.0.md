@@ -20,7 +20,7 @@
 
 ## Architecture
 
-![Pipeline](../assets/architecture_flow.png)
+See [architecture.md](architecture.md) for the pipeline and system overview.
 
 ## Interactive Demo
 

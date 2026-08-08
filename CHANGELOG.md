@@ -4,6 +4,38 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ---
 
+## [3.1.0] — Platform Completion (2026-08-08)
+
+### Added
+- Benchmark CLI (`benchmark/run.py`) with `--model`, `--city`, `--seed`, `--leaderboard`
+- Result-schema validator (`benchmark/schemas/validator.py`)
+- Public leaderboard generator (`docs/leaderboard.md`)
+- `/simulate` and `/evaluate` REST endpoints (multi-agent rollout + offline metrics)
+- LLM mobility agent scaffold (`src/agents/`) — tool-using, echo-mode, no provider required
+- Repository audit (`docs/repository_audit.md`)
+- Research note: multi-agent policy-adoption saturation (`docs/research/multi_agent_market_effect.md`)
+- `POST /simulate` / `POST /evaluate` documented in `docs/index.rst` platform toctree
+
+### Changed
+- README results restored to match checked-in benchmark artifacts (GraphSAGE MAE, multi-agent +$531.16)
+- Docker api image now bakes in `data/processed/` + `outputs/` so all endpoints work out of the box
+- `.dockerignore` updated to include processed data and outputs in the api build context
+- `docker_setup.md` rewritten to match current services and data handling
+- Fixed pyproject.toml: `dependencies` moved under `[project]` (was parsed as `project.urls.dependencies`, breaking `pip install` and Docker builds)
+- ROADMAP: LLM mobility agent scaffold marked complete
+
+### Fixed
+- `test_report_consistency` failures — README headline metrics now match checked-in artifacts
+- LLM agent test capitalization + deprecated `datetime.utcnow()`
+
+### Verified
+- 436 tests pass (up from 402)
+- `ruff check src/ tests/ benchmark/ scripts/` clean
+- Docker api + demo images build and serve all endpoints; compose config valid
+- Sphinx docs build with `-W` (warnings-as-errors) now passes: **0 warnings** (was 95 — 83 unreferenced-doc `toc.not_included` + 12 xref/highlighting/image). Orphaned archive docs are suppressed via `suppress_warnings = ["toc.not_included"]` in `docs/conf.py` and remain reachable by URL; real defects still fail the build.
+
+---
+
 ## [3.0.0] — Decision Intelligence Platform (2026-08-08)
 
 ### Added

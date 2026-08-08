@@ -144,13 +144,17 @@ Two-Step vs Single-Step: +$21.84/day, bootstrap 95% CI [$5.00, $39.53], p = 0.01
 | **DQN** | **+$53.74** | [+46.21, +61.57] |
 | Double DQN | -$25.27 | [-32.77, -17.97] |
 
-### Multi-Agent Competition (50 drivers)
+### Multi-Agent Competition (50 drivers, 7-day window)
 
-| Strategy | Avg Revenue/Driver | Utilization |
+| Strategy | Avg Revenue/Driver (7d) | Utilization |
 |---|---:|---:|
-| Random (no strategy) | $189.42 | 3.1% |
-| Single-Step | $412.85 | 10.8% |
-| **Two-Step** | **$438.17** | **12.3%** |
+| Hot Zone | $1,233.41 | 7.3% |
+| Two-Step | $1,508.71 | 9.5% |
+| **Single-Step** | **$1,764.56** | **11.1%** |
+
+Single-Step vs Hot Zone: **+$531.16/driver** over the window, bootstrap 95% CI
+[$525.64, $536.67], paired t p < 0.001. Revenue figures are 7-day simulator
+totals (finite-demand multi-agent, 30 runs) — not daily earnings.
 
 > At fixed fleet size, raising demand/supply ratio from 0.5x to 2.0x increases Single-Step utilization from 6.42% to 18.53%.
 
@@ -161,6 +165,17 @@ Two-Step vs Single-Step: +$21.84/day, bootstrap 95% CI [$5.00, $39.53], p = 0.01
 | Historical Average | 1.7273 | 5.9237 |
 | LightGBM | 1.5114 | 5.0707 |
 | **Ensemble (LGB + XGB)** | **1.4868** | **4.9810** |
+
+### OD Graph Learning
+
+| Model | MAE |
+|---|---:|
+| LightGBM (non-graph) | 1.5114 |
+| GraphSAGE | 1.5037 |
+
+GraphSAGE improves MAE by 0.51% over non-graph LightGBM, but the timestamp-level
+95% CI [-0.0042, +0.0200] crosses zero — the graph-neural contribution is **not
+statistically supported** at this sample size. See [outputs/graph_benchmark.md](outputs/graph_benchmark.md).
 
 > **Surprising finding:** Better forecast accuracy does NOT equal better decisions. The forecast-enhanced strategy scores -$17.88/day vs the simpler historical version. This "prediction-policy gap" is one of the platform's key research contributions. See [Decision-Aware Forecasting](docs/research/decision_aware_forecasting.md).
 

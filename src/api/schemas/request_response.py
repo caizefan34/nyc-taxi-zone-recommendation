@@ -112,3 +112,49 @@ class ErrorResponse(BaseModel):
     error: str
     detail: Optional[str] = None
     timestamp: str
+
+
+class SimulateRequest(BaseModel):
+    """Request to run a multi-agent simulator rollout."""
+    model_name: str = Field("two_step", description="Policy to simulate (hot_zone | single_step | two_step)")
+    driver_count: int = Field(50, ge=1, le=1000, description="Number of competing drivers")
+    demand_supply_ratio: float = Field(1.0, ge=0.0, le=10.0, description="Demand/supply ratio")
+    days: int = Field(7, ge=1, le=30, description="Simulation horizon in days")
+    seed: int = Field(20230722, description="Random seed for reproducibility")
+    return_per_driver: bool = Field(False, description="Include per-driver results (may be large)")
+
+
+class SimulateResponse(BaseModel):
+    """Aggregate outcome of one multi-agent simulator rollout."""
+    evaluation_type: str = "simulation"
+    driver_count: int
+    days: int
+    seed: int
+    model_name: str
+    fulfilled_trips: int
+    demand_fulfillment_rate: float
+    total_revenue: float
+    average_driver_revenue: float
+    average_idle_minutes: float
+    driver_utilization: float
+    zone_saturation_rate: float
+    note: str = "Simulator outcome only. Not production revenue evidence."
+
+
+class EvaluateRequest(BaseModel):
+    """Request to evaluate a model against stored benchmark or shadow evidence."""
+    model_name: str = Field("two_step", description="Model to evaluate")
+    evaluation_type: str = Field(
+        "benchmark",
+        pattern="^(benchmark|shadow)$",
+        description="benchmark = stored benchmark artifacts; shadow = shadow-evaluation records",
+    )
+    city: str = Field("nyc", description="City context")
+
+
+class EvaluateResponse(BaseModel):
+    model_name: str
+    evaluation_type: str
+    metrics: dict = {}
+    source: str = ""
+    note: str = "Offline evaluation. Not real-world A/B evidence."

@@ -10,6 +10,8 @@ from fastapi import APIRouter, HTTPException, Request
 from src.api.schemas.request_response import (
     DemandForecastRequest,
     DemandForecastResponse,
+    EvaluateRequest,
+    EvaluateResponse,
     FleetOptimizeRequest,
     FleetOptimizeResponse,
     HealthResponse,
@@ -18,6 +20,8 @@ from src.api.schemas.request_response import (
     RecommendationEnvelope,
     RecommendationRequest,
     RecommendationResponse,
+    SimulateRequest,
+    SimulateResponse,
     VersionResponse,
 )
 from src.api.services.recommendation_service import (
@@ -26,6 +30,7 @@ from src.api.services.recommendation_service import (
     get_recommendation,
     list_available_models,
 )
+from src.api.services.simulation_service import evaluate_model, run_simulation
 
 logger = logging.getLogger(__name__)
 VERSION = "3.0.0"
@@ -212,3 +217,56 @@ async def fleet_optimize(request: FleetOptimizeRequest):
 async def list_models():
     """List available models."""
     return list_available_models()
+
+
+@router.post("/simulate", response_model=SimulateResponse, tags=["Simulation"])
+async def simulate(request: SimulateRequest):
+    """Run a finite-demand multi-agent simulator rollout for a policy.
+
+    All results are SIMULATOR outcomes — not production revenue estimates.
+    """
+    rid = str(uuid.uuid4())[:8]
+    logger.info(
+        "Simulation request %s model=%s drivers=%d ratio=%.2f days=%d seed=%d",
+        rid, request.model_name, request.driver_count, request.demand_supply_ratio,
+        request.days, request.seed,
+    )
+    try:
+        result = run_simulation(
+            model_name=request.model_name,
+            driver_count=request.driver_count,
+            demand_supply_ratio=request.demand_supply_ratio,
+            days=request.days,
+            seed=request.seed,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except (FileNotFoundError, OSError) as exc:
+        raise HTTPException(status_code=503, detail=f"Simulation data unavailable: {exc}") from exc
+    result["request_id"] = rid
+    return result
+
+
+@router.post("/evaluate", response_model=EvaluateResponse, tags=["Evaluation"])
+async def evaluate(request: EvaluateRequest):
+    """Return offline evaluation metrics for a model.
+
+    `evaluation_type="benchmark"` reads checked-in benchmark artifacts;
+    `evaluation_type="shadow"` reads stored shadow-evaluation records.
+    Both are OFFLINE — never real-world A/B evidence.
+    """
+    rid = str(uuid.uuid4())[:8]
+    logger.info("Evaluate request %s model=%s type=%s city=%s", rid, request.model_name,
+                request.evaluation_type, request.city)
+    try:
+        result = evaluate_model(
+            model_name=request.model_name,
+            evaluation_type=request.evaluation_type,
+            city=request.city,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    result["request_id"] = rid
+    return result

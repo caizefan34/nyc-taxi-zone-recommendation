@@ -37,9 +37,9 @@ python scripts/verify_reproduction.py
 
 ### Contribute
 
-- Submit your model to our [public leaderboard](docs/leaderboard.md)
+- Submit your model to our [public leaderboard](leaderboard.md)
 - Report issues or suggest features
-- Share feedback via our [feedback template](docs/external_feedback_template.md)
+- Share feedback via our [feedback template](external_feedback_template.md)
 
 ### Important Limitations
 

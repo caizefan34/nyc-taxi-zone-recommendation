@@ -73,6 +73,26 @@ Architecture
 
 .. toctree::
    :maxdepth: 2
+   :caption: 🧭 Platform
+
+   decision_engine
+   api
+   leaderboard
+   benchmark_protocol
+   shadow_evaluation
+   historical_replay
+   llm_agent
+   cross_city_extension
+
+.. toctree::
+   :maxdepth: 2
+   :caption: 🔬 Research Notes
+
+   research/decision_aware_forecasting
+   research/multi_agent_market_effect
+
+.. toctree::
+   :maxdepth: 2
    :caption: 🔧 API Reference
 
    api/data_loader

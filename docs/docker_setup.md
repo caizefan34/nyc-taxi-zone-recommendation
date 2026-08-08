@@ -1,6 +1,6 @@
 # Docker Setup Guide
 
-> Reproducible environment for the NYC Taxi Zone Recommendation system.
+> Reproducible deployment for the Urban Mobility Decision Intelligence platform.
 
 ## Prerequisites
 
@@ -9,51 +9,61 @@
 
 ## Quick Start
 
-### Build the Docker image
+### One-command deployment
 
 ```bash
-docker build -t nyc-taxi-recommendation .
+docker compose up
+# API  → http://localhost:8000/docs
+# Demo → http://localhost:8501
 ```
 
-Builds a Python 3.12 environment with all dependencies. Uses multi-stage build for smaller image size.
+`docker compose up` builds and runs both services with health checks.
 
-### Run with Docker Compose
+### Build specific service images
 
 ```bash
-# Show available commands
-docker compose run --rm nyc-taxi
-
-# Run tests
-docker compose run --rm test
-
-# Train models
-docker compose run --rm train
+docker build --target api -t nyc-taxi-api:latest .     # FastAPI service
+docker build --target demo -t nyc-taxi-demo:latest .    # Streamlit dashboard
+docker build --target test -t nyc-taxi-test:latest .    # Test harness
 ```
 
-### Interactive shell
-
-```bash
-docker run -it --rm \
-    -v .:/app \
-    -e PYTHONPATH=/app \
-    nyc-taxi-recommendation \
-    /bin/bash
-```
+Multi-stage Dockerfile (`Dockerfile`):
+- `source` — Python 3.12-slim base, copies the repo
+- `api` — installs `.[api]`, serves FastAPI on `:8000`
+- `demo` — installs `.[demo]`, serves Streamlit on `:8501`
+- `test` — installs full stack (`.[dev,data,forecasting,graph,rl,api,demo]`), runs pytest
 
 ## Services
 
-### `nyc-taxi` (default)
-Entry point for general usage. Runs `make help` by default.
+| Service | Image target | Port | Healthcheck | Purpose |
+|---|---|---|---|---|
+| `api` | `api` | 8000 | `/health` | REST API: recommendations, forecast, fleet, simulate, evaluate |
+| `demo` | `demo` | 8501 | Streamlit `/_stcore/health` | Interactive dashboard (SIMULATION) |
+| `test` | `test` | — | — | Runs the test suite |
 
-### `test`
-Runs the test suite via `make test` (pytest).
+## Data handling
 
-### `train`
-Runs full training pipeline via `make train` (data + forecasting + RL).
+- The `api` image **bakes in** `data/processed/` and `outputs/` so all endpoints
+  (`/v1/recommendations`, `/simulate`, `/evaluate`) work out of the box.
+- These directories are gitignored (large parquet files). Rebuild the image after
+  re-running the data pipeline so the image reflects current artifacts:
+  ```bash
+  make all          # regenerate data/processed + outputs/
+  docker compose build api
+  docker compose up
+  ```
+- For BYO-data deployments, mount your own artifacts instead of rebuilding:
+  ```bash
+  docker run -p 8000:8000 \
+    -v /host/data/processed:/app/data/processed \
+    -v /host/outputs:/app/outputs \
+    nyc-taxi-api:latest
+  ```
 
 ## Notes
 
 - All random seeds are fixed in `configs/` for reproducibility
-- Results are written to the mounted `outputs/` directory
+- Results are written to `outputs/`
 - Container uses Python 3.12-slim for minimal size
-- Volume mounts allow code changes without rebuilding
+- The Streamlit dashboard is **simulation-only** and clearly labeled; it does not
+  present production or A/B evidence

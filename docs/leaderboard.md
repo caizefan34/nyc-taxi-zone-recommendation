@@ -2,82 +2,51 @@
 
 > Open Urban Mobility Benchmark — Public Leaderboard
 
-**Benchmark Version**: v3.0.0 | **Last Evaluated**: 2026-08 | **Hardware**: CPU (Intel Xeon, 4 vCPUs, 16GB RAM)
+**Evaluation type:** SIMULATOR / HISTORICAL-REPLAY only. These are not production
+revenue estimates and no real-world A/B results are reported.
 
----
+_Regenerated: 2026-08-08 09:26 UTC by `python benchmark/run.py --leaderboard`_
 
-## Internal Baselines (Reproducible, Checked-in)
+## Scope & Honesty Statement
 
-All results are reproducible via `make all`. 402 tests validate correctness.
+- All numbers below are extracted from checked-in benchmark artifacts in `outputs/`.
+- **Endpoints are not comparable across rows**: NDCG@3/Hit@3/Utility@1 come from a
+  3,360-query static diagnostic; Daily Fare from a 100-seed legacy single-driver rollout;
+  Revenue/Driver + Utilization from the finite-demand multi-agent simulator. Do not rank
+  across endpoints.
+- No production revenue, deployment, or real-world A/B evidence exists in this repository.
 
-| Model | Type | NDCG@3 | Hit@3 | Daily Fare ($) | Utilization | Seeds |
-|---|---|---|---|---|---|---|
-| Hot Zone | Policy (baseline) | 0.7846 | 0.5842 | 431.21 | — | 1 |
-| Single-Step | Policy | 0.9024 | 0.8804 | 548.77 | 10.8% | 1 |
-| Two-Step Horizon (default) | Policy | **0.9565** | **0.9714** | **570.61** | 12.3% | 1 |
-| DQN | RL Policy | — | — | 466.59 | 15.2% | 3 |
-| Double DQN | RL Policy | — | — | 523.50 | 13.8% | 3 |
-| IQL | Offline RL | — | — | — | — | 1 |
-| Ensemble (LGB+XGB) | Forecast | MAE 1.4868 | — | — | — | 1 |
+## Policy Leaderboard
 
-> ⚠️ All results are **simulator outcomes** — not production revenue estimates. See [methodology](methodology.md).
+| Model | Endpoint | NDCG@3 | Hit@3 | Utility@1 | Daily Fare | Revenue/Driver | Utilization |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Hot Zone (`hot_zone`) | reference_metrics (static + 100-seed rollout) | 0.7846 | 0.5842 | 19.43 | $431.21 | — | — |
+| Single-Step (`single_step`) | reference_metrics (static + 100-seed rollout) | 0.9024 | 0.8804 | 25.06 | $548.77 | — | — |
+| Two-Step Horizon (`two_step`) | reference_metrics (static + 100-seed rollout) | 0.9565 | 0.9714 | 27.59 | $570.61 | — | — |
+| Hot Zone (`hot_zone`) | multi_agent_benchmark (finite-demand, 30 runs) | — | — | — | — | $1233.41 | 0.0731 |
+| Single-Step (`single_step`) | multi_agent_benchmark (finite-demand, 30 runs) | — | — | — | — | $1764.56 | 0.1111 |
+| Two-Step Horizon (`two_step`) | multi_agent_benchmark (finite-demand, 30 runs) | — | — | — | — | $1508.71 | 0.0951 |
+| DQN (`dqn`) | rl_benchmark (multi-seed) | — | — | — | — | $1821.77 | 0.1121 |
+| Double DQN (`double_dqn`) | rl_benchmark (multi-seed) | — | — | — | — | $1742.77 | 0.1069 |
+| Finite Horizon (`finite_horizon`) | rl_benchmark (multi-seed) | — | — | — | — | $1511.16 | 0.0952 |
 
----
+## Forecast Leaderboard (held-out)
+
+| Model | MAE | RMSE |
+|---|---:|---:|
+| Historical Average (`historical_average`) | 1.7273 | 5.9237 |
+| LightGBM (`lightgbm`) | 1.5114 | 5.0707 |
+| Ensemble (LGB+XGB) (`ensemble`) | 1.4868 | — |
+| GraphSAGE (`graphsage`) | 1.5037 | — |
+| GAT (`gat`) | 1.5058 | — |
+| OD Messages (`od_messages`) | 1.5024 | — |
 
 ## External Submissions
 
-> *No external submissions yet. Be the first to contribute!*
+> No external submissions yet. See `docs/external_contribution.md` to submit a model.
 
-| Model | Contributor | Type | Submitted | Key Metric | Verified |
-|---|---|---|---|---|---|
-| — | — | — | — | — | — |
+## How to Regenerate
 
-### How to Submit
-
-1. Implement the `Policy`, `ForecastModel`, or `RLPolicy` interface (`src/interfaces/__init__.py`)
-2. Run `python benchmark/runners/run_external_model.py` with your model
-3. Results are auto-validated against the [submission schema](benchmark_protocol.md#submission-schema)
-4. Open a PR adding your entry to this table
-5. CI verifies metrics are reproducible before merging
-
-See the [external contribution guide](external_contribution.md) for detailed instructions.
-
----
-
-## Submission Rules
-
-- **Reproducibility**: Submissions must be reproducible. No hidden data leakage. CI re-runs your code.
-- **Metrics**: All metrics must follow the [benchmark protocol](benchmark_protocol.md).
-- **Hardware**: Report the hardware used for evaluation.
-- **Scope**: This leaderboard tracks **simulator metrics only** — not production revenue.
-- **Fair comparison**: Use the same data splits and simulator configuration as baselines.
-
----
-
-## Historical Results
-
-All past results are archived in `docs/results/`. Major version changes are tracked in [CHANGELOG.md](../CHANGELOG.md).
-
-| Version | Date | Key Change |
-|---|---|---|
-| v3.0.0 | 2026-08 | Decision intelligence platform, trajectory-level OPE |
-| v2.0.0 | 2026-07 | Multi-agent simulator v2, IQL offline RL |
-| v1.0.0 | 2026-07 | Initial benchmark |
-
----
-
-## Citation
-
-If you use these benchmark results, please cite:
-
-```bibtex
-@software{cai2025urbanmobility,
-  author = {Cai, Zefan},
-  title = {Dynamic Urban Mobility Decision System},
-  year = {2025},
-  publisher = {GitHub},
-  url = {https://github.com/caizefan34/urban-mobility-ai}
-}
+```bash
+python benchmark/run.py --leaderboard
 ```
-
-See [CITATION.cff](../CITATION.cff) for full metadata.

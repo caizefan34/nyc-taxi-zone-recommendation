@@ -80,7 +80,7 @@ See [benchmark_protocol.md](benchmark_protocol.md) for the full protocol.
 
 \* vs Single-Step policy in multi-agent setting
 
-> ⚠️ All results are simulator outcomes. See [limitations](#limitations).
+> ⚠️ All results are simulator outcomes. See the Limitations section below.
 
 ## Limitations
 

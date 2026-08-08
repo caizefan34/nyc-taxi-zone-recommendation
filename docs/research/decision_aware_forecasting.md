@@ -103,7 +103,7 @@ Different decisions require different forecast properties:
 
 ## References
 
-- [Forecasting benchmark results](../outputs/forecasting_benchmark.md)
-- [Graph benchmark results](../outputs/graph_benchmark.md)
-- [Ablation study](../docs/ablation_study.md)
+- [Forecasting benchmark results](../forecasting.md) — full pipeline and metrics
+- [Graph benchmark results](../graph_learning.md) — OD graph features and ablation
+- [Ablation study](../ablation_study.md)
 - Script: `scripts/run_decision_aware_experiment.py`
