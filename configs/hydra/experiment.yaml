@@ -5,7 +5,7 @@ defaults:
   - _self_
 
 project:
-  name: nyc-taxi-zone-recommendation
+  name: urban-mobility-ai
   version: 1.0.0
 
 data:
