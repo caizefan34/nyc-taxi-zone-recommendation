@@ -81,9 +81,9 @@ These are **planned activities**, not completed work:
 
 All results can be reproduced by running:
 
-`ash
+```bash
 make all
-`
+```
 
 This executes the full pipeline: data processing → forecasting → simulation → policy optimization → benchmark evaluation.
 
@@ -93,14 +93,14 @@ See [benchmark_protocol.md](benchmark_protocol.md) for details.
 
 If you use this work, please cite:
 
-`ibtex
+```bibtex
 @software{cai2025urbanmobility,
   author = {Cai, Zefan},
-  title = {Dynamic Urban Mobility Decision System},
-  year = {2025},
+  title = {Urban Mobility Decision Intelligence},
+  year = {2026},
   publisher = {GitHub},
   url = {https://github.com/caizefan34/nyc-taxi-zone-recommendation}
 }
-`
+```
 
 See [CITATION.cff](../CITATION.cff) for the full metadata.

@@ -4,6 +4,24 @@
   --showcase-cyan: #00d2ff;
   --showcase-blue: #3a7bd5;
   --showcase-ink: #172033;
+  --showcase-card-bg: #ffffff;
+  --showcase-card-border: #e3e8f2;
+  --showcase-card-gradient: linear-gradient(180deg, #ffffff, #f8fbff);
+  --showcase-text-muted: #667085;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --showcase-navy: #0a0a1a;
+    --showcase-indigo: #1a1040;
+    --showcase-cyan: #4f8fff;
+    --showcase-blue: #3a7bd5;
+    --showcase-ink: #c8d0e0;
+    --showcase-card-bg: #111122;
+    --showcase-card-border: #1e1e3a;
+    --showcase-card-gradient: linear-gradient(180deg, #141428, #0d0d1a);
+    --showcase-text-muted: #8888b0;
+  }
 }
 
 .wy-nav-content {
@@ -82,14 +100,14 @@
 .metric-card,
 .feature-grid article {
   padding: 1.35rem;
-  border: 1px solid #e3e8f2;
+  border: 1px solid var(--showcase-card-border);
   border-radius: 16px;
-  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  background: var(--showcase-card-gradient);
   box-shadow: 0 10px 30px rgba(23, 32, 51, 0.07);
 }
 
 .metric-card span,
-.metric-card small { display: block; color: #667085; }
+.metric-card small { display: block; color: var(--showcase-text-muted); }
 .metric-card strong { display: block; margin: 0.35rem 0; color: var(--showcase-ink); font-size: 1.8rem; }
 .feature-grid h3 { margin-top: 0; color: var(--showcase-ink); }
 .feature-grid a { color: #1268a8; font-weight: 700; }

@@ -27,6 +27,13 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Visualization",
     "Operating System :: OS Independent",
 ]
+
+[project.urls]
+Homepage = "https://caizefan34.github.io/nyc-taxi-zone-recommendation/"
+Documentation = "https://caizefan34.github.io/nyc-taxi-zone-recommendation/docs/"
+Repository = "https://github.com/caizefan34/nyc-taxi-zone-recommendation"
+Issues = "https://github.com/caizefan34/nyc-taxi-zone-recommendation/issues"
+Discussions = "https://github.com/caizefan34/nyc-taxi-zone-recommendation/discussions"
 dependencies = [
     "numpy>=1.26.0",
     "pandas>=2.2.0",

@@ -2,13 +2,13 @@
 
 > Open Urban Mobility Benchmark — Public Leaderboard
 
-**Benchmark Version**: v2.1.0 | **Last Evaluated**: 2025-07-26 | **Hardware**: CPU (Intel Xeon, 4 vCPUs, 16GB RAM)
+**Benchmark Version**: v3.0.0 | **Last Evaluated**: 2026-08 | **Hardware**: CPU (Intel Xeon, 4 vCPUs, 16GB RAM)
 
 ---
 
 ## Internal Baselines (Reproducible, Checked-in)
 
-All results are reproducible via `make all`. 328 tests validate correctness. Multi-seed results use 3 random seeds.
+All results are reproducible via `make all`. 402 tests validate correctness.
 
 | Model | Type | NDCG@3 | Hit@3 | Daily Fare ($) | Utilization | Seeds |
 |---|---|---|---|---|---|---|
@@ -60,9 +60,9 @@ All past results are archived in `docs/results/`. Major version changes are trac
 
 | Version | Date | Key Change |
 |---|---|---|
-| v2.1.0 | 2025-07-26 | External submission workflow, enhanced leaderboard |
-| v2.0.0 | 2025-06 | Multi-agent simulator v2, IQL offline RL |
-| v1.0.0 | 2025-04 | Initial benchmark with 5 policies |
+| v3.0.0 | 2026-08 | Decision intelligence platform, trajectory-level OPE |
+| v2.0.0 | 2026-07 | Multi-agent simulator v2, IQL offline RL |
+| v1.0.0 | 2026-07 | Initial benchmark |
 
 ---
 

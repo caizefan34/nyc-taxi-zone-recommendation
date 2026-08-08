@@ -24,7 +24,7 @@
     <a href="docs/badges/documentation.svg"><img src="docs/badges/documentation.svg" alt="Documentation"></a>
     <a href="#quick-start"><img src="https://img.shields.io/badge/docker-ready-blue?logo=docker&logoColor=white" alt="Docker"></a>
     <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen?logo=github" alt="Contributions"></a>
-    <a href="https://doi.org/10.5281/zenodo.placeholder"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.placeholder-blue?logo=doi" alt="DOI"></a>
+    <a href="https://doi.org/10.5281/zenodo.XXXXXXX"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.XXXXXXX-blue?logo=doi" alt="DOI"></a>
   </p>
 
   <!-- Quick Links -->

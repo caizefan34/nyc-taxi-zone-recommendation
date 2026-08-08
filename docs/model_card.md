@@ -128,8 +128,8 @@ A multi-agent supply-demand simulator for NYC taxi repositioning. Simulates 50 d
 
 | Policy | Revenue/Driver | vs Greedy | 95% CI |
 |--------|:--------------:|:---------:|:------:|
-| DQN | ,821.77 | +.74 | [+.21, +.57] |
-| Double DQN | ,742.77 | -.27 | [-.77, -.97] |
+| DQN | $1,821.77 | +$53.74 | [+$46.21, +$61.57] |
+| Double DQN | $1,742.77 | -$25.27 | [-$32.77, -$17.97] |
 | IQL | 247.20 (DR) | N/A (diff scale) | [244.91, 249.61] |
 
 ### Bias

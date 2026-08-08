@@ -1,5 +1,8 @@
 .PHONY: help install test lint format clean train forecast-train forecast-benchmark graph-benchmark multi-agent-benchmark rl-benchmark combined-benchmark sanity static rollout parameters audit report evaluate docker-build docker-test
 
+# all: Run the full benchmark pipeline (data, forecasts, policies, evaluation)
+all: train forecast-benchmark graph-benchmark multi-agent-benchmark rl-benchmark combined-benchmark evaluate
+
 help:
 	@echo "NYC Taxi Zone Recommendation"
 	@echo "  make train       Split raw data, clean, and build travel times"

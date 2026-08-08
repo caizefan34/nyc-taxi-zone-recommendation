@@ -5,10 +5,10 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 
-project = "NYC Taxi Zone Recommendation"
+project = "Urban Mobility Decision Intelligence"
 author = "Zefan Cai"
 copyright = f"2026, {author}"
-release = "1.0.0"
+release = "3.0.0"
 
 extensions = [
     "sphinx.ext.autodoc",
