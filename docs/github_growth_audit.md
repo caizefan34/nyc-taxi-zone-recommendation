@@ -1,19 +1,19 @@
 # GitHub Growth & Community Adoption Audit
 
-> Phase 16 v2 | 2026-07-26
+> v3.0 | 2026-08-08
 
 ## Scores
 
 | Dimension | Score | Evidence |
 |---|---|---|
-| **README clarity** | 9/10 | Hero section with one-line value prop. Badges, quick links (Live Demo, Docs, Roadmap, Contribute). Architecture diagram (mermaid). Key results table. Quick Start. All within first scroll. |
-| **Visual presentation** | 8/10 | Unified dark-theme landing page at root URL. Mermaid architecture diagram. Demo scenario chart at `assets/demo_scenarios.png`. Web page embeds interactive Leaflet NYC map. Missing: actual app screenshots (generated chart helps). |
-| **Demo accessibility** | 9/10 | Two entry points: (1) Interactive web demo at root URL with Leaflet map + simulation, (2) Streamlit app via `streamlit run app/app.py`. Demo gallery with 4 scenarios. |
-| **SEO discoverability** | 9/10 | GitHub description: "AI-driven urban mobility benchmark". 17 topics: urban-mobility, reinforcement-learning, smart-city, benchmark, simulation, etc. CITATION.cff for academic indexing. |
-| **Contributor readiness** | 9/10 | Enhanced CONTRIBUTING.md (how to add model/benchmark/experiment). 5 issue templates (bug, new_model, new_experiment, documentation, experiment_proposal). ROADMAP.md with completed/current/future. Good first issues label. |
-| **Research visibility** | 9/10 | CITATION.cff. README citation block with BibTeX. Preserved all scientific disclaimers. Results table with CIs and p-values. Reproducibility section. |
+| **README clarity** | 9/10 | Hero section with one-line value prop. Badges, quick links (Live Demo, Docs, Roadmap, Contribute). Architecture diagram (mermaid). Key results tables including OPE and RL. Quick Start with Docker and local options. All within first scroll. |
+| **Visual presentation** | 9/10 | Unified dark-theme landing page. Mermaid architecture diagram. Interactive Leaflet map demo. Social preview SVG shows key stats (NDCG 0.9565, DQN +$53.74, 402 tests, 263 zones). |
+| **Demo accessibility** | 9/10 | Two entry points: (1) Interactive web demo with Leaflet map + simulation, (2) Streamlit app via `streamlit run app/app.py`. Docker Compose one-command deployment. |
+| **SEO discoverability** | 9/10 | GitHub description: "AI-driven urban mobility benchmark". 17 topics: urban-mobility, reinforcement-learning, smart-city, benchmark, simulation, etc. CITATION.cff for academic indexing (v3.0.0). |
+| **Contributor readiness** | 9/10 | Enhanced CONTRIBUTING.md (how to add model/benchmark/experiment, including offline RL agents). 9 issue templates. ROADMAP.md with completed/current/future. Good first issues label. |
+| **Research visibility** | 9/10 | CITATION.cff with updated keywords (offline policy evaluation, doubly robust). README citation block with BibTeX. All scientific disclaimers preserved. Results with CIs and p-values. OPE caveats documented. |
 
-**Overall: 8.8/10**
+**Overall: 9.0/10**
 
 ## What was delivered
 

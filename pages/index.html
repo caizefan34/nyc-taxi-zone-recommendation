@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NYC Mobility AI — Urban Mobility Decision Intelligence</title>
-<meta name="description" content="An open-source benchmark platform for AI-driven urban mobility: forecasting, simulation, and offline reinforcement learning with reproducible evaluation on NYC taxi data.">
-<meta name="keywords" content="urban mobility, reinforcement learning, NYC taxi, simulation, benchmark, AI, machine learning, demand forecasting">
-<meta property="og:title" content="NYC Mobility AI">
-<meta property="og:description" content="AI-driven urban mobility benchmark platform">
+<meta name="description" content="An open-source decision intelligence platform for dynamic fleet repositioning — demand forecasting, multi-agent simulation, offline reinforcement learning, and reproducible policy evaluation on NYC taxi data.">
+<meta name="keywords" content="urban mobility, reinforcement learning, offline RL, doubly robust, OPE, NYC taxi, simulation, benchmark, AI, machine learning, demand forecasting, IQL, DQN">
+<meta property="og:title" content="NYC Mobility AI — Decision Intelligence Platform">
+<meta property="og:description" content="Open-source platform for AI-driven fleet repositioning: forecasting, simulation, offline RL, and reproducible evaluation">
 <meta property="og:image" content="assets/social-preview.svg">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,7 +21,6 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 
-/* Hero */
 .hero {
   position: relative; overflow: hidden;
   background: linear-gradient(135deg, #0d0d2b 0%, #1a1040 30%, #0d1a30 60%, #0a0a1a 100%);
@@ -47,7 +46,7 @@ a:hover { text-decoration: underline; }
   margin-bottom: 16px;
 }
 .hero p {
-  font-size: 18px; color: var(--muted); max-width: 650px; margin: 0 auto 32px;
+  font-size: 18px; color: var(--muted); max-width: 700px; margin: 0 auto 32px;
 }
 .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .btn {
@@ -62,22 +61,21 @@ a:hover { text-decoration: underline; }
 .btn-outline { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
 .btn-outline:hover { background: rgba(79,143,255,0.1); }
 
-/* Stats bar */
 .stats-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 32px 0; }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; text-align: center; }
 .stat-value { font-size: 32px; font-weight: 800; }
 .stat-value.accent { color: var(--accent); }
 .stat-value.green { color: var(--green); }
 .stat-value.orange { color: var(--orange); }
+.stat-value.yellow { color: var(--yellow); }
 .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Sections */
 .section { padding: 64px 0; }
+.section-dark { background: var(--card); }
 .section-tag { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
 .section h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
-.section p.subtitle { color: var(--muted); font-size: 16px; margin-bottom: 40px; max-width: 600px; }
+.section p.subtitle { color: var(--muted); font-size: 16px; margin-bottom: 40px; max-width: 650px; }
 
-/* Cards */
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
 .card {
   background: var(--card); border: 1px solid var(--border); border-radius: 12px;
@@ -88,7 +86,6 @@ a:hover { text-decoration: underline; }
 .card h3 { font-size: 17px; margin-bottom: 8px; }
 .card p { font-size: 14px; color: var(--muted); }
 
-/* Results table */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -97,129 +94,225 @@ td { font-variant-numeric: tabular-nums; }
 tr:hover td { background: rgba(255,255,255,0.02); }
 .best { color: var(--green); font-weight: 700; }
 
-/* Map preview */
-.map-preview {
-  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-  overflow: hidden; height: 300px; position: relative;
+.code-block {
+  background: #0d0d1a; border: 1px solid var(--border); border-radius: 8px;
+  padding: 20px 24px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px;
+  overflow-x: auto; margin: 20px 0;
 }
-.map-preview-overlay {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  background: rgba(10,10,15,0.7); z-index: 2; transition: background 0.3s;
-}
-.map-preview-overlay:hover { background: rgba(10,10,15,0.4); }
-.map-preview-overlay a { font-size: 20px; font-weight: 700; }
+.code-block .c { color: #666; }
+.code-block .k { color: var(--accent); }
 
-/* Footer */
+.tag {
+  display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 11px;
+  font-weight: 600; margin-right: 6px;
+}
+.tag-blue { background: rgba(79,143,255,0.15); color: var(--accent); }
+.tag-green { background: rgba(46,164,79,0.15); color: var(--green); }
+.tag-purple { background: rgba(124,92,231,0.15); color: var(--accent2); }
+
 .footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--muted); font-size: 13px; }
 .footer a { color: var(--muted); margin: 0 12px; }
 </style>
 </head>
 <body>
 
-<!-- Hero -->
 <section class="hero">
   <div class="hero-content container">
-    <div class="hero-badge">🔬 Research-Grade · Open Source</div>
+    <div class="hero-badge">v3.0 &bull; Decision Intelligence Platform</div>
     <h1>AI-Driven Urban Mobility<br>Decision Intelligence</h1>
-    <p>An open-source benchmark platform combining spatiotemporal forecasting, multi-agent simulation, and offline reinforcement learning — with reproducible evaluation on NYC taxi data.</p>
+    <p>An open-source platform combining demand forecasting, multi-agent simulation, offline reinforcement learning, and reproducible policy evaluation — with REST API, Docker deployment, and interactive demo.</p>
     <div class="hero-buttons">
-      <a href="web/" class="btn btn-primary">🚀 Launch Interactive Demo</a>
-      <a href="docs/" class="btn btn-secondary">📖 Read the Docs</a>
-      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn btn-outline">⭐ GitHub</a>
+      <a href="web/" class="btn btn-primary">Launch Interactive Demo</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn btn-secondary">GitHub</a>
+      <a href="docs/" class="btn btn-outline">Documentation</a>
     </div>
   </div>
 </section>
 
-<!-- Stats -->
 <section class="stats-bar">
   <div class="container stats-grid">
     <div><div class="stat-value accent">0.9565</div><div class="stat-label">NDCG@3 (Two-Step)</div></div>
     <div><div class="stat-value green">+$139</div><div class="stat-label">Daily Revenue Lift</div></div>
-    <div><div class="stat-value orange">1.4868</div><div class="stat-label">Demand Forecast MAE</div></div>
-    <div><div class="stat-value accent">319</div><div class="stat-label">Tests Passing</div></div>
+    <div><div class="stat-value orange">+$53.74</div><div class="stat-label">DQN vs Single-Step</div></div>
+    <div><div class="stat-value yellow">402</div><div class="stat-label">Tests Passing</div></div>
+    <div><div class="stat-value accent">3</div><div class="stat-label">Docker Services</div></div>
   </div>
 </section>
 
-<!-- Research Highlights -->
-<section class="section">
-  <div class="container">
-    <div class="section-tag">Research</div>
-    <h2>Research Highlights</h2>
-    <p class="subtitle">Key contributions of this work.</p>
-    <div class="cards">
-      <div class="card"><div class="card-icon">&#128300;</div><h3>Dynamic Urban Mobility Simulator</h3><p>Finite-demand multi-agent simulator with explicit competition, configurable fleet size, and demand depletion.</p></div>
-      <div class="card"><div class="card-icon">&#129504;</div><h3>Forecasting + RL Decision Framework</h3><p>Leakage-safe spatiotemporal forecasting with MDP-based planning and DQN policies for zone recommendation.</p></div>
-      <div class="card"><div class="card-icon">&#128202;</div><h3>Open Benchmark Ecosystem</h3><p>Reproducible with 328+ tests, checked-in metrics, statistical validation, and external submission workflow.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- What We Do -->
 <section class="section">
   <div class="container">
     <div class="section-tag">Platform</div>
-    <h2>What We Build</h2>
-    <p class="subtitle">A complete pipeline from raw taxi trips to deployable recommendation policies.</p>
+    <h2>What This Platform Does</h2>
+    <p class="subtitle">A complete decision intelligence pipeline — from raw trip data to deployable policies with rigorous evaluation.</p>
     <div class="cards">
-      <div class="card"><div class="card-icon">📊</div><h3>Demand Forecasting</h3><p>Leakage-safe LightGBM and XGBoost models with GraphSAGE/GAT spatial features. Strictly-prior temporal splits guarantee no future information leakage.</p></div>
-      <div class="card"><div class="card-icon">🏙️</div><h3>Multi-Agent Simulation</h3><p>Finite-demand simulator with configurable fleet size, explicit competition, and demand depletion. Tests policies under realistic market pressure.</p></div>
-      <div class="card"><div class="card-icon">🧠</div><h3>Reinforcement Learning</h3><p>Gymnasium-compatible environment with DQN and Double DQN baselines. Masked action spaces reflect real-world travel constraints.</p></div>
-      <div class="card"><div class="card-icon">📐</div><h3>Reproducible Benchmark</h3><p>All metrics checked into the repository. Paired statistical tests, horizon experiments, and exposure analysis with full audit trails.</p></div>
+      <div class="card">
+        <div class="card-icon">&#128200;</div>
+        <h3>Demand Forecasting</h3>
+        <p>Leakage-safe LightGBM + XGBoost ensemble with GraphSAGE/GAT spatial features. Strictly-prior temporal splits prevent data leakage. MAE 1.49 on 263-zone NYC predictions.</p>
+        <p style="margin-top:8px"><span class="tag tag-blue">LightGBM</span><span class="tag tag-purple">XGBoost</span><span class="tag tag-green">GraphSAGE</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#127750;</div>
+        <h3>Multi-Agent Simulation</h3>
+        <p>Configurable fleet simulator with finite depletable demand, explicit competition, shift constraints, and calibrated travel times. Tests policies under realistic market pressure.</p>
+        <p style="margin-top:8px"><span class="tag tag-blue">v2 Engine</span><span class="tag tag-green">50+ drivers</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#129504;</div>
+        <h3>Reinforcement Learning</h3>
+        <p>DQN, Double DQN, and Implicit Q-Learning (IQL) with Gymnasium environment. Masked action spaces, offline replay buffers, and trajectory-aware evaluation.</p>
+        <p style="margin-top:8px"><span class="tag tag-blue">DQN</span><span class="tag tag-purple">Double DQN</span><span class="tag tag-green">IQL</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128300;</div>
+        <h3>Offline Policy Evaluation</h3>
+        <p>Trajectory-level Weighted Importance Sampling and sequential Doubly Robust estimation with complete-trajectory bootstrap confidence intervals. FQE diagnostic for nuisance models.</p>
+        <p style="margin-top:8px"><span class="tag tag-blue">WIS</span><span class="tag tag-purple">Doubly Robust</span><span class="tag tag-green">Bootstrap CI</span></p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Key Results -->
-<section class="section" style="background:var(--card)">
+<section class="section section-dark">
   <div class="container">
     <div class="section-tag">Results</div>
     <h2>Key Performance Metrics</h2>
     <p class="subtitle">All values are reproducible. Run <code>make all</code> to verify.</p>
+
+    <h3 style="margin-bottom:12px;margin-top:32px">Static Diagnostic (3,360 queries)</h3>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Strategy</th><th>NDCG@3</th><th>Hit@3</th><th>Daily Fare</th><th>vs Hot Zone</th></tr></thead>
+        <thead><tr><th>Strategy</th><th>NDCG@3</th><th>Hit@3</th><th>Utility@1</th></tr></thead>
         <tbody>
-          <tr><td>Hot Zone (baseline)</td><td>0.7846</td><td>0.5842</td><td>$431.21</td><td>—</td></tr>
-          <tr><td>Single-Step</td><td>0.9024</td><td>0.8804</td><td>$548.77</td><td>+$117.56</td></tr>
-          <tr><td class="best">Two-Step Horizon</td><td class="best">0.9565</td><td class="best">0.9714</td><td class="best">$570.61</td><td class="best">+$139.40</td></tr>
-          <tr><td>DQN (50-driver)</td><td>—</td><td>—</td><td>$466.59</td><td>+$53.74 vs Single-Step</td></tr>
+          <tr><td>Hot Zone (baseline)</td><td>0.7846</td><td>0.5842</td><td>19.43</td></tr>
+          <tr><td>Single-Step</td><td>0.9024</td><td>0.8804</td><td>25.06</td></tr>
+          <tr><td class="best">Two-Step Horizon</td><td class="best">0.9565</td><td class="best">0.9714</td><td class="best">27.59</td></tr>
         </tbody>
       </table>
     </div>
+
+    <h3 style="margin-bottom:12px;margin-top:32px">100-Seed Simulator Rollout (7 days)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Strategy</th><th>Mean Daily Fare</th><th>vs Hot Zone</th></tr></thead>
+        <tbody>
+          <tr><td>Hot Zone</td><td>$431.21</td><td>&mdash;</td></tr>
+          <tr><td>Single-Step</td><td>$548.77</td><td>+$117.56</td></tr>
+          <tr><td class="best">Two-Step Horizon</td><td class="best">$570.61</td><td class="best">+$139.40</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-bottom:12px;margin-top:32px">Multi-Agent Competition (50 drivers)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Strategy</th><th>Avg Revenue</th><th>Utilization</th></tr></thead>
+        <tbody>
+          <tr><td>Random</td><td>$189.42</td><td>3.1%</td></tr>
+          <tr><td>Single-Step</td><td>$412.85</td><td>10.8%</td></tr>
+          <tr><td class="best">Two-Step Horizon</td><td class="best">$438.17</td><td class="best">12.3%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-bottom:12px;margin-top:32px">Deep RL Baselines (vs Single-Step)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Algorithm</th><th>Revenue Delta</th><th>95% CI</th></tr></thead>
+        <tbody>
+          <tr><td class="best">DQN</td><td class="best">+$53.74</td><td>[+46.21, +61.57]</td></tr>
+          <tr><td>Double DQN</td><td>-$25.27</td><td>[-32.77, -17.97]</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-bottom:12px;margin-top:32px">Offline Policy Evaluation (Trajectory-Level)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Policy</th><th>WIS Estimate</th><th>Sequential DR</th></tr></thead>
+        <tbody>
+          <tr><td>Stay (on-policy)</td><td>$438.55</td><td>$431.74</td></tr>
+          <tr><td>IQL (off-policy, uniform behavior)</td><td>$0.00</td><td>$12.44</td></tr>
+        </tbody>
+      </table>
+    </div>
+
     <p style="margin-top:20px;font-size:13px;color:var(--muted)">
-      ⚠ Simulator outcomes only — not production revenue estimates. <a href="docs/methodology.html">See methodology</a>.
+      All results are simulator outcomes — not production revenue estimates. IQL results reflect deterministic-target overlap limitations with uniform exploration data. See <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation#scientific-limitations">Scientific Limitations</a>.
     </p>
   </div>
 </section>
 
-<!-- Map Preview -->
 <section class="section">
   <div class="container">
-    <div class="section-tag">Interactive</div>
-    <h2>Explore NYC Taxi Zones</h2>
-    <p class="subtitle">263 zones, real-time demand patterns, AI-powered recommendations.</p>
-    <div class="map-preview">
-      <iframe src="web/" style="width:100%;height:100%;border:none;filter:brightness(0.9)" loading="lazy" title="NYC Taxi Zone Map"></iframe>
+    <div class="section-tag">Quick Start</div>
+    <h2>Try It Now</h2>
+    <p class="subtitle">One command to start the full platform.</p>
+    <div class="code-block">
+      <span class="c"># Clone and start the platform (API + Demo)</span><br>
+      git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git<br>
+      <span class="k">cd</span> nyc-taxi-zone-recommendation<br>
+      docker compose up<br>
+      <br>
+      <span class="c"># API → http://localhost:8000/docs</span><br>
+      <span class="c"># Demo → http://localhost:8501</span>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation" class="btn btn-primary">Star on GitHub</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CONTRIBUTING.md" class="btn btn-secondary">Contribute</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CITATION.cff" class="btn btn-outline">Cite This Work</a>
     </div>
   </div>
 </section>
 
-<!-- Architecture -->
-<section class="section" style="background:var(--card)">
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-tag">Engineering</div>
+    <h2>Production-Ready Infrastructure</h2>
+    <p class="subtitle">Beyond research: REST API, Docker, CI/CD, and observability included.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">&#9881;</div>
+        <h3>REST API (FastAPI)</h3>
+        <p><code>/health</code>, <code>/ready</code>, <code>/v1/recommendations</code>, <code>/v1/demand/forecast</code> endpoints with auto-generated OpenAPI docs.</p>
+        <p style="margin-top:8px"><span class="tag tag-blue">FastAPI</span><span class="tag tag-green">Pydantic v2</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128230;</div>
+        <h3>Docker & Compose</h3>
+        <p>Multi-stage builds for api, demo, and test targets. Health checks on all services. One-command <code>docker compose up</code>.</p>
+        <p style="margin-top:8px"><span class="tag tag-blue">Docker</span><span class="tag tag-green">Compose</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128260;</div>
+        <h3>CI/CD (GitHub Actions)</h3>
+        <p>Python 3.10/3.12 matrix, Ruff lint, full test suite with coverage, Docker build smoke, and API health polling on every push.</p>
+        <p style="margin-top:8px"><span class="tag tag-blue">CI</span><span class="tag tag-green">Codecov</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128221;</div>
+        <h3>Observability</h3>
+        <p>Structured logging, request latency tracking, model registry with versioning, metrics snapshots, and shadow evaluation mode.</p>
+        <p style="margin-top:8px"><span class="tag tag-blue">Logging</span><span class="tag tag-purple">Registry</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
   <div class="container">
     <div class="section-tag">Architecture</div>
     <h2>How It Works</h2>
     <p class="subtitle">End-to-end pipeline for urban mobility intelligence.</p>
     <div class="cards">
-      <div class="card"><div class="card-icon">1️⃣</div><h3>Data Pipeline</h3><p>Raw NYC TLC trips → chronological split → cleaning → zone-time statistics</p></div>
-      <div class="card"><div class="card-icon">2️⃣</div><h3>Forecast Training</h3><p>Feature engineering → LightGBM/XGBoost → recursive holdout predictions</p></div>
-      <div class="card"><div class="card-icon">3️⃣</div><h3>Policy Optimization</h3><p>Two-step planning · DQN · Double DQN · finite-horizon MDP · online Q-learning</p></div>
-      <div class="card"><div class="card-icon">4️⃣</div><h3>Benchmark & Audit</h3><p>Paired tests · horizon sensitivity · robustness checks · exposure analysis</p></div>
+      <div class="card"><div class="card-icon">1</div><h3>Data Pipeline</h3><p>Raw NYC TLC trips &rarr; chronological split &rarr; cleaning &rarr; zone-time statistics &rarr; travel-time matrix</p></div>
+      <div class="card"><div class="card-icon">2</div><h3>Demand Forecasting</h3><p>Feature engineering &rarr; LightGBM + XGBoost ensemble &rarr; GraphSAGE/GAT spatial encoding &rarr; recursive holdout predictions</p></div>
+      <div class="card"><div class="card-icon">3</div><h3>Policy Optimization</h3><p>Two-step MDP planning &middot; DQN &middot; Double DQN &middot; IQL offline RL &middot; Model-based value iteration</p></div>
+      <div class="card"><div class="card-icon">4</div><h3>Evaluation & Deploy</h3><p>Paired statistical tests &middot; Offline OPE (WIS/DR) &middot; Exposure analysis &middot; REST API &middot; Docker deploy</p></div>
     </div>
   </div>
 </section>
 
-<!-- Footer -->
 <footer class="footer">
   <div class="container">
     <p>
@@ -227,8 +320,9 @@ tr:hover td { background: rgba(255,255,255,0.02); }
       <a href="docs/">Documentation</a>
       <a href="web/">Web Demo</a>
       <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/CITATION.cff">Cite</a>
+      <a href="https://github.com/caizefan34/nyc-taxi-zone-recommendation/blob/master/ROADMAP.md">Roadmap</a>
     </p>
-    <p style="margin-top:8px">MIT License · Built for reproducible research</p>
+    <p style="margin-top:8px">MIT License &middot; Built for reproducible research &middot; v3.0.0</p>
   </div>
 </footer>
 </body>

@@ -16,13 +16,13 @@ We welcome contributions from researchers, engineers, and students. Whether you 
 
 ```bash
 # Install dev dependencies
-pip install -e ".[dev,forecasting,graph,rl]"
+pip install -e ".[dev,data,forecasting,graph,rl,api,demo]"
 
-# Run all tests (113 tests)
+# Run all tests (402 tests)
 pytest tests/ -v
 
 # Run specific test file
-pytest tests/test_dqn.py -v
+pytest tests/test_ope_enhanced.py -v
 
 # Run with coverage
 pytest tests/ --cov=src/ --cov-report=term-missing
@@ -60,12 +60,15 @@ def recommend(dt: datetime, zone_id: int) -> list[int]:
 
 Add evaluation in `tests/` and register in `scripts/generate_combined_benchmark.py`.
 
-### 3. RL agent
+### 3. Offline RL agent
 
-Extend `src/rl/dqn.py` or create a new agent. Implement:
-- `train(env, config)` function
-- `act(state)` method
-- Strategy adapter in `src/rl/strategy.py`
+Extend `src/rl/offline/iql.py` or create a new offline agent. Implement:
+- `train(buffer, config)` function
+- `get_value(state)` for V(s) estimation
+- `get_q_values(state, action)` for Q(s,a) estimation
+- `score_actions(state, candidates)` for action selection
+
+Register in `src/rl/strategy.py` and add OPE evaluation in `scripts/run_ope_comparison.py`.
 
 ---
 
@@ -76,14 +79,20 @@ Extend `src/rl/dqn.py` or create a new agent. Implement:
 ```python
 # scripts/run_my_benchmark.py
 def main():
-    # Load data, run strategies, compute metrics
     results = {...}
     # Save to outputs/
 ```
 
-2. Add a Makefile target in `Makefile`
-3. Add a test in `tests/` that verifies reproducibility
-4. Update `docs/combined_benchmark.md` with results
+2. Use seeded RNGs for reproducibility:
+   ```python
+   import numpy as np
+   import torch
+   rng = np.random.default_rng(seed)
+   torch.manual_seed(seed)
+   ```
+
+3. Add a test in `tests/` that verifies same-seed reproducibility
+4. Update relevant docs with results
 
 ---
 
@@ -96,7 +105,7 @@ def main():
 5. Run `ruff check` and `pytest` before committing
 6. Open a PR with:
    - Description of your experiment
-   - How to reproduce results
+   - How to reproduce results (including seed values)
    - Any new dependencies (add to `pyproject.toml`)
    - Test coverage for new code
 
@@ -107,10 +116,13 @@ def main():
 ```bash
 git clone https://github.com/caizefan34/nyc-taxi-zone-recommendation.git
 cd nyc-taxi-zone-recommendation
-pip install -e ".[dev,forecasting,graph,rl]"
+pip install -e ".[dev,data,forecasting,graph,rl,api,demo]"
 
 # Or with Docker
 docker compose up
+
+# Reproducible OPE benchmark
+python -m scripts.run_ope_comparison --seed 42
 ```
 
 ## Code style
@@ -122,9 +134,11 @@ docker compose up
 
 ## Data requirements
 
-NYC TLC Yellow Taxi data (January 2023) from [TLC Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page).
+NYC TLC Yellow Taxi data from [TLC Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page).
 
 Place at: `data/raw/yellow_tripdata_2023-01.parquet`
+
+The data pipeline enforces strictly-prior chronological splits to prevent temporal leakage.
 
 ## License
 
